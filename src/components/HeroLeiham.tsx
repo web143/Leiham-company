@@ -140,7 +140,7 @@ export default function HeroLeiham({ isDark = true }: { isDark?: boolean }) {
 
     return (
         <section ref={sectionRef} style={{ height: isMobileHero ? '150vh' : '250vh' }} className={cn("relative transition-colors duration-300", isDark ? 'bg-black' : 'bg-white')}>
-            <div className="sticky top-0 h-screen overflow-hidden">
+            <div className={cn("sticky top-0 h-screen overflow-hidden", !isMobileHero && "min-w-[1200px] overflow-x-auto")}>
                 <motion.div className="w-full h-full relative flex items-center justify-center">
                     <motion.div
                         style={{ opacity: overlayOpacity }}
