@@ -127,15 +127,6 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
   const cuotaMensual = montoFinanciar * 0.04;
   const numeroCuotas = montoFinanciar > 0 ? 25 : 0;
 
-  // Política de Regalos
-  const maxRegalo = totalProductos * 0.10;
-  const CATEGORIAS_EXCLUIDAS = ["Aros Silicromáticos", "Piezas de Reemplazo"];
-  const productosElegiblesRegalo = products.filter(p => 
-    !CATEGORIAS_EXCLUIDAS.some(cat => 
-      p.category.toLowerCase().includes(cat.toLowerCase())
-    ) && p.total <= maxRegalo
-  );
-
 
   return (
     <section className={cn("w-full min-h-screen transition-colors duration-300", isDark ? "bg-black" : "bg-white")}>
@@ -308,7 +299,7 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
           isDark ? "bg-slate-900/60 border-[#0066B3]/20 shadow-[#0066B3]/5" : "bg-slate-100 border-slate-200 shadow-slate-200/50")}>
 
           {/* Totales top */}
-          <div>
+          <div className="grid grid-cols-1 gap-3">
             <div className={cn("rounded-2xl p-4 border transition-all duration-300", isDark ? "bg-black/40 border-white/5" : "bg-white border-slate-200")}>
               <p className={cn("text-[10px] font-bold uppercase tracking-widest mb-1 transition-colors", isDark ? "text-white/30" : "text-slate-400")}>Total</p>
               <p className={cn("text-xl font-bold tracking-tighter transition-colors", isDark ? "text-white" : "text-slate-900")}>{fmt(totalProductos)}</p>
@@ -395,60 +386,57 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
           </div>
 
         </div>
+      </div>
 
-        {/* Sección de Regalos — aparece solo cuando hay productos seleccionados */}
-        {totalProductos > 0 && (
-          <div className={`mt-4 rounded-2xl p-4 ${isDark ? 'bg-slate-900/40' : 'bg-white border border-slate-200'}`}>
+      {totalProductos > 0 && (
+        <div className="max-w-[1200px] mx-auto px-4 pb-8">
+          <div className={cn("rounded-2xl p-4", isDark ? "bg-slate-900/40 border border-white/5" : "bg-slate-100 border border-slate-200")}>
             
-            {/* Header en una línea */}
             <div className="flex flex-wrap items-center gap-2 mb-3">
               <span>🎁</span>
-              <h3 className={`text-sm font-black uppercase tracking-widest ${isDark ? 'text-white' : 'text-slate-900'}`}>
+              <h3 className={cn("text-sm font-black uppercase tracking-widest", isDark ? "text-white" : "text-slate-900")}>
                 Regalos Disponibles
               </h3>
               <span className="text-xs font-bold text-[#0066B3] bg-[#0066B3]/10 px-2 py-0.5 rounded-full">
-                Hasta {fmt(maxRegalo)}
+                Hasta {fmt(totalProductos * 0.10)}
               </span>
-              <span className={`text-xs ml-2 ${isDark ? 'text-white/30' : 'text-slate-400'}`}>
-                Máx. 10% del total · Solo aplica descuento O regalo, no ambos · Financiamiento 6-12 meses sin intereses: no aplica
+              <span className={cn("text-xs", isDark ? "text-white/30" : "text-slate-400")}>
+                Máx. 10% · Solo descuento O regalo, no ambos · Financiamiento 6-12 meses sin intereses: no aplica
               </span>
             </div>
 
-            {/* Productos en fila horizontal con scroll */}
-            {productosElegiblesRegalo.length > 0 ? (
-              <div className="flex gap-2 overflow-x-auto pb-1"
-                style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(0,102,179,0.2) transparent' }}>
-                {productosElegiblesRegalo.map(p => (
-                  <div key={p.code + p.name}
-                    className={`flex-shrink-0 px-3 py-2 rounded-xl flex flex-col gap-1 min-w-[160px] max-w-[200px] ${
-                      isDark ? 'bg-slate-800/50' : 'bg-slate-100'
-                    }`}>
-                    <p className={`text-xs font-semibold leading-tight ${isDark ? 'text-white/80' : 'text-slate-700'}`}>
-                      {p.name}
-                    </p>
-                    <div className="flex justify-between items-center">
-                      <p className={`text-[10px] ${isDark ? 'text-white/30' : 'text-slate-400'}`}>
-                        {p.category}
-                      </p>
-                      <p className="text-[#0066B3] text-xs font-bold">
-                        {fmt(p.total)}
-                      </p>
+            {(() => {
+              const EXCLUIR = ['aro', 'reparac', 'reemplaz'];
+              const maxR = totalProductos * 0.10;
+              const elegibles = products.filter(p =>
+                !EXCLUIR.some(ex => p.category.toLowerCase().includes(ex) || p.name.toLowerCase().includes(ex)) &&
+                p.total <= maxR
+              );
+              return elegibles.length > 0 ? (
+                <div className="flex gap-2 overflow-x-auto pb-1"
+                  style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(0,102,179,0.2) transparent' }}>
+                  {elegibles.map(p => (
+                    <div key={p.code + p.name}
+                      className={cn("flex-shrink-0 px-3 py-2 rounded-xl min-w-[150px] max-w-[190px]", isDark ? "bg-slate-800/50" : "bg-white border border-slate-200")}>
+                      <p className={cn("text-xs font-semibold leading-tight mb-1", isDark ? "text-white/80" : "text-slate-700")}>{p.name}</p>
+                      <div className="flex justify-between items-center">
+                        <p className={cn("text-[10px]", isDark ? "text-white/30" : "text-slate-400")}>{p.category}</p>
+                        <p className="text-[#0066B3] text-xs font-bold">{fmt(p.total)}</p>
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p className={`text-xs ${isDark ? 'text-white/20' : 'text-slate-400'}`}>
-                Ningún producto califica como regalo para este monto
-              </p>
-            )}
+                  ))}
+                </div>
+              ) : (
+                <p className={cn("text-xs", isDark ? "text-white/20" : "text-slate-400")}>Ningún producto califica para este monto</p>
+              );
+            })()}
 
-            <p className={`text-[10px] mt-2 ${isDark ? 'text-white/20' : 'text-slate-400'}`}>
-              * Puedes combinar varios productos cuya suma no exceda {fmt(maxRegalo)} · ⚠️ Extractor, Power Blender, Easy Release y Purificador: máx. 5%
+            <p className={cn("text-[10px] mt-2", isDark ? "text-white/20" : "text-slate-400")}>
+              * Puedes combinar productos cuya suma no exceda {fmt(totalProductos * 0.10)} · ⚠️ Extractor, Power Blender, Easy Release y Purificador: máx. 5%
             </p>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </section>
   );
 }
