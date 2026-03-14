@@ -1,5 +1,4 @@
-"use client";
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { Search, Plus, Check, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { products } from "@/lib/products";
@@ -12,6 +11,26 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
   const [inicialDado, setInicialDado] = useState("");
   const [porcentaje, setPorcentaje] = useState(4);
   const [porcentajeInput, setPorcentajeInput] = useState("4");
+
+  const categoryRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
+
+  const handleCategoryClick = (cat: string) => {
+    // Si ya está activa, desactivar
+    if (activeCategory === cat) {
+      setActiveCategory(null);
+      return;
+    }
+    
+    setActiveCategory(cat);
+    
+    // Scroll al header de esa categoría en la lista
+    setTimeout(() => {
+      categoryRefs.current[cat]?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
+    }, 50);
+  };
 
   const isSelected = (p: typeof products[0]) =>
     selectedItems.some(i => i.code === p.code && i.name === p.name);
@@ -129,7 +148,7 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
             Todos
           </button>
           {allCategories.map(cat => (
-            <button key={cat} onClick={() => setActiveCategory(activeCategory === cat ? null : cat)}
+            <button key={cat} onClick={() => handleCategoryClick(cat)}
               className={cn("flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-colors", 
                 activeCategory === cat ? 'bg-[#0066B3] text-white' : (isDark ? 'bg-slate-800 text-white/50' : 'bg-slate-200 text-slate-500')
               )}>
@@ -149,7 +168,7 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
               return (
                 <button
                   key={cat}
-                  onClick={() => setActiveCategory(activeCategory === cat ? null : cat)}
+                  onClick={() => handleCategoryClick(cat)}
                   className={cn("w-full text-left px-3 py-1.5 rounded-xl text-xs flex justify-between items-center group transition-all duration-300", 
                     activeCategory === cat 
                       ? (isDark ? 'bg-slate-800/50 text-white' : 'bg-slate-200 text-slate-900') 
@@ -212,7 +231,11 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
                     <p className={cn("text-sm transition-colors", isDark ? "text-white/20" : "text-slate-400")}>No se encontraron productos.</p>
                 </div>
             ) : visibleCategories.map(cat => (
-              <div key={cat} className="mb-6 last:mb-0">
+              <div 
+                key={cat} 
+                ref={el => { categoryRefs.current[cat] = el; }}
+                className="mb-6 last:mb-0"
+              >
                 <p className={cn("text-[10px] font-black uppercase tracking-[0.2em] py-3 px-3 sticky top-0 backdrop-blur-md rounded-lg z-10 mb-2 border-b transition-all duration-300", 
                   isDark ? "text-white/20 bg-black/50 border-white/5" : "text-slate-400 bg-white/90 border-slate-200")}>
                   {cat}
