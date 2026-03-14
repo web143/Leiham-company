@@ -99,6 +99,7 @@ export default function HeroLeiham({ isDark = true }: { isDark?: boolean }) {
     const sectionRef = useRef<HTMLElement>(null);
     const [isMobileHero, setIsMobileHero] = useState(false);
     useEffect(() => {
+        if (typeof window === 'undefined') return;
         const check = () => setIsMobileHero(window.innerWidth < 768);
         check();
         window.addEventListener('resize', check);
@@ -283,6 +284,7 @@ function FloatingProduct({
     const [isMobile, setIsMobile] = useState(false);
 
     useEffect(() => {
+        if (typeof window === 'undefined') return;
         const check = () => setIsMobile(window.innerWidth < 768);
         check();
         window.addEventListener('resize', check);
@@ -299,6 +301,7 @@ function FloatingProduct({
     const opacityOut = useTransform(scrollProgress, [0, 0.4], [1, 0]);
 
     useEffect(() => {
+        if (typeof window === 'undefined') return;
         // Skip mouse repulse on touch/mobile — saves expensive layout reads every frame
         if (isMobile) return;
         const handleMouseMove = (e: MouseEvent) => {

@@ -8,6 +8,7 @@ export default function Home() {
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
+        if (typeof window === 'undefined') return;
         const saved = localStorage.getItem('leiham-theme');
         if (saved === 'light') setIsDark(false);
         setMounted(true);
