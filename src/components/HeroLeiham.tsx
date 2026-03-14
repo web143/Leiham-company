@@ -20,7 +20,8 @@ export default function HeroLeiham({ isDark = true }: { isDark?: boolean }) {
             rotate: -8,
             floatDuration: 7,
             floatAmplitude: 15,
-            position: "left-0 top-[20%] md:top-[20%]",
+            left: "0vw",
+            top: "20vh",
             scrollTarget: { x: -500, y: 300, scale: 0 },
         },
         {
@@ -34,7 +35,8 @@ export default function HeroLeiham({ isDark = true }: { isDark?: boolean }) {
             rotate: -10,
             floatDuration: 7,
             floatAmplitude: 15,
-            position: "left-[180px] md:left-[15%] top-[2%] md:top-[4%]",
+            left: "12vw",
+            top: "3vh",
             scrollTarget: { x: -400, y: -350, scale: 0 },
         },
         {
@@ -48,7 +50,8 @@ export default function HeroLeiham({ isDark = true }: { isDark?: boolean }) {
             rotate: -20,
             floatDuration: 6,
             floatAmplitude: 12,
-            position: "left-0 bottom-[5%] md:bottom-[8%]",
+            left: "0vw",
+            bottom: "8vh",
             scrollTarget: { x: -600, y: 400, scale: 0 },
         },
         {
@@ -62,7 +65,8 @@ export default function HeroLeiham({ isDark = true }: { isDark?: boolean }) {
             rotate: 8,
             floatDuration: 7,
             floatAmplitude: 15,
-            position: "right-0 top-[20%] md:top-[20%]",
+            right: "0vw",
+            top: "20vh",
             scrollTarget: { x: 500, y: 250, scale: 0 },
         },
         {
@@ -76,7 +80,8 @@ export default function HeroLeiham({ isDark = true }: { isDark?: boolean }) {
             rotate: -20,
             floatDuration: 6,
             floatAmplitude: 12,
-            position: "right-[180px] md:right-[15%] top-[2%] md:top-[4%]",
+            right: "12vw",
+            top: "3vh",
             scrollTarget: { x: 600, y: 380, scale: 0 },
         },
         {
@@ -90,7 +95,8 @@ export default function HeroLeiham({ isDark = true }: { isDark?: boolean }) {
             rotate: -30,
             floatDuration: 7,
             floatAmplitude: 15,
-            position: "right-0 bottom-[5%] md:bottom-[8%]",
+            right: "0vw",
+            bottom: "8vh",
             scrollTarget: { x: 450, y: -350, scale: 0 },
         },
     ];
@@ -173,7 +179,6 @@ export default function HeroLeiham({ isDark = true }: { isDark?: boolean }) {
                             <FloatingProduct
                                 key={index}
                                 {...product}
-                                className={product.position}
                                 scrollProgress={progress}
                             />
                         ))}
@@ -267,6 +272,10 @@ function FloatingProduct({
     floatAmplitude = 20,
     scrollProgress,
     scrollTarget,
+    left,
+    right,
+    top,
+    bottom,
 }: {
     src: string;
     alt: string;
@@ -281,6 +290,10 @@ function FloatingProduct({
     floatAmplitude?: number;
     scrollProgress?: MotionValue<number>;
     scrollTarget: { x: number; y: number; scale: number };
+    left?: string;
+    right?: string;
+    top?: string;
+    bottom?: string;
 }) {
     const ref = useRef<HTMLDivElement>(null);
     const [repulse, setRepulse] = useState({ x: 0, y: 0 });
@@ -306,7 +319,6 @@ function FloatingProduct({
 
     const finalWidth = isMobile && mobileWidth ? mobileWidth : width;
     const finalHeight = isMobile && mobileHeight ? mobileHeight : height;
-    const finalPosition = isMobile && mobilePosition ? mobilePosition : className;
 
     useEffect(() => {
         if (typeof window === 'undefined') return;
@@ -340,6 +352,11 @@ function FloatingProduct({
         <motion.div
             ref={ref}
             style={{
+                position: 'absolute',
+                left: isMobile ? undefined : left,
+                right: isMobile ? undefined : right,
+                top: isMobile ? undefined : top,
+                bottom: isMobile ? undefined : bottom,
                 opacity: isMobile ? 1 : opacityOut,
                 scale: isMobile ? 1 : scaleOut,
                 x: isMobile ? 0 : moveX,
@@ -348,7 +365,7 @@ function FloatingProduct({
                 transform: "translateZ(0)",
                 zIndex: scrollTarget.scale === 0 ? 30 : 20, // using scrollTarget.scale to identify 'isHero' intent if needed
             }}
-            className={cn("absolute z-20", finalPosition)}
+            className={cn("z-20", isMobile ? mobilePosition : "")}
         >
             <motion.div
                 animate={{
