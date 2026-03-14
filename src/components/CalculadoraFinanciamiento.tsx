@@ -308,15 +308,10 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
           isDark ? "bg-slate-900/60 border-[#0066B3]/20 shadow-[#0066B3]/5" : "bg-slate-100 border-slate-200 shadow-slate-200/50")}>
 
           {/* Totales top */}
-          <div className="grid grid-cols-2 gap-3">
+          <div>
             <div className={cn("rounded-2xl p-4 border transition-all duration-300", isDark ? "bg-black/40 border-white/5" : "bg-white border-slate-200")}>
               <p className={cn("text-[10px] font-bold uppercase tracking-widest mb-1 transition-colors", isDark ? "text-white/30" : "text-slate-400")}>Total</p>
               <p className={cn("text-xl font-bold tracking-tighter transition-colors", isDark ? "text-white" : "text-slate-900")}>{fmt(totalProductos)}</p>
-            </div>
-            <div className={cn("border rounded-2xl p-4 shadow-inner transition-all duration-300", 
-              isDark ? "bg-[#0066B3]/20 border-[#0066B3]/30" : "bg-[#0066B3]/10 border-[#0066B3]/20")}>
-              <p className={cn("text-[10px] font-bold uppercase tracking-widest mb-1 transition-colors", isDark ? "text-[#0066B3]/70" : "text-[#0066B3]")}>Cuota/Mes</p>
-              <p className="text-xl font-bold text-[#0066B3] tracking-tighter">{fmt(cuotaMensual)}</p>
             </div>
           </div>
 
@@ -379,13 +374,11 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
           {/* Desglose */}
           <div className={cn("flex-1 space-y-2 border-t pt-4 overflow-y-auto pr-1 custom-scrollbar transition-all duration-300", isDark ? "border-white/10" : "border-slate-200")}>
             {[
-              { label: 'Valor productos', value: fmt(totalProductos) },
-              { label: 'Inicial aplicado', value: fmt(inicialDadoNum) },
-              { label: 'Equivalencia %', value: `${porcentaje}%` },
-              { label: 'Pago de entrada', value: fmt(pagoInicial) },
-              { label: 'Monto a financiar', value: fmt(montoFinanciar) },
-              { label: 'Cuota mensual (4%)', value: fmt(cuotaMensual), highlight: true },
-              { label: 'Plan de pagos', value: `${numeroCuotas} meses` },
+              { label: 'Valor productos', value: fmt(totalProductos), highlight: false },
+              { label: 'Inicial aplicado', value: fmt(inicialDadoNum), highlight: false },
+              { label: 'Equivalencia %', value: `${porcentaje}%`, highlight: false },
+              { label: 'Pago de entrada', value: fmt(pagoInicial), highlight: false },
+              { label: 'Monto a financiar', value: fmt(montoFinanciar), highlight: true },
             ].map(row => (
               <div key={row.label}
                 className={cn("flex justify-between items-center py-1 transition-all duration-300", 
@@ -405,38 +398,39 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
 
         {/* Sección de Regalos — aparece solo cuando hay productos seleccionados */}
         {totalProductos > 0 && (
-          <div className={`mt-6 rounded-2xl p-6 ${isDark ? 'bg-slate-900/40' : 'bg-white border border-slate-200'}`}>
+          <div className={`mt-4 rounded-2xl p-4 ${isDark ? 'bg-slate-900/40' : 'bg-white border border-slate-200'}`}>
             
-            {/* Header */}
-            <div className="flex flex-wrap items-center gap-3 mb-4">
-              <span className="text-2xl">🎁</span>
-              <h3 className={`text-lg font-black uppercase tracking-widest ${isDark ? 'text-white' : 'text-slate-900'}`}>
+            {/* Header en una línea */}
+            <div className="flex flex-wrap items-center gap-2 mb-3">
+              <span>🎁</span>
+              <h3 className={`text-sm font-black uppercase tracking-widest ${isDark ? 'text-white' : 'text-slate-900'}`}>
                 Regalos Disponibles
               </h3>
-              <div className={`px-3 py-1 rounded-full text-sm font-bold bg-[#0066B3]/20 text-[#0066B3]`}>
+              <span className="text-xs font-bold text-[#0066B3] bg-[#0066B3]/10 px-2 py-0.5 rounded-full">
                 Hasta {fmt(maxRegalo)}
-              </div>
-              <p className={`ml-auto text-xs ${isDark ? 'text-white/30' : 'text-slate-400'}`}>
+              </span>
+              <span className={`text-xs ml-2 ${isDark ? 'text-white/30' : 'text-slate-400'}`}>
                 Máx. 10% del total · Solo aplica descuento O regalo, no ambos · Financiamiento 6-12 meses sin intereses: no aplica
-              </p>
+              </span>
             </div>
 
-            {/* Grid de productos elegibles */}
+            {/* Productos en fila horizontal con scroll */}
             {productosElegiblesRegalo.length > 0 ? (
-              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3">
+              <div className="flex gap-2 overflow-x-auto pb-1"
+                style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(0,102,179,0.2) transparent' }}>
                 {productosElegiblesRegalo.map(p => (
                   <div key={p.code + p.name}
-                    className={`flex flex-col justify-between px-4 py-3 rounded-xl ${
-                      isDark ? 'bg-slate-800/50' : 'bg-white border border-slate-100 shadow-sm'
+                    className={`flex-shrink-0 px-3 py-2 rounded-xl flex flex-col gap-1 min-w-[160px] max-w-[200px] ${
+                      isDark ? 'bg-slate-800/50' : 'bg-slate-100'
                     }`}>
-                    <p className={`text-xs font-semibold mb-1 ${isDark ? 'text-white/80' : 'text-slate-700'}`}>
+                    <p className={`text-xs font-semibold leading-tight ${isDark ? 'text-white/80' : 'text-slate-700'}`}>
                       {p.name}
                     </p>
-                    <div className="flex justify-between items-center mt-2">
-                      <p className={`text-[10px] font-bold uppercase tracking-tighter ${isDark ? 'text-white/30' : 'text-slate-400'}`}>
+                    <div className="flex justify-between items-center">
+                      <p className={`text-[10px] ${isDark ? 'text-white/30' : 'text-slate-400'}`}>
                         {p.category}
                       </p>
-                      <p className="text-[#0066B3] text-xs font-bold font-mono">
+                      <p className="text-[#0066B3] text-xs font-bold">
                         {fmt(p.total)}
                       </p>
                     </div>
@@ -444,17 +438,14 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
                 ))}
               </div>
             ) : (
-              <p className={`text-sm text-center py-4 ${isDark ? 'text-white/20' : 'text-slate-400'}`}>
+              <p className={`text-xs ${isDark ? 'text-white/20' : 'text-slate-400'}`}>
                 Ningún producto califica como regalo para este monto
               </p>
             )}
 
-            {/* Advertencia productos con precio ajustado */}
-            <p className={`text-xs mt-4 ${isDark ? 'text-white/20' : 'text-slate-400'}`}>
-              * Puedes combinar varios productos cuya suma no exceda {fmt(maxRegalo)} · 
-              ⚠️ Extractor, Power Blender, Easy Release y Purificador: regalo máximo recomendado 5%
+            <p className={`text-[10px] mt-2 ${isDark ? 'text-white/20' : 'text-slate-400'}`}>
+              * Puedes combinar varios productos cuya suma no exceda {fmt(maxRegalo)} · ⚠️ Extractor, Power Blender, Easy Release y Purificador: máx. 5%
             </p>
-
           </div>
         )}
       </div>
