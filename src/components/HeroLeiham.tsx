@@ -97,17 +97,30 @@ export default function HeroLeiham({ isDark = true }: { isDark?: boolean }) {
 ;
 
     const sectionRef = useRef<HTMLElement>(null);
+    const [isMobileHero, setIsMobileHero] = useState(false);
+    useEffect(() => {
+        const check = () => setIsMobileHero(window.innerWidth < 768);
+        check();
+        window.addEventListener('resize', check);
+        return () => window.removeEventListener('resize', check);
+    }, []);
+
     const { scrollYProgress } = useScroll({
         target: sectionRef,
         offset: ["start start", "end end"]
     });
 
-    const progress = useSpring(scrollYProgress, { stiffness: 100, damping: 30 });
+    // On mobile: skip useSpring (JS thread bottleneck) and use raw scroll directly
+    const progress = isMobileHero
+        ? scrollYProgress
+        : useSpring(scrollYProgress, { stiffness: 100, damping: 30 });
 
-    const titleScale = useTransform(progress, [0, 0.6], [1, 8]);
+    // On mobile: scale capped at 3 (vs 8 on desktop) — halves the GPU rasterization cost
+    const titleScale = useTransform(progress, [0, 0.6], [1, isMobileHero ? 3 : 8]);
     const titleOpacity = useTransform(progress, [0, 0.1, 0.55, 0.65], [1, 1, 1, 0]);
     const titleLetterSpacing = useTransform(progress, [0, 0.6], ["-0.02em", "0.3em"]);
-    const titleBlur = useTransform(progress, [0.5, 0.65], [0, 20]);
+    // On mobile: disable blur filter — CSS blur is extremely expensive on mobile GPUs
+    const titleBlur = isMobileHero ? null : useTransform(progress, [0.5, 0.65], [0, 20]);
     const subtitleOpacity = useTransform(progress, [0, 0.2], [1, 0]);
     const subtitleY = useTransform(progress, [0, 0.2], [0, 30]);
 
@@ -169,8 +182,10 @@ export default function HeroLeiham({ isDark = true }: { isDark?: boolean }) {
                                     scale: titleScale,
                                     opacity: titleOpacity,
                                     letterSpacing: titleLetterSpacing,
-                                    filter: useTransform(titleBlur, v => `blur(${v}px)`),
+                                    // Blur disabled on mobile — too expensive
+                                    ...(titleBlur ? { filter: useTransform(titleBlur, v => `blur(${v}px)`) } : {}),
                                     transformOrigin: "center center",
+                                    willChange: "transform, opacity",
                                 }}
                             >
                                 <h1 className={cn("text-[clamp(2.5rem,10vw,9rem)] font-black tracking-tight uppercase leading-none transition-colors duration-300", isDark ? "text-white" : "text-slate-900")}>
