@@ -20,7 +20,7 @@ export default function HeroLeiham({ isDark = true }: { isDark?: boolean }) {
             rotate: -8,
             floatDuration: 7,
             floatAmplitude: 15,
-            position: "left-[-5%] md:left-[-2%] top-[25%] md:top-[20%]",
+            position: "left-0 top-[20%] md:top-[20%]",
             scrollTarget: { x: -500, y: 300, scale: 0 },
         },
         {
@@ -34,7 +34,7 @@ export default function HeroLeiham({ isDark = true }: { isDark?: boolean }) {
             rotate: -10,
             floatDuration: 7,
             floatAmplitude: 15,
-            position: "left-[12%] md:left-[15%] top-[2%] md:top-[4%]",
+            position: "left-[180px] md:left-[15%] top-[2%] md:top-[4%]",
             scrollTarget: { x: -400, y: -350, scale: 0 },
         },
         {
@@ -48,7 +48,7 @@ export default function HeroLeiham({ isDark = true }: { isDark?: boolean }) {
             rotate: -20,
             floatDuration: 6,
             floatAmplitude: 12,
-            position: "left-[1%] md:left-[3%] bottom-[5%] md:bottom-[8%]",
+            position: "left-0 bottom-[5%] md:bottom-[8%]",
             scrollTarget: { x: -600, y: 400, scale: 0 },
         },
         {
@@ -62,7 +62,7 @@ export default function HeroLeiham({ isDark = true }: { isDark?: boolean }) {
             rotate: 8,
             floatDuration: 7,
             floatAmplitude: 15,
-            position: "right-[-5%] md:right-[-2%] top-[25%] md:top-[20%]",
+            position: "right-0 top-[20%] md:top-[20%]",
             scrollTarget: { x: 500, y: 250, scale: 0 },
         },
         {
@@ -76,7 +76,7 @@ export default function HeroLeiham({ isDark = true }: { isDark?: boolean }) {
             rotate: -20,
             floatDuration: 6,
             floatAmplitude: 12,
-            position: "right-[12%] md:right-[15%] top-[2%] md:top-[4%]",
+            position: "right-[180px] md:right-[15%] top-[2%] md:top-[4%]",
             scrollTarget: { x: 600, y: 380, scale: 0 },
         },
         {
@@ -90,7 +90,7 @@ export default function HeroLeiham({ isDark = true }: { isDark?: boolean }) {
             rotate: -30,
             floatDuration: 7,
             floatAmplitude: 15,
-            position: "right-[1%] md:right-[3%] bottom-[5%] md:bottom-[8%]",
+            position: "right-0 bottom-[5%] md:bottom-[8%]",
             scrollTarget: { x: 450, y: -350, scale: 0 },
         },
     ];
