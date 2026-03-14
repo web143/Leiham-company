@@ -45,22 +45,25 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
 
   const fmt = (n: number) => `RD$ ${n.toLocaleString("es-DO", { minimumFractionDigits: 2 })}`;
 
-  const filtered = useMemo(() =>
-    products.filter(p => {
-      const searchLower = search.toLowerCase().trim();
-      
-      if (!searchLower) return true; // si no hay búsqueda, mostrar todo
-      
+  const filtered = useMemo(() => {
+    const searchLower = search.toLowerCase().trim();
+    
+    if (!searchLower) {
+      return activeCategory 
+        ? products.filter(p => p.category === activeCategory)
+        : products;
+    }
+    
+    return products.filter(p => {
       const matchName = p.name.toLowerCase().includes(searchLower);
       const matchCode = p.code.toLowerCase().includes(searchLower);
       const matchTotal = p.total.toString().includes(searchLower);
       const matchPrice = p.price.toString().includes(searchLower);
-      
       const matchCategory = activeCategory ? p.category === activeCategory : true;
       
       return (matchName || matchCode || matchTotal || matchPrice) && matchCategory;
-    })
-  , [search, activeCategory]);
+    });
+  }, [search, activeCategory]);
 
   const visibleCategories = useMemo(() => [...new Set(filtered.map(p => p.category))].sort(), [filtered]);
   const allCategories = useMemo(() => [...new Set(products.map(p => p.category))].sort(), []);
