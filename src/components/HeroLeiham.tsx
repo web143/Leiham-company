@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useRef, useState, useEffect } from "react";
-import { motion, useScroll, useTransform, useSpring, MotionValue } from "framer-motion";
+import { motion, useScroll, useTransform, useSpring, useMotionValue, MotionValue } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
@@ -94,7 +94,6 @@ export default function HeroLeiham({ isDark = true }: { isDark?: boolean }) {
             scrollTarget: { x: 450, y: -350, scale: 0 },
         },
     ];
-;
 
     const sectionRef = useRef<HTMLElement>(null);
     const [isMobileHero, setIsMobileHero] = useState(false);
@@ -114,6 +113,7 @@ export default function HeroLeiham({ isDark = true }: { isDark?: boolean }) {
     // Call hooks unconditionally to comply with React's Rules of Hooks
     const springProgress = useSpring(scrollYProgress, { stiffness: 100, damping: 30 });
     const desktopBlur = useTransform(springProgress, [0.5, 0.65], [0, 20]);
+    const blurStyle = useTransform(desktopBlur, v => `blur(${v}px)`);
 
     // Choose the progress value based on device (without conditional hooks)
     const progress = isMobileHero ? scrollYProgress : springProgress;
@@ -186,7 +186,7 @@ export default function HeroLeiham({ isDark = true }: { isDark?: boolean }) {
                                     opacity: titleOpacity,
                                     letterSpacing: titleLetterSpacing,
                                     // Blur disabled on mobile — too expensive
-                                    filter: isMobileHero ? "none" : useTransform(desktopBlur, v => `blur(${v}px)`),
+                                    filter: isMobileHero ? "none" : blurStyle,
                                     transformOrigin: "center center",
                                     willChange: "transform, opacity",
                                 }}
@@ -276,12 +276,22 @@ function FloatingProduct({
     rotate?: number;
     floatDuration?: number;
     floatAmplitude?: number;
-    scrollProgress: MotionValue<number>;
+    scrollProgress?: MotionValue<number>;
     scrollTarget: { x: number; y: number; scale: number };
 }) {
     const ref = useRef<HTMLDivElement>(null);
     const [repulse, setRepulse] = useState({ x: 0, y: 0 });
     const [isMobile, setIsMobile] = useState(false);
+
+    // Fallback MotionValue to ensure useTransform is always called with valid input
+    const fallbackProgress = useMotionValue(0);
+    const progress = scrollProgress ?? fallbackProgress;
+
+    // TODOS los hooks siempre se llaman al inicio del componente
+    const moveX = useTransform(progress, [0, 0.5], [0, scrollTarget.x]);
+    const moveY = useTransform(progress, [0, 0.5], [0, scrollTarget.y]);
+    const scaleOut = useTransform(progress, [0, 0.5], [1, scrollTarget.scale]);
+    const opacityOut = useTransform(progress, [0, 0.4], [1, 0]);
 
     useEffect(() => {
         if (typeof window === 'undefined') return;
@@ -294,11 +304,6 @@ function FloatingProduct({
     const finalWidth = isMobile && mobileWidth ? mobileWidth : width;
     const finalHeight = isMobile && mobileHeight ? mobileHeight : height;
     const finalPosition = isMobile && mobilePosition ? mobilePosition : className;
-
-    const moveX = useTransform(scrollProgress, [0, 0.5], [0, scrollTarget.x]);
-    const moveY = useTransform(scrollProgress, [0, 0.5], [0, scrollTarget.y]);
-    const scaleOut = useTransform(scrollProgress, [0, 0.5], [1, scrollTarget.scale]);
-    const opacityOut = useTransform(scrollProgress, [0, 0.4], [1, 0]);
 
     useEffect(() => {
         if (typeof window === 'undefined') return;
@@ -379,4 +384,5 @@ function FloatingProduct({
         </motion.div>
     );
 }
+
 
