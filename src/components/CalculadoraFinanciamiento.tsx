@@ -28,16 +28,20 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
 
   const filtered = useMemo(() =>
     products.filter(p => {
-      const matchSearch =
-        p.name.toLowerCase().includes(search.toLowerCase()) ||
-        p.code.toLowerCase().includes(search.toLowerCase()) ||
-        p.total.toString().includes(search.replace(/[^0-9]/g, '')) ||
-        p.price.toString().includes(search.replace(/[^0-9]/g, '')) ||
-        fmt(p.total).includes(search) ||
-        fmt(p.price).includes(search);
+      const searchLower = search.toLowerCase().trim();
+      
+      if (!searchLower) return true; // si no hay búsqueda, mostrar todo
+      
+      const matchName = p.name.toLowerCase().includes(searchLower);
+      const matchCode = p.code.toLowerCase().includes(searchLower);
+      const matchTotal = p.total.toString().includes(searchLower);
+      const matchPrice = p.price.toString().includes(searchLower);
+      
       const matchCategory = activeCategory ? p.category === activeCategory : true;
-      return matchSearch && matchCategory;
-    }), [search, activeCategory]);
+      
+      return (matchName || matchCode || matchTotal || matchPrice) && matchCategory;
+    })
+  , [search, activeCategory]);
 
   const visibleCategories = useMemo(() => [...new Set(filtered.map(p => p.category))].sort(), [filtered]);
   const allCategories = useMemo(() => [...new Set(products.map(p => p.category))].sort(), []);
