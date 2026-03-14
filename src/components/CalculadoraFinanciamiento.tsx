@@ -127,6 +127,15 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
   const cuotaMensual = montoFinanciar * 0.04;
   const numeroCuotas = montoFinanciar > 0 ? 25 : 0;
 
+  // Política de Regalos
+  const maxRegalo = totalProductos * 0.10;
+  const CATEGORIAS_EXCLUIDAS = ["Aros Silicromáticos", "Piezas de Reemplazo"];
+  const productosElegiblesRegalo = products.filter(p => 
+    !CATEGORIAS_EXCLUIDAS.some(cat => 
+      p.category.toLowerCase().includes(cat.toLowerCase())
+    ) && p.total <= maxRegalo
+  );
+
 
   return (
     <section className={cn("w-full min-h-screen transition-colors duration-300", isDark ? "bg-black" : "bg-white")}>
@@ -391,6 +400,80 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
               </div>
             ))}
           </div>
+
+          {/* Política de Regalos */}
+          {totalProductos > 0 && (
+            <div className={`mt-4 pt-4 border-t ${isDark ? 'border-white/10' : 'border-slate-200'}`}>
+              
+              {/* Header */}
+              <div className="flex items-center gap-2 mb-3">
+                <span className="text-lg">🎁</span>
+                <h4 className={`text-xs font-black uppercase tracking-widest ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                  Regalos Disponibles
+                </h4>
+                <span className="ml-auto text-[#0066B3] text-xs font-bold font-mono">
+                  Hasta {fmt(maxRegalo)}
+                </span>
+              </div>
+
+              {/* Nota de política */}
+              <p className={`text-[10px] font-bold uppercase tracking-tight mb-3 ${isDark ? 'text-white/30' : 'text-slate-400'}`}>
+                Máx. 10% del total · Solo aplica descuento O regalo, no ambos
+              </p>
+
+              {/* Lista de productos elegibles */}
+              {productosElegiblesRegalo.length > 0 ? (
+                <div className="space-y-1 max-h-[160px] overflow-y-auto pr-1 custom-scrollbar"
+                  style={{ 
+                    scrollbarWidth: 'thin', 
+                    scrollbarColor: isDark ? 'rgba(0,102,179,0.3) transparent' : 'rgba(0,102,179,0.2) transparent' 
+                  }}>
+                  {productosElegiblesRegalo.map(p => (
+                    <div key={p.code + p.name}
+                      className={`flex justify-between items-center px-3 py-2 rounded-xl transition-all ${
+                        isDark ? 'bg-slate-800/40' : 'bg-slate-200/50'
+                      }`}>
+                      <div className="flex-1 min-w-0 mr-2">
+                        <p className={`text-[11px] font-medium truncate ${isDark ? 'text-white/80' : 'text-slate-700'}`}>
+                          {p.name}
+                        </p>
+                        <p className={`text-[9px] font-bold uppercase tracking-tighter ${isDark ? 'text-white/20' : 'text-slate-400'}`}>
+                          {p.category}
+                        </p>
+                      </div>
+                      <p className="text-[#0066B3] text-[11px] font-black font-mono flex-shrink-0">
+                        {fmt(p.total)}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className={`text-xs text-center py-3 ${isDark ? 'text-white/20' : 'text-slate-400'}`}>
+                  Ningún producto califica como regalo para este monto
+                </p>
+              )}
+
+              {/* Advertencia productos con precio ajustado */}
+              {productosElegiblesRegalo.some(p => 
+                p.name.toLowerCase().includes('extractor') ||
+                p.name.toLowerCase().includes('power blender') ||
+                p.name.toLowerCase().includes('easy release') ||
+                p.name.toLowerCase().includes('purificador')
+              ) && (
+                <p className={`text-[10px] font-bold mt-3 px-3 py-2 rounded-xl border leading-relaxed ${
+                  isDark ? 'bg-yellow-500/5 border-yellow-500/20 text-yellow-400/70' : 'bg-yellow-50 border-yellow-200 text-yellow-700'
+                }`}>
+                  ⚠️ Extractor, Power Blender, Easy Release y Purificador: regalo máximo recomendado 5%
+                </p>
+              )}
+
+              {/* Nota combinaciones */}
+              <p className={`text-[9px] font-bold mt-2 italic ${isDark ? 'text-white/20' : 'text-slate-400'}`}>
+                * También puedes combinar varios productos cuya suma no exceda {fmt(maxRegalo)}
+              </p>
+
+            </div>
+          )}
 
         </div>
       </div>
