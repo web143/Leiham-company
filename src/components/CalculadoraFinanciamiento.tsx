@@ -12,6 +12,18 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
   const [inicialDado, setInicialDado] = useState("");
   const [porcentaje, setPorcentaje] = useState(4);
   const [porcentajeInput, setPorcentajeInput] = useState("4");
+  const [selectedRegalos, setSelectedRegalos] = useState<typeof products>([]);
+
+  const toggleRegalo = (p: typeof products[0]) => {
+    setSelectedRegalos(prev =>
+      prev.some(i => i.code === p.code && i.name === p.name)
+        ? prev.filter(i => !(i.code === p.code && i.name === p.name))
+        : [...prev, p]
+    );
+  };
+
+  const isRegaloSelected = (p: typeof products[0]) =>
+    selectedRegalos.some(i => i.code === p.code && i.name === p.name);
 
   const categoryRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
 
@@ -392,6 +404,7 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
         <div className="max-w-[1200px] mx-auto px-4 pb-8">
           <div className={cn("rounded-2xl p-4", isDark ? "bg-slate-900/40 border border-white/5" : "bg-slate-100 border border-slate-200")}>
             
+            {/* Header */}
             <div className="flex flex-wrap items-center gap-2 mb-3">
               <span>🎁</span>
               <h3 className={cn("text-sm font-black uppercase tracking-widest", isDark ? "text-white" : "text-slate-900")}>
@@ -406,34 +419,91 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
             </div>
 
             {(() => {
-              const EXCLUIR = ['aro', 'reparac', 'reemplaz'];
+              const EXCLUIR = ['aro', 'reparac', 'reemplaz', 'tapa'];
               const maxR = totalProductos * 0.10;
+              const totalRegalos = selectedRegalos.reduce((s, p) => s + p.total, 0);
+              const porcentajeUsado = totalProductos > 0 ? (totalRegalos / totalProductos) * 100 : 0;
+              const cerca = totalRegalos > 0 && porcentajeUsado >= 7 && totalRegalos <= maxR;
+              const excedido = totalRegalos > maxR;
+
               const elegibles = products.filter(p =>
-                !EXCLUIR.some(ex => p.category.toLowerCase().includes(ex) || p.name.toLowerCase().includes(ex)) &&
-                p.total <= maxR
+                !EXCLUIR.some(ex => 
+                  p.category.toLowerCase().includes(ex) || 
+                  p.name.toLowerCase().includes(ex)
+                ) && p.total <= maxR
               );
-              return elegibles.length > 0 ? (
-                <div className="flex gap-2 overflow-x-auto pb-1"
-                  style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(0,102,179,0.2) transparent' }}>
-                  {elegibles.map(p => (
-                    <div key={p.code + p.name}
-                      className={cn("flex-shrink-0 px-3 py-2 rounded-xl min-w-[150px] max-w-[190px]", isDark ? "bg-slate-800/50" : "bg-white border border-slate-200")}>
-                      <p className={cn("text-xs font-semibold leading-tight mb-1", isDark ? "text-white/80" : "text-slate-700")}>{p.name}</p>
-                      <div className="flex justify-between items-center">
-                        <p className={cn("text-[10px]", isDark ? "text-white/30" : "text-slate-400")}>{p.category}</p>
-                        <p className="text-[#0066B3] text-xs font-bold">{fmt(p.total)}</p>
-                      </div>
+
+              return (
+                <>
+                  {/* Alerta de estado */}
+                  {selectedRegalos.length > 0 && (
+                    <div className={cn("flex items-center justify-between px-4 py-2.5 rounded-xl mb-3 text-xs font-bold",
+                      excedido 
+                        ? 'bg-red-500/15 border border-red-500/30 text-red-400'
+                        : cerca
+                        ? 'bg-yellow-500/15 border border-yellow-500/30 text-yellow-400'
+                        : 'bg-[#0066B3]/10 border border-[#0066B3]/20 text-[#0066B3]'
+                    )}>
+                      <span>
+                        {excedido 
+                          ? `⛔ Excediste el límite por ${fmt(totalRegalos - maxR)}`
+                          : cerca
+                          ? `⚠️ Cerca del límite — te quedan ${fmt(maxR - totalRegalos)}`
+                          : `✓ ${selectedRegalos.length} regalo${selectedRegalos.length > 1 ? 's' : ''} seleccionado${selectedRegalos.length > 1 ? 's' : ''}`
+                        }
+                      </span>
+                      <span className={excedido ? 'text-red-400' : 'text-[#0066B3]'}>
+                        {fmt(totalRegalos)} / {fmt(maxR)}
+                      </span>
                     </div>
-                  ))}
-                </div>
-              ) : (
-                <p className={cn("text-xs", isDark ? "text-white/20" : "text-slate-400")}>Ningún producto califica para este monto</p>
+                  )}
+
+                  {/* Lista horizontal de productos */}
+                  {elegibles.length > 0 ? (
+                    <div className="flex gap-2 overflow-x-auto pb-1"
+                      style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(0,102,179,0.2) transparent' }}>
+                      {elegibles.map(p => {
+                        const sel = isRegaloSelected(p);
+                        const excederiaSiAgrego = !sel && (totalRegalos + p.total) > maxR;
+                        return (
+                          <div
+                            key={p.code + p.name}
+                            onClick={() => !excederiaSiAgrego || sel ? toggleRegalo(p) : null}
+                            className={cn(
+                              "flex-shrink-0 px-3 py-2 rounded-xl min-w-[150px] max-w-[190px] cursor-pointer border transition-all",
+                              sel
+                                ? 'bg-[#0066B3]/20 border-[#0066B3]/40'
+                                : excederiaSiAgrego
+                                ? (isDark ? 'bg-slate-800/20 border-white/5 opacity-40 cursor-not-allowed' : 'bg-slate-50 border-slate-100 opacity-40 cursor-not-allowed')
+                                : (isDark ? 'bg-slate-800/50 border-white/5 hover:border-[#0066B3]/30' : 'bg-white border-slate-200 hover:border-[#0066B3]/30')
+                            )}>
+                            <div className="flex justify-between items-start mb-1">
+                              <p className={cn("text-xs font-semibold leading-tight flex-1 mr-2", 
+                                sel ? 'text-[#0066B3]' : (isDark ? "text-white/80" : "text-slate-700"))}>
+                                {p.name}
+                              </p>
+                              {sel && <Check className="w-3.5 h-3.5 text-[#0066B3] flex-shrink-0 mt-0.5" />}
+                            </div>
+                            <div className="flex justify-between items-center">
+                              <p className={cn("text-[10px]", isDark ? "text-white/30" : "text-slate-400")}>{p.category}</p>
+                              <p className={cn("text-xs font-bold", sel ? 'text-[#0066B3]' : 'text-[#0066B3]')}>{fmt(p.total)}</p>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <p className={cn("text-xs", isDark ? "text-white/20" : "text-slate-400")}>
+                      Ningún producto califica para este monto
+                    </p>
+                  )}
+
+                  <p className={cn("text-[10px] mt-2", isDark ? "text-white/20" : "text-slate-400")}>
+                    * Combina productos cuya suma no exceda {fmt(maxR)} · ⚠️ Extractor, Power Blender, Easy Release y Purificador: máx. 5%
+                  </p>
+                </>
               );
             })()}
-
-            <p className={cn("text-[10px] mt-2", isDark ? "text-white/20" : "text-slate-400")}>
-              * Puedes combinar productos cuya suma no exceda {fmt(totalProductos * 0.10)} · ⚠️ Extractor, Power Blender, Easy Release y Purificador: máx. 5%
-            </p>
           </div>
         </div>
       )}
