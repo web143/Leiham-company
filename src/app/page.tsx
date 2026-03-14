@@ -1,7 +1,8 @@
-"use client";
 import { useState, useEffect } from "react";
-import HeroLeiham from "@/components/HeroLeiham";
-import CalculadoraFinanciamiento from "@/components/CalculadoraFinanciamiento";
+import dynamic from 'next/dynamic';
+
+const HeroLeiham = dynamic(() => import('@/components/HeroLeiham'), { ssr: false });
+const CalculadoraFinanciamiento = dynamic(() => import('@/components/CalculadoraFinanciamiento'), { ssr: false });
 
 export default function Home() {
     const [isDark, setIsDark] = useState(true);
