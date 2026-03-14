@@ -185,7 +185,7 @@ export default function HeroLeiham({ isDark = true }: { isDark?: boolean }) {
                     </div>
 
                     {/* Contenido central - Solo marca */}
-                    <div className="relative z-30 container mx-auto px-4 md:px-6" style={{ zIndex: 40 }}>
+                    <div className="relative z-30 container mx-auto px-4 md:px-6" style={{ maxWidth: '55%', zIndex: 40 }}>
                         <div className="text-center">
                             {/* Leiham Company */}
                             <motion.div
@@ -199,7 +199,7 @@ export default function HeroLeiham({ isDark = true }: { isDark?: boolean }) {
                                     willChange: "transform, opacity",
                                 }}
                             >
-                                <h1 className={cn("text-[clamp(2.8rem,11vw,9rem)] font-black tracking-tight uppercase leading-none transition-colors duration-300", isDark ? "text-white" : "text-slate-900")}>
+                                <h1 className={cn("text-[clamp(2rem,6vw,9rem)] font-black tracking-tight uppercase leading-none transition-colors duration-300", isDark ? "text-white" : "text-slate-900")}>
                                     LEIHAM<br />COMPANY
                                 </h1>
                             </motion.div>
