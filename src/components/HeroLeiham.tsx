@@ -103,12 +103,34 @@ export default function HeroLeiham({ isDark = true }: { isDark?: boolean }) {
 
     const sectionRef = useRef<HTMLElement>(null);
     const [isMobileHero, setIsMobileHero] = useState(false);
+    const [heroScale, setHeroScale] = useState(1);
+
     useEffect(() => {
         if (typeof window === 'undefined') return;
         const check = () => setIsMobileHero(window.innerWidth < 768);
+        const updateScale = () => {
+            const baseWidth = 1440;
+            const currentWidth = window.innerWidth;
+            if (currentWidth >= 768) {
+                const newScale = Math.min(1, currentWidth / baseWidth);
+                setHeroScale(newScale);
+            } else {
+                setHeroScale(1);
+            }
+        };
+        
         check();
-        window.addEventListener('resize', check);
-        return () => window.removeEventListener('resize', check);
+        updateScale();
+        
+        window.addEventListener('resize', () => {
+            check();
+            updateScale();
+        });
+        
+        return () => window.removeEventListener('resize', () => {
+            check();
+            updateScale();
+        });
     }, []);
 
     const { scrollYProgress } = useScroll({
@@ -141,117 +163,129 @@ export default function HeroLeiham({ isDark = true }: { isDark?: boolean }) {
     return (
         <section ref={sectionRef} style={{ height: isMobileHero ? '150vh' : '250vh' }} className={cn("relative transition-colors duration-300", isDark ? 'bg-black' : 'bg-white')}>
             <div className="sticky top-0 h-screen overflow-hidden">
-                <motion.div className="w-full h-full relative flex items-center justify-center">
-                    <motion.div
-                        style={{ opacity: overlayOpacity }}
-                        className={cn("absolute inset-0 z-50 pointer-events-none transition-colors duration-300", isDark ? "bg-black" : "bg-white")}
-                    />
-                    {/* Lamp Effect */}
-                    <div style={{ position: 'absolute', top: '-10px', left: 0, right: 0, zIndex: 1, pointerEvents: 'none', height: '320px', overflow: 'visible' }}>
-                        {/* Glow principal */}
-                        <div style={{
-                            position: 'absolute',
-                            top: 0,
-                            left: 0,
-                            right: 0,
-                            height: '320px',
-                            background: isDark
-                                ? 'radial-gradient(ellipse 90% 120% at 50% 0%, rgba(0,102,179,0.55) 0%, transparent 70%)'
-                                : 'radial-gradient(ellipse 90% 120% at 50% 0%, rgba(0,102,179,0.75) 0%, transparent 70%)',
-                            filter: 'blur(15px)'
-                        }} />
-                    </div>
-                    {/* Gradiente de fondo sutil azul */}
-                    <div className={cn("absolute inset-0 blur-3xl transition-opacity duration-300", isDark ? "bg-gradient-to-br from-[#0066B3]/[0.08] via-transparent to-[#0066B3]/[0.15]" : "bg-gradient-to-br from-[#0066B3]/[0.03] via-transparent to-[#0066B3]/[0.05]")} />
-
-                    {/* Patrón de puntos refinado */}
-                    <div
-                        className={cn("absolute inset-0 transition-opacity duration-300", isDark ? "opacity-[0.03]" : "opacity-[0.06]")}
-                        style={{
-                            backgroundImage: `radial-gradient(circle at 1px 1px, rgba(0, 102, 179, 0.4) 1px, transparent 0)`,
-                            backgroundSize: "50px 50px",
-                        }}
-                    />
-
-                    {/* Productos flotantes */}
-                    <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                        {products.map((product, index) => (
-                            <FloatingProduct
-                                key={index}
-                                {...product}
-                                scrollProgress={progress}
-                            />
-                        ))}
-                    </div>
-
-                    {/* Contenido central - Solo marca */}
-                    <div className="relative z-30 container mx-auto px-4 md:px-6" style={{ maxWidth: '55%', zIndex: 40 }}>
-                        <div className="text-center">
-                            {/* Leiham Company */}
-                            <motion.div
-                                style={{
-                                    scale: titleScale,
-                                    opacity: titleOpacity,
-                                    letterSpacing: titleLetterSpacing,
-                                    // Blur disabled on mobile — too expensive
-                                    filter: isMobileHero ? "none" : blurStyle,
-                                    transformOrigin: "center center",
-                                    willChange: "transform, opacity",
-                                }}
-                            >
-                                <h1 className={cn("text-[clamp(2rem,6vw,9rem)] font-black tracking-tight uppercase leading-none transition-colors duration-300", isDark ? "text-white" : "text-slate-900")}>
-                                    LEIHAM<br />COMPANY
-                                </h1>
-                            </motion.div>
-
-                            {/* By Royal Prestige */}
-                            <motion.p
-                                style={{ opacity: subtitleOpacity, y: subtitleY }}
-                                className="text-[0.5rem] md:text-sm tracking-[0.25em] md:tracking-[0.4em] text-[#0066B3] font-medium uppercase mt-8"
-                            >
-                                BY ROYAL PRESTIGE
-                            </motion.p>
-                        </div>
-                    </div>
-
-                    {/* Flecha scroll indicator */}
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 1.5, duration: 1 }}
-                        className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10"
-                    >
+                <div
+                    style={{
+                        transform: `scale(${heroScale})`,
+                        transformOrigin: 'center center',
+                        width: '100%',
+                        height: '100%',
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                    }}
+                >
+                    <motion.div className="w-full h-full relative flex items-center justify-center">
                         <motion.div
-                            animate={{ y: [0, 12, 0] }}
+                            style={{ opacity: overlayOpacity }}
+                            className={cn("absolute inset-0 z-50 pointer-events-none transition-colors duration-300", isDark ? "bg-black" : "bg-white")}
+                        />
+                        {/* Lamp Effect */}
+                        <div style={{ position: 'absolute', top: '-10px', left: 0, right: 0, zIndex: 1, pointerEvents: 'none', height: '320px', overflow: 'visible' }}>
+                            {/* Glow principal */}
+                            <div style={{
+                                position: 'absolute',
+                                top: 0,
+                                left: 0,
+                                right: 0,
+                                height: '320px',
+                                background: isDark
+                                    ? 'radial-gradient(ellipse 90% 120% at 50% 0%, rgba(0,102,179,0.55) 0%, transparent 70%)'
+                                    : 'radial-gradient(ellipse 90% 120% at 50% 0%, rgba(0,102,179,0.75) 0%, transparent 70%)',
+                                filter: 'blur(15px)'
+                            }} />
+                        </div>
+                        {/* Gradiente de fondo sutil azul */}
+                        <div className={cn("absolute inset-0 blur-3xl transition-opacity duration-300", isDark ? "bg-gradient-to-br from-[#0066B3]/[0.08] via-transparent to-[#0066B3]/[0.15]" : "bg-gradient-to-br from-[#0066B3]/[0.03] via-transparent to-[#0066B3]/[0.05]")} />
+
+                        {/* Patrón de puntos refinado */}
+                        <div
+                            className={cn("absolute inset-0 transition-opacity duration-300", isDark ? "opacity-[0.03]" : "opacity-[0.06]")}
+                            style={{
+                                backgroundImage: `radial-gradient(circle at 1px 1px, rgba(0, 102, 179, 0.4) 1px, transparent 0)`,
+                                backgroundSize: "50px 50px",
+                            }}
+                        />
+
+                        {/* Productos flotantes */}
+                        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                            {products.map((product, index) => (
+                                <FloatingProduct
+                                    key={index}
+                                    {...product}
+                                    scrollProgress={progress}
+                                />
+                            ))}
+                        </div>
+
+                        {/* Contenido central - Solo marca */}
+                        <div className="relative z-30 container mx-auto px-4 md:px-6" style={{ maxWidth: '55%', zIndex: 40 }}>
+                            <div className="text-center">
+                                {/* Leiham Company */}
+                                <motion.div
+                                    style={{
+                                        scale: titleScale,
+                                        opacity: titleOpacity,
+                                        letterSpacing: titleLetterSpacing,
+                                        // Blur disabled on mobile — too expensive
+                                        filter: isMobileHero ? "none" : blurStyle,
+                                        transformOrigin: "center center",
+                                        willChange: "transform, opacity",
+                                    }}
+                                >
+                                    <h1 className={cn("text-[clamp(2rem,6vw,9rem)] font-black tracking-tight uppercase leading-none transition-colors duration-300", isDark ? "text-white" : "text-slate-900")}>
+                                        LEIHAM<br />COMPANY
+                                    </h1>
+                                </motion.div>
+
+                                {/* By Royal Prestige */}
+                                <motion.p
+                                    style={{ opacity: subtitleOpacity, y: subtitleY }}
+                                    className="text-[0.5rem] md:text-sm tracking-[0.25em] md:tracking-[0.4em] text-[#0066B3] font-medium uppercase mt-8"
+                                >
+                                    BY ROYAL PRESTIGE
+                                </motion.p>
+                            </div>
+                        </div>
+
+                        {/* Flecha scroll indicator */}
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ delay: 1.5, duration: 1 }}
+                            className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10"
+                        >
+                            <motion.div
+                                animate={{ y: [0, 12, 0] }}
+                                transition={{
+                                    duration: 2,
+                                    repeat: Number.POSITIVE_INFINITY,
+                                    ease: "easeInOut",
+                                }}
+                                className={cn("flex flex-col items-center gap-2 transition-colors duration-300", isDark ? "text-white/40" : "text-slate-400")}
+                            >
+                                <span className="text-xs tracking-[0.3em] uppercase font-light">
+                                    Scroll
+                                </span>
+                                <ChevronDown className="w-6 h-6" />
+                            </motion.div>
+                        </motion.div>
+
+                        {/* Gradiente inferior suave */}
+                        <div className={cn("absolute inset-0 pointer-events-none transition-opacity duration-300", isDark ? "bg-gradient-to-t from-black via-transparent to-black/40" : "bg-gradient-to-t from-white via-transparent to-white/10")} />
+
+                        {/* Línea decorativa sutil */}
+                        <motion.div
+                            initial={{ scaleX: 0 }}
+                            animate={{ scaleX: 1 }}
                             transition={{
                                 duration: 2,
-                                repeat: Number.POSITIVE_INFINITY,
-                                ease: "easeInOut",
+                                delay: 1.2,
+                                ease: [0.25, 0.4, 0.25, 1],
                             }}
-                            className={cn("flex flex-col items-center gap-2 transition-colors duration-300", isDark ? "text-white/40" : "text-slate-400")}
-                        >
-                            <span className="text-xs tracking-[0.3em] uppercase font-light">
-                                Scroll
-                            </span>
-                            <ChevronDown className="w-6 h-6" />
-                        </motion.div>
+                            className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#0066B3]/60 to-transparent"
+                        />
                     </motion.div>
-
-                    {/* Gradiente inferior suave */}
-                    <div className={cn("absolute inset-0 pointer-events-none transition-opacity duration-300", isDark ? "bg-gradient-to-t from-black via-transparent to-black/40" : "bg-gradient-to-t from-white via-transparent to-white/10")} />
-
-                    {/* Línea decorativa sutil */}
-                    <motion.div
-                        initial={{ scaleX: 0 }}
-                        animate={{ scaleX: 1 }}
-                        transition={{
-                            duration: 2,
-                            delay: 1.2,
-                            ease: [0.25, 0.4, 0.25, 1],
-                        }}
-                        className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#0066B3]/60 to-transparent"
-                    />
-                </motion.div>
+                </div>
             </div>
         </section>
     );
