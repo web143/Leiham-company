@@ -1,14 +1,15 @@
-'use client';
+"use client";
 
 import dynamic from 'next/dynamic';
 import { useState, useEffect } from 'react';
 
-const HeroLeiham = dynamic(() => import('@/components/HeroLeiham'), { 
+// Importación dinámica para deshabilitar SSR y prevenir errores en móvil
+const HeroLeiham = dynamic(() => import('../components/HeroLeiham'), { 
   ssr: false,
   loading: () => <div className="w-full h-screen bg-black" />
 });
 
-const CalculadoraFinanciamiento = dynamic(() => import('@/components/CalculadoraFinanciamiento'), { 
+const CalculadoraFinanciamiento = dynamic(() => import('../components/CalculadoraFinanciamiento'), { 
   ssr: false,
   loading: () => <div className="w-full h-screen bg-black" />
 });

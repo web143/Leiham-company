@@ -1,4 +1,4 @@
-'use client';
+"use client";
 import { useState, useMemo, useEffect, useRef } from "react";
 import { Search, Plus, Check, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
