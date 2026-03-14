@@ -110,17 +110,19 @@ export default function HeroLeiham({ isDark = true }: { isDark?: boolean }) {
         offset: ["start start", "end end"]
     });
 
-    // On mobile: skip useSpring (JS thread bottleneck) and use raw scroll directly
-    const progress = isMobileHero
-        ? scrollYProgress
-        : useSpring(scrollYProgress, { stiffness: 100, damping: 30 });
+    // Call hooks unconditionally to comply with React's Rules of Hooks
+    const springProgress = useSpring(scrollYProgress, { stiffness: 100, damping: 30 });
+    const desktopBlur = useTransform(springProgress, [0.5, 0.65], [0, 20]);
+
+    // Choose the progress value based on device (without conditional hooks)
+    const progress = isMobileHero ? scrollYProgress : springProgress;
 
     // On mobile: scale capped at 3 (vs 8 on desktop) — halves the GPU rasterization cost
     const titleScale = useTransform(progress, [0, 0.6], [1, isMobileHero ? 3 : 8]);
     const titleOpacity = useTransform(progress, [0, 0.1, 0.55, 0.65], [1, 1, 1, 0]);
     const titleLetterSpacing = useTransform(progress, [0, 0.6], ["-0.02em", "0.3em"]);
-    // On mobile: disable blur filter — CSS blur is extremely expensive on mobile GPUs
-    const titleBlur = isMobileHero ? null : useTransform(progress, [0.5, 0.65], [0, 20]);
+    
+    // Subtitle animations
     const subtitleOpacity = useTransform(progress, [0, 0.2], [1, 0]);
     const subtitleY = useTransform(progress, [0, 0.2], [0, 30]);
 
@@ -183,7 +185,7 @@ export default function HeroLeiham({ isDark = true }: { isDark?: boolean }) {
                                     opacity: titleOpacity,
                                     letterSpacing: titleLetterSpacing,
                                     // Blur disabled on mobile — too expensive
-                                    ...(titleBlur ? { filter: useTransform(titleBlur, v => `blur(${v}px)`) } : {}),
+                                    filter: isMobileHero ? "none" : useTransform(desktopBlur, v => `blur(${v}px)`),
                                     transformOrigin: "center center",
                                     willChange: "transform, opacity",
                                 }}
