@@ -16,7 +16,7 @@ export default function HeroLeiham({ isDark = true }: { isDark?: boolean }) {
             height: 460,
             mobileWidth: 160,
             mobileHeight: 175,
-            mobilePosition: "left-[-3%] top-[22%]",
+            mobilePosition: "left-[-2%] top-[30%]",
             rotate: -8,
             floatDuration: 7,
             floatAmplitude: 15,
@@ -28,9 +28,9 @@ export default function HeroLeiham({ isDark = true }: { isDark?: boolean }) {
             alt: "Jarra Royal Prestige",
             width: 250,
             height: 320,
-            mobileWidth: 100,
-            mobileHeight: 125,
-            mobilePosition: "left-[10%] top-[4%]",
+            mobileWidth: 95,
+            mobileHeight: 120,
+            mobilePosition: "left-[12%] top-[5%]",
             rotate: -10,
             floatDuration: 7,
             floatAmplitude: 15,
@@ -42,9 +42,9 @@ export default function HeroLeiham({ isDark = true }: { isDark?: boolean }) {
             alt: "Cuchillo Chef Royal Prestige",
             width: 480,
             height: 180,
-            mobileWidth: 180,
-            mobileHeight: 68,
-            mobilePosition: "left-[1%] bottom-[14%]",
+            mobileWidth: 170,
+            mobileHeight: 65,
+            mobilePosition: "left-[-1%] bottom-[18%]",
             rotate: -20,
             floatDuration: 6,
             floatAmplitude: 12,
@@ -58,7 +58,7 @@ export default function HeroLeiham({ isDark = true }: { isDark?: boolean }) {
             height: 460,
             mobileWidth: 160,
             mobileHeight: 175,
-            mobilePosition: "right-[-3%] top-[22%]",
+            mobilePosition: "right-[-2%] top-[30%]",
             rotate: 8,
             floatDuration: 7,
             floatAmplitude: 15,
@@ -70,9 +70,9 @@ export default function HeroLeiham({ isDark = true }: { isDark?: boolean }) {
             alt: "Wok Royal Prestige",
             width: 320,
             height: 400,
-            mobileWidth: 100,
-            mobileHeight: 125,
-            mobilePosition: "right-[10%] top-[4%]",
+            mobileWidth: 95,
+            mobileHeight: 120,
+            mobilePosition: "right-[12%] top-[5%]",
             rotate: -20,
             floatDuration: 6,
             floatAmplitude: 12,
@@ -84,9 +84,9 @@ export default function HeroLeiham({ isDark = true }: { isDark?: boolean }) {
             alt: "Sartén Deluxe Easy Release",
             width: 380,
             height: 140,
-            mobileWidth: 180,
-            mobileHeight: 68,
-            mobilePosition: "right-[1%] bottom-[14%]",
+            mobileWidth: 170,
+            mobileHeight: 65,
+            mobilePosition: "right-[-1%] bottom-[18%]",
             rotate: -30,
             floatDuration: 7,
             floatAmplitude: 15,
@@ -111,7 +111,10 @@ export default function HeroLeiham({ isDark = true }: { isDark?: boolean }) {
     });
 
     // Call hooks unconditionally to comply with React's Rules of Hooks
-    const springProgress = useSpring(scrollYProgress, { stiffness: 100, damping: 30 });
+    const springProgress = useSpring(scrollYProgress, {
+        stiffness: isMobileHero ? 60 : 100,
+        damping: isMobileHero ? 40 : 30
+    });
     const desktopBlur = useTransform(springProgress, [0.5, 0.65], [0, 20]);
     const blurStyle = useTransform(desktopBlur, v => `blur(${v}px)`);
 
@@ -122,7 +125,7 @@ export default function HeroLeiham({ isDark = true }: { isDark?: boolean }) {
     const titleScale = useTransform(progress, [0, 0.6], [1, isMobileHero ? 3 : 8]);
     const titleOpacity = useTransform(progress, [0, 0.1, 0.55, 0.65], [1, 1, 1, 0]);
     const titleLetterSpacing = useTransform(progress, [0, 0.6], ["-0.02em", "0.3em"]);
-    
+
     // Subtitle animations
     const subtitleOpacity = useTransform(progress, [0, 0.2], [1, 0]);
     const subtitleY = useTransform(progress, [0, 0.2], [0, 30]);
@@ -130,7 +133,7 @@ export default function HeroLeiham({ isDark = true }: { isDark?: boolean }) {
     const overlayOpacity = useTransform(progress, [0.6, 0.75], [0, 1]);
 
     return (
-        <section ref={sectionRef} style={{ height: '250vh' }} className={cn("relative transition-colors duration-300", isDark ? 'bg-black' : 'bg-white')}>
+        <section ref={sectionRef} style={{ height: isMobileHero ? '150vh' : '250vh' }} className={cn("relative transition-colors duration-300", isDark ? 'bg-black' : 'bg-white')}>
             <div className="sticky top-0 h-screen overflow-hidden">
                 <motion.div className="w-full h-full relative flex items-center justify-center">
                     <motion.div
@@ -140,16 +143,16 @@ export default function HeroLeiham({ isDark = true }: { isDark?: boolean }) {
                     {/* Lamp Effect */}
                     <div style={{ position: 'absolute', top: '-10px', left: 0, right: 0, zIndex: 1, pointerEvents: 'none', height: '320px', overflow: 'visible' }}>
                         {/* Glow principal */}
-                        <div style={{ 
-                            position: 'absolute', 
-                            top: 0, 
-                            left: 0, 
-                            right: 0, 
-                            height: '320px', 
+                        <div style={{
+                            position: 'absolute',
+                            top: 0,
+                            left: 0,
+                            right: 0,
+                            height: '320px',
                             background: isDark
                                 ? 'radial-gradient(ellipse 90% 120% at 50% 0%, rgba(0,102,179,0.55) 0%, transparent 70%)'
                                 : 'radial-gradient(ellipse 90% 120% at 50% 0%, rgba(0,102,179,0.75) 0%, transparent 70%)',
-                            filter: 'blur(15px)' 
+                            filter: 'blur(15px)'
                         }} />
                     </div>
                     {/* Gradiente de fondo sutil azul */}
@@ -191,7 +194,7 @@ export default function HeroLeiham({ isDark = true }: { isDark?: boolean }) {
                                     willChange: "transform, opacity",
                                 }}
                             >
-                                <h1 className={cn("text-[clamp(2.5rem,10vw,9rem)] font-black tracking-tight uppercase leading-none transition-colors duration-300", isDark ? "text-white" : "text-slate-900")}>
+                                <h1 className={cn("text-[clamp(2.8rem,11vw,9rem)] font-black tracking-tight uppercase leading-none transition-colors duration-300", isDark ? "text-white" : "text-slate-900")}>
                                     LEIHAM<br />COMPANY
                                 </h1>
                             </motion.div>
@@ -199,7 +202,7 @@ export default function HeroLeiham({ isDark = true }: { isDark?: boolean }) {
                             {/* By Royal Prestige */}
                             <motion.p
                                 style={{ opacity: subtitleOpacity, y: subtitleY }}
-                                className="text-[0.55rem] md:text-sm tracking-[0.3em] md:tracking-[0.4em] text-[#0066B3] font-medium uppercase mt-8"
+                                className="text-[0.5rem] md:text-sm tracking-[0.25em] md:tracking-[0.4em] text-[#0066B3] font-medium uppercase mt-8"
                             >
                                 BY ROYAL PRESTIGE
                             </motion.p>
@@ -283,6 +286,14 @@ function FloatingProduct({
     const [repulse, setRepulse] = useState({ x: 0, y: 0 });
     const [isMobile, setIsMobile] = useState(false);
 
+    useEffect(() => {
+        if (typeof window === 'undefined') return;
+        const check = () => setIsMobile(window.innerWidth < 768);
+        check();
+        window.addEventListener('resize', check);
+        return () => window.removeEventListener('resize', check);
+    }, []);
+
     // Fallback MotionValue to ensure useTransform is always called with valid input
     const fallbackProgress = useMotionValue(0);
     const progress = scrollProgress ?? fallbackProgress;
@@ -292,14 +303,6 @@ function FloatingProduct({
     const moveY = useTransform(progress, [0, 0.5], [0, scrollTarget.y]);
     const scaleOut = useTransform(progress, [0, 0.5], [1, scrollTarget.scale]);
     const opacityOut = useTransform(progress, [0, 0.4], [1, 0]);
-
-    useEffect(() => {
-        if (typeof window === 'undefined') return;
-        const check = () => setIsMobile(window.innerWidth < 768);
-        check();
-        window.addEventListener('resize', check);
-        return () => window.removeEventListener('resize', check);
-    }, []);
 
     const finalWidth = isMobile && mobileWidth ? mobileWidth : width;
     const finalHeight = isMobile && mobileHeight ? mobileHeight : height;
@@ -337,11 +340,13 @@ function FloatingProduct({
         <motion.div
             ref={ref}
             style={{
-                opacity: opacityOut,
-                scale: scaleOut,
-                x: moveX,
-                y: moveY,
+                opacity: isMobile ? 1 : opacityOut,
+                scale: isMobile ? 1 : scaleOut,
+                x: isMobile ? 0 : moveX,
+                y: isMobile ? 0 : moveY,
                 willChange: "transform, opacity",
+                transform: "translateZ(0)",
+                zIndex: scrollTarget.scale === 0 ? 30 : 20, // using scrollTarget.scale to identify 'isHero' intent if needed
             }}
             className={cn("absolute z-20", finalPosition)}
         >
@@ -384,5 +389,3 @@ function FloatingProduct({
         </motion.div>
     );
 }
-
-
