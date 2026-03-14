@@ -144,7 +144,7 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
     <section className={cn("w-full min-h-screen transition-colors duration-300", isDark ? "bg-black" : "bg-white")}>
       
       {/* Título de sección */}
-      <div className="text-center py-6 px-4">
+      <div className="text-center py-3 px-4">
         <p className="text-[#0066B3] text-xs tracking-[0.3em] uppercase mb-2">Leiham Company</p>
         <h2 className={cn("text-3xl font-black tracking-tight uppercase transition-colors duration-300", isDark ? "text-white" : "text-slate-900")}>
           Calculadora de <span className="text-[#0066B3]">Financiamiento</span>

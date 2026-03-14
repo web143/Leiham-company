@@ -130,7 +130,7 @@ export default function HeroLeiham({ isDark = true }: { isDark?: boolean }) {
     const overlayOpacity = useTransform(progress, [0.6, 0.75], [0, 1]);
 
     return (
-        <section ref={sectionRef} style={{ height: isMobileHero ? '150vh' : '250vh', minWidth: isMobileHero ? undefined : '1100px' }} className={cn("relative transition-colors duration-300", isDark ? 'bg-black' : 'bg-white')}>
+        <section ref={sectionRef} style={{ height: isMobileHero ? '150vh' : '200vh', minWidth: isMobileHero ? undefined : '1100px' }} className={cn("relative transition-colors duration-300", isDark ? 'bg-black' : 'bg-white')}>
             <div className="sticky top-0 h-screen overflow-hidden">
                 <motion.div className="w-full h-full relative flex items-center justify-center">
                     <motion.div
