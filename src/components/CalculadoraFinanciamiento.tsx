@@ -366,7 +366,7 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
             </div>
           </div>
 
-          {/* Inputs */}
+          {/* Inputs - Bloque 1: Inicial */}
           <div className="space-y-6">
               <div>
                 <label className={cn("text-[10px] font-black tracking-[0.2em] uppercase block mb-3 transition-colors", isDark ? "text-white/40" : "text-slate-400")}>
@@ -420,10 +420,34 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
                   <span>Min 4%</span><span>25%</span><span>50%</span><span>75%</span><span>Full 100%</span>
                 </div>
               </div>
+          </div>
 
-              {/* Separador */}
-              <div className={cn("border-t pt-3", isDark ? "border-white/5" : "border-slate-200")} />
+          {/* Desglose (Ahora después del Inicial) */}
+          <div className={cn("space-y-2 border-t pt-3 transition-all duration-300", isDark ? "border-white/10" : "border-slate-200")}>
+            {[
+              { label: 'Valor productos', value: fmt(totalProductos) },
+              { label: 'Inicial aplicado', value: fmt(inicialDadoNum) },
+              { label: 'Equivalencia %', value: `${porcentaje.toFixed(2)}%` },
+              { label: 'Pago de entrada', value: fmt(pagoInicial) },
+              { label: 'Monto a financiar', value: fmt(montoFinanciar) },
+            ].map(row => (
+              <div key={row.label}
+                className={cn("flex justify-between items-center py-1 transition-all duration-300")}>
+                <span className={cn(isDark ? 'text-white/30 text-[9px] font-bold uppercase tracking-widest' : 'text-slate-400 text-[9px] font-bold uppercase tracking-widest')}>
+                  {row.label}
+                </span>
+                <span className={cn(isDark ? 'text-white text-xs font-mono font-bold' : 'text-slate-900 text-xs font-mono font-bold')}>
+                  {row.value}
+                </span>
+              </div>
+            ))}
+          </div>
 
+          {/* Separador */}
+          <div className={cn("border-t pt-1", isDark ? "border-white/5" : "border-slate-200")} />
+
+          {/* Inputs - Bloque 2: Pago de Cuotas */}
+          <div className="space-y-6">
               {/* Dropdown meses + porcentaje */}
               <div>
                 <label className={cn("text-[10px] font-black tracking-[0.2em] uppercase block mb-2",
@@ -479,67 +503,64 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
 
               {/* Mensaje cuando escribe cuota — válida */}
               {pctEscrito > 0 && !bajoDeMinimoMsg && !mesSeleccionado && montoFinanciar > 0 && (
-                <div className={cn("px-3 py-2.5 rounded-xl border text-xs space-y-1",
+                <div className={cn("px-3 py-2.5 rounded-xl border text-xs space-y-1.5",
                   isDark ? "bg-[#0066B3]/10 border-[#0066B3]/20" : "bg-[#0066B3]/5 border-[#0066B3]/20")}>
+                  
                   <p className={isDark ? "text-white/60" : "text-slate-600"}>
                     Tu cuota representa el{" "}
                     <span className="text-[#0066B3] font-bold">{pctEscrito.toFixed(2)}%</span>
                     {" "}del monto a financiar
                   </p>
+
                   {filaAnterior && filaSiguiente && (
-                    <p className={isDark ? "text-white/40" : "text-slate-400"}>
-                      Cae entre{" "}
-                      <span className="text-[#0066B3] font-bold">{filaAnterior.cuotas} meses ({filaAnterior.pct.toFixed(2)}%)</span>
-                      {" "}y{" "}
-                      <span className="text-[#0066B3] font-bold">{filaSiguiente.cuotas} meses ({filaSiguiente.pct.toFixed(2)}%)</span>
-                    </p>
+                    <div className={cn("space-y-1 pt-1 border-t", isDark ? "border-white/10" : "border-slate-200")}>
+                      <p className={isDark ? "text-white/40" : "text-slate-400"}>Cae entre:</p>
+                      <div className="flex justify-between items-center">
+                        <span className={isDark ? "text-white/60" : "text-slate-600"}>
+                          {filaAnterior.cuotas} meses — {filaAnterior.pct.toFixed(2)}%
+                        </span>
+                        <span className="text-[#0066B3] font-bold">
+                          {fmt(montoFinanciar * (filaAnterior.pct / 100))}/mes
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className={isDark ? "text-white/60" : "text-slate-600"}>
+                          {filaSiguiente.cuotas} meses — {filaSiguiente.pct.toFixed(2)}%
+                        </span>
+                        <span className="text-[#0066B3] font-bold">
+                          {fmt(montoFinanciar * (filaSiguiente.pct / 100))}/mes
+                        </span>
+                      </div>
+                    </div>
                   )}
+
                   {filaActiva && (
-                    <p className={isDark ? "text-white/40" : "text-slate-400"}>
-                      Opción más cercana:{" "}
-                      <span className="text-[#0066B3] font-bold">{filaActiva.cuotas} meses — {filaActiva.pct.toFixed(2)}%</span>
-                    </p>
+                    <div className={cn("flex justify-between items-center pt-1 border-t font-bold",
+                      isDark ? "border-white/10 text-white" : "border-slate-200 text-slate-900")}>
+                      <span>Opción más cercana: {filaActiva.cuotas} meses — {filaActiva.pct.toFixed(2)}%</span>
+                      <span className="text-[#0066B3]">{fmt(montoFinanciar * (filaActiva.pct / 100))}/mes</span>
+                    </div>
                   )}
                 </div>
               )}
 
               {/* Resultado del dropdown */}
               {mesSeleccionado && filaActiva && montoFinanciar > 0 && (
-                <div className={cn("px-3 py-2.5 rounded-xl border text-xs",
-                  isDark ? "bg-[#0066B3]/10 border-[#0066B3]/20" : "bg-[#0066B3]/5 border-[#0066B3]/20")}>
+                <div className={cn("px-4 py-3 rounded-xl border transition-all duration-300",
+                  isDark ? "bg-[#0066B3]/10 border-[#0066B3]/20 shadow-lg shadow-[#0066B3]/5" : "bg-[#0066B3]/5 border-[#0066B3]/20 shadow-md shadow-slate-200")}>
                   <div className="flex justify-between items-center">
-                    <span className={isDark ? "text-white/50" : "text-slate-500"}>Cuota mensual</span>
-                    <span className="text-[#0066B3] font-black text-base">{fmt(cuotaDelDropdown)}</span>
+                    <div>
+                      <p className={cn("text-[10px] font-bold uppercase tracking-widest mb-1 transition-colors", isDark ? "text-[#0066B3]" : "text-[#0066B3]")}>
+                        {filaActiva.cuotas} meses — {filaActiva.pct.toFixed(2)}%
+                      </p>
+                      <span className={isDark ? "text-white/50 text-xs" : "text-slate-500 text-xs"}>Cuota mensual</span>
+                    </div>
+                    <span className="text-[#0066B3] font-black text-xl">{fmt(cuotaDelDropdown)}</span>
                   </div>
                 </div>
               )}
           </div>
 
-          {/* Desglose */}
-          <div className={cn("space-y-2 border-t pt-3 transition-all duration-300", isDark ? "border-white/10" : "border-slate-200")}>
-            {[
-              { label: 'Valor productos', value: fmt(totalProductos) },
-              { label: 'Inicial aplicado', value: fmt(inicialDadoNum) },
-              { label: 'Equivalencia %', value: `${porcentaje.toFixed(2)}%` },
-              { label: 'Pago de entrada', value: fmt(pagoInicial) },
-              { label: 'Monto a financiar', value: fmt(montoFinanciar) },
-              ...(filaActiva && montoFinanciar > 0 && !bajoDeMinimoMsg ? [
-                { label: 'Plan de pagos', value: `${filaActiva.cuotas} meses — ${filaActiva.pct.toFixed(2)}%`, highlight: true },
-              ] : []),
-            ].map(row => (
-              <div key={row.label}
-                className={cn("flex justify-between items-center py-1 transition-all duration-300", 
-                  row.highlight && (isDark ? 'bg-[#0066B3]/5 px-4 rounded-xl border border-[#0066B3]/10 py-2 mt-2 mb-1' : 'bg-[#0066B3]/5 px-4 rounded-xl border border-[#0066B3]/20 py-2 mt-2 mb-1')
-                )}>
-                <span className={row.highlight ? (isDark ? 'text-white font-bold text-xs uppercase tracking-tight' : 'text-slate-900 font-bold text-xs uppercase tracking-tight') : (isDark ? 'text-white/30 text-[9px] font-bold uppercase tracking-widest' : 'text-slate-400 text-[9px] font-bold uppercase tracking-widest')}>
-                  {row.label}
-                </span>
-                <span className={row.highlight ? 'text-[#0066B3] font-black text-lg tracking-tighter' : (isDark ? 'text-white text-xs font-mono font-bold' : 'text-slate-900 text-xs font-mono font-bold')}>
-                  {row.value}
-                </span>
-              </div>
-            ))}
-          </div>
 
         </div>
 
