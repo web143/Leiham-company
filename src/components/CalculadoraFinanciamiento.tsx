@@ -5,6 +5,23 @@ import { motion, AnimatePresence } from "framer-motion";
 import { products } from "@/lib/products";
 import { cn } from "@/lib/utils";
 
+const TABLA_PAGOS = [
+  { cuotas: 2, pct: 51.95 }, { cuotas: 3, pct: 35.07 }, { cuotas: 4, pct: 26.64 },
+  { cuotas: 5, pct: 21.58 }, { cuotas: 6, pct: 18.21 }, { cuotas: 7, pct: 15.80 },
+  { cuotas: 8, pct: 14.00 }, { cuotas: 9, pct: 12.60 }, { cuotas: 10, pct: 11.48 },
+  { cuotas: 11, pct: 10.56 }, { cuotas: 12, pct: 9.80 }, { cuotas: 13, pct: 9.16 },
+  { cuotas: 14, pct: 8.61 }, { cuotas: 15, pct: 8.13 }, { cuotas: 16, pct: 7.71 },
+  { cuotas: 17, pct: 7.35 }, { cuotas: 18, pct: 7.02 }, { cuotas: 19, pct: 6.73 },
+  { cuotas: 20, pct: 6.47 }, { cuotas: 21, pct: 6.23 }, { cuotas: 22, pct: 6.02 },
+  { cuotas: 23, pct: 5.82 }, { cuotas: 24, pct: 5.65 }, { cuotas: 25, pct: 5.48 },
+  { cuotas: 26, pct: 5.33 }, { cuotas: 27, pct: 5.19 }, { cuotas: 28, pct: 5.06 },
+  { cuotas: 29, pct: 4.95 }, { cuotas: 30, pct: 4.83 }, { cuotas: 31, pct: 4.73 },
+  { cuotas: 32, pct: 4.63 }, { cuotas: 33, pct: 4.54 }, { cuotas: 34, pct: 4.46 },
+  { cuotas: 35, pct: 4.38 }, { cuotas: 36, pct: 4.30 }, { cuotas: 37, pct: 4.23 },
+  { cuotas: 38, pct: 4.16 }, { cuotas: 39, pct: 4.10 }, { cuotas: 40, pct: 4.04 },
+  { cuotas: 41, pct: 4.00 },
+];
+
 export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: boolean }) {
   const [selectedItems, setSelectedItems] = useState<typeof products>([]);
   const [search, setSearch] = useState("");
@@ -13,6 +30,8 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
   const [porcentaje, setPorcentaje] = useState(4);
   const [porcentajeInput, setPorcentajeInput] = useState("4");
   const [selectedRegalos, setSelectedRegalos] = useState<typeof products>([]);
+  const [cuotaInput, setCuotaInput] = useState("");
+  const [mesSeleccionado, setMesSeleccionado] = useState<number | null>(null);
 
   const toggleRegalo = (p: typeof products[0]) => {
     setSelectedRegalos(prev =>
@@ -80,11 +99,10 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
 
   const visibleCategories = useMemo(() => [...new Set(filtered.map(p => p.category))].sort(), [filtered]);
   const allCategories = useMemo(() => [...new Set(products.map(p => p.category))].sort(), []);
-
   const totalProductos = selectedItems.reduce((s, p) => s + p.total, 0);
-
-  // Cuando se escribe el inicial — calcula el porcentaje automáticamente
   const inicialDadoNum = parseFloat(inicialDado.replace(/[^0-9.]/g, '')) || 0;
+  const pagoInicial = Math.min(inicialDadoNum, totalProductos);
+  const montoFinanciar = Math.max(0, totalProductos - pagoInicial);
 
   // Si el usuario escribe en el input de inicial, actualiza el slider también
   const handleInicialChange = (value: string) => {
@@ -120,8 +138,6 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
     }
   };
 
-  // Cuando cambia la lista de productos seleccionados,
-  // recalcular el porcentaje basado en el inicial dado actual
   useEffect(() => {
     if (totalProductos > 0 && inicialDadoNum > 0) {
       const nuevoPct = Math.min(100, Math.max(4, (inicialDadoNum / totalProductos) * 100));
@@ -133,17 +149,49 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
     }
   }, [selectedItems]);
 
-  // Cálculos derivados — siempre basados en inicialDadoNum
-  const pagoInicial = Math.min(inicialDadoNum, totalProductos);
-  const montoFinanciar = Math.max(0, totalProductos - pagoInicial);
-  const cuotaMensual = montoFinanciar * 0.04;
-  const numeroCuotas = montoFinanciar > 0 ? 25 : 0;
+  const cuotaInputNum = parseFloat(cuotaInput.replace(/[^0-9.]/g, '')) || 0;
 
+  const pctEscrito = montoFinanciar > 0 && cuotaInputNum > 0
+    ? (cuotaInputNum / montoFinanciar) * 100
+    : 0;
+
+  const filaActiva = mesSeleccionado
+    ? TABLA_PAGOS.find(f => f.cuotas === mesSeleccionado) ?? null
+    : pctEscrito > 0
+    ? TABLA_PAGOS.reduce((prev, curr) =>
+        Math.abs(curr.pct - pctEscrito) < Math.abs(prev.pct - pctEscrito) ? curr : prev)
+    : null;
+
+  const filaAnterior = pctEscrito > 0 && !mesSeleccionado
+    ? TABLA_PAGOS.filter(f => f.pct >= pctEscrito).slice(-1)[0] ?? null
+    : null;
+  const filaSiguiente = pctEscrito > 0 && !mesSeleccionado
+    ? TABLA_PAGOS.find(f => f.pct < pctEscrito) ?? null
+    : null;
+
+  const bajoDeMinimoMsg = pctEscrito > 0 && pctEscrito < 4.00 && !mesSeleccionado;
+  const cuotaMinimaRD = montoFinanciar * 0.04;
+
+  const cuotaDelDropdown = filaActiva ? montoFinanciar * (filaActiva.pct / 100) : 0;
+
+  const handleMesChange = (cuotas: number) => {
+    setMesSeleccionado(cuotas);
+    setCuotaInput("");
+  };
+
+  const handleCuotaChange = (value: string) => {
+    setCuotaInput(value);
+    setMesSeleccionado(null);
+  };
+
+  useEffect(() => {
+    setCuotaInput("");
+    setMesSeleccionado(null);
+  }, [selectedItems]);
 
   return (
     <section className={cn("w-full min-h-screen transition-colors duration-300", isDark ? "bg-black" : "bg-white")}>
       
-      {/* Título de sección */}
       <div className="text-center py-3 px-4">
         <p className="text-[#0066B3] text-xs tracking-[0.3em] uppercase mb-2">Leiham Company</p>
         <h2 className={cn("text-3xl font-black tracking-tight uppercase transition-colors duration-300", isDark ? "text-white" : "text-slate-900")}>
@@ -372,6 +420,99 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
                   <span>Min 4%</span><span>25%</span><span>50%</span><span>75%</span><span>Full 100%</span>
                 </div>
               </div>
+
+              {/* Separador */}
+              <div className={cn("border-t pt-3", isDark ? "border-white/5" : "border-slate-200")} />
+
+              {/* Dropdown meses + porcentaje */}
+              <div>
+                <label className={cn("text-[10px] font-black tracking-[0.2em] uppercase block mb-2",
+                  isDark ? "text-white/40" : "text-slate-400")}>
+                  Plan de pagos
+                </label>
+                <select
+                  value={mesSeleccionado ?? ""}
+                  onChange={e => handleMesChange(Number(e.target.value))}
+                  className={cn("w-full px-4 py-3 rounded-2xl border outline-none text-sm font-bold transition-all cursor-pointer",
+                    isDark
+                      ? "bg-black/40 border-white/5 text-white focus:border-[#0066B3]/50"
+                      : "bg-white border-slate-300 text-slate-900 focus:border-[#0066B3]/30")}
+                >
+                  <option value="">— Seleccionar meses —</option>
+                  {TABLA_PAGOS.map(f => (
+                    <option key={f.cuotas} value={f.cuotas}>
+                      {f.cuotas} meses — {f.pct.toFixed(2)}%
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Input cuota mensual */}
+              <div>
+                <label className={cn("text-[10px] font-black tracking-[0.2em] uppercase block mb-2",
+                  isDark ? "text-white/40" : "text-slate-400")}>
+                  O escribe la cuota mensual <span className="text-[#0066B3]/50">(RD$)</span>
+                </label>
+                <div className="relative">
+                  <span className={cn("absolute left-4 top-1/2 -translate-y-1/2 font-bold",
+                    isDark ? "text-white/20" : "text-slate-300")}>$</span>
+                  <input
+                    value={cuotaInput}
+                    onChange={e => handleCuotaChange(e.target.value)}
+                    placeholder="0.00"
+                    className={cn("w-full pl-8 pr-4 py-3 rounded-2xl border outline-none font-mono text-sm transition-all",
+                      isDark
+                        ? "bg-black/40 border-white/5 text-white focus:border-[#0066B3]/50"
+                        : "bg-white border-slate-300 text-slate-900 focus:border-[#0066B3]/30")}
+                  />
+                </div>
+              </div>
+
+              {/* Mensaje cuando escribe cuota — bajo mínimo */}
+              {bajoDeMinimoMsg && montoFinanciar > 0 && (
+                <div className="px-3 py-2.5 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs space-y-1">
+                  <p>⛔ Porcentaje escrito: <strong>{pctEscrito.toFixed(2)}%</strong></p>
+                  <p>El mínimo permitido es <strong>4.00% (41 meses)</strong></p>
+                  <p>Cuota mínima: <strong>{fmt(cuotaMinimaRD)}</strong></p>
+                </div>
+              )}
+
+              {/* Mensaje cuando escribe cuota — válida */}
+              {pctEscrito > 0 && !bajoDeMinimoMsg && !mesSeleccionado && montoFinanciar > 0 && (
+                <div className={cn("px-3 py-2.5 rounded-xl border text-xs space-y-1",
+                  isDark ? "bg-[#0066B3]/10 border-[#0066B3]/20" : "bg-[#0066B3]/5 border-[#0066B3]/20")}>
+                  <p className={isDark ? "text-white/60" : "text-slate-600"}>
+                    Tu cuota representa el{" "}
+                    <span className="text-[#0066B3] font-bold">{pctEscrito.toFixed(2)}%</span>
+                    {" "}del monto a financiar
+                  </p>
+                  {filaAnterior && filaSiguiente && (
+                    <p className={isDark ? "text-white/40" : "text-slate-400"}>
+                      Cae entre{" "}
+                      <span className="text-[#0066B3] font-bold">{filaAnterior.cuotas} meses ({filaAnterior.pct.toFixed(2)}%)</span>
+                      {" "}y{" "}
+                      <span className="text-[#0066B3] font-bold">{filaSiguiente.cuotas} meses ({filaSiguiente.pct.toFixed(2)}%)</span>
+                    </p>
+                  )}
+                  {filaActiva && (
+                    <p className={isDark ? "text-white/40" : "text-slate-400"}>
+                      Opción más cercana:{" "}
+                      <span className="text-[#0066B3] font-bold">{filaActiva.cuotas} meses — {filaActiva.pct.toFixed(2)}%</span>
+                    </p>
+                  )}
+                </div>
+              )}
+
+              {/* Resultado del dropdown */}
+              {mesSeleccionado && filaActiva && montoFinanciar > 0 && (
+                <div className={cn("px-3 py-2.5 rounded-xl border text-xs",
+                  isDark ? "bg-[#0066B3]/10 border-[#0066B3]/20" : "bg-[#0066B3]/5 border-[#0066B3]/20")}>
+                  <div className="flex justify-between items-center">
+                    <span className={isDark ? "text-white/50" : "text-slate-500"}>Cuota mensual</span>
+                    <span className="text-[#0066B3] font-black text-base">{fmt(cuotaDelDropdown)}</span>
+                  </div>
+                </div>
+              )}
           </div>
 
           {/* Desglose */}
@@ -379,9 +520,12 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
             {[
               { label: 'Valor productos', value: fmt(totalProductos), highlight: false },
               { label: 'Inicial aplicado', value: fmt(inicialDadoNum), highlight: false },
-              { label: 'Equivalencia %', value: `${porcentaje}%`, highlight: false },
-              { label: 'Pago de entrada', value: fmt(pagoInicial), highlight: false },
-              { label: 'Monto a financiar', value: fmt(montoFinanciar), highlight: true },
+               { label: 'Equivalencia %', value: `${porcentaje}%`, highlight: false },
+               { label: 'Pago de entrada', value: fmt(pagoInicial), highlight: false },
+               { label: 'Monto a financiar', value: fmt(montoFinanciar), highlight: true },
+               ...(filaActiva && montoFinanciar > 0 && !bajoDeMinimoMsg ? [
+                 { label: 'Plan de pagos', value: `${filaActiva.cuotas} meses — ${filaActiva.pct.toFixed(2)}%`, highlight: true },
+               ] : []),
             ].map(row => (
               <div key={row.label}
                 className={cn("flex justify-between items-center py-1 transition-all duration-300", 
