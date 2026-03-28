@@ -354,7 +354,7 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
           </div>
         </div>
 
-        {/* COLUMNA 3 — Calculadora */}
+        {/* COLUMNA 3 — Calculadora (Unificada para todos los tamaños) */}
         <div className={cn("rounded-2xl p-6 flex flex-col gap-4 border shadow-2xl transition-all duration-300 h-full overflow-y-auto custom-scrollbar", 
           isDark ? "bg-slate-900/60 border-[#0066B3]/20 shadow-[#0066B3]/5" : "bg-slate-100 border-slate-200 shadow-slate-200/50")}>
 
