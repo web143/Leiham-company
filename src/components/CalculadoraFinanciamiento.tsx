@@ -104,6 +104,15 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
   const pagoInicial = Math.min(inicialDadoNum, totalProductos);
   const montoFinanciar = Math.max(0, totalProductos - pagoInicial);
 
+  // Precio sin ITBIS (suma de p.price de los items seleccionados)
+  const precioSinItbis = selectedItems.reduce((s, p) => s + p.price, 0);
+
+  // ITBIS total (suma de p.itbis de los items seleccionados)
+  const itbisTotal = selectedItems.reduce((s, p) => s + p.itbis, 0);
+
+  // Tasa de interés anual fija
+  const TASA_INTERES_ANUAL = 26;
+
   // Si el usuario escribe en el input de inicial, actualiza el slider también
   const handleInicialChange = (value: string) => {
     setInicialDado(value);
@@ -424,17 +433,28 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
           {/* Desglose (Ahora después del Inicial) */}
           <div className={cn("space-y-2 border-t pt-3 transition-all duration-300", isDark ? "border-white/10" : "border-slate-200")}>
             {[
+              { label: 'Precio de compra', value: fmt(precioSinItbis) },
+              { label: 'ITBIS', value: fmt(itbisTotal) },
+              { label: 'Tasa de interés anual', value: `${TASA_INTERES_ANUAL}%` },
               { label: 'Valor productos', value: fmt(totalProductos) },
               { label: 'Inicial aplicado', value: fmt(inicialDadoNum) },
               { label: 'Equivalencia %', value: `${porcentaje.toFixed(2)}%` },
               { label: 'Monto a financiar', value: fmt(montoFinanciar) },
+              ...(filaActiva && montoFinanciar > 0 && !bajoDeMinimoMsg ? [
+                { label: 'Plan de pagos', value: `${filaActiva.cuotas} meses — ${filaActiva.pct.toFixed(2)}%`, highlight: true },
+              ] : []),
             ].map(row => (
               <div key={row.label}
                 className={cn("flex justify-between items-center py-1 transition-all duration-300")}>
                 <span className={cn(isDark ? 'text-white/30 text-[9px] font-bold uppercase tracking-widest' : 'text-slate-400 text-[9px] font-bold uppercase tracking-widest')}>
                   {row.label}
                 </span>
-                <span className={cn(isDark ? 'text-white text-xs font-mono font-bold' : 'text-slate-900 text-xs font-mono font-bold')}>
+                <span className={cn(
+                  'text-xs font-mono font-bold',
+                  (row as { highlight?: boolean }).highlight
+                    ? 'text-[#0066B3]'
+                    : isDark ? 'text-white' : 'text-slate-900'
+                )}>
                   {row.value}
                 </span>
               </div>
