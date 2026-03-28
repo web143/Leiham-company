@@ -1,4 +1,4 @@
-const CACHE_NAME = 'leiham-v1';
+const CACHE_NAME = 'leiham-v2';
 const urlsToCache = [
   '/',
   '/manifest.json',
@@ -27,6 +27,25 @@ self.addEventListener('activate', event => {
 });
 
 self.addEventListener('fetch', event => {
+  const url = new URL(event.request.url);
+  
+  // Archivos JS/CSS de Next.js — siempre de la red primero
+  if (url.pathname.startsWith('/_next/static')) {
+    event.respondWith(
+      fetch(event.request).then(response => {
+        const responseClone = response.clone();
+        caches.open(CACHE_NAME).then(cache => {
+          cache.put(event.request, responseClone);
+        });
+        return response;
+      }).catch(() => {
+        return caches.match(event.request);
+      })
+    );
+    return;
+  }
+
+  // Todo lo demás — caché primero
   event.respondWith(
     caches.match(event.request).then(cached => {
       if (cached) return cached;
