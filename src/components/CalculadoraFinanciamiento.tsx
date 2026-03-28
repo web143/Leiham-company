@@ -355,7 +355,7 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
         </div>
 
         {/* COLUMNA 3 — Calculadora */}
-        <div className={cn("rounded-2xl p-6 flex flex-col gap-4 border shadow-2xl transition-all duration-300 h-full overflow-hidden", 
+        <div className={cn("rounded-2xl p-6 flex flex-col gap-4 border shadow-2xl transition-all duration-300 h-full overflow-y-auto custom-scrollbar", 
           isDark ? "bg-slate-900/60 border-[#0066B3]/20 shadow-[#0066B3]/5" : "bg-slate-100 border-slate-200 shadow-slate-200/50")}>
 
           {/* Totales top */}
@@ -516,16 +516,16 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
           </div>
 
           {/* Desglose */}
-          <div className={cn("flex-1 space-y-2 border-t pt-4 overflow-y-auto pr-1 custom-scrollbar transition-all duration-300", isDark ? "border-white/10" : "border-slate-200")}>
+          <div className={cn("space-y-2 border-t pt-3 transition-all duration-300", isDark ? "border-white/10" : "border-slate-200")}>
             {[
-              { label: 'Valor productos', value: fmt(totalProductos), highlight: false },
-              { label: 'Inicial aplicado', value: fmt(inicialDadoNum), highlight: false },
-               { label: 'Equivalencia %', value: `${porcentaje}%`, highlight: false },
-               { label: 'Pago de entrada', value: fmt(pagoInicial), highlight: false },
-               { label: 'Monto a financiar', value: fmt(montoFinanciar), highlight: true },
-               ...(filaActiva && montoFinanciar > 0 && !bajoDeMinimoMsg ? [
-                 { label: 'Plan de pagos', value: `${filaActiva.cuotas} meses — ${filaActiva.pct.toFixed(2)}%`, highlight: true },
-               ] : []),
+              { label: 'Valor productos', value: fmt(totalProductos) },
+              { label: 'Inicial aplicado', value: fmt(inicialDadoNum) },
+              { label: 'Equivalencia %', value: `${porcentaje.toFixed(2)}%` },
+              { label: 'Pago de entrada', value: fmt(pagoInicial) },
+              { label: 'Monto a financiar', value: fmt(montoFinanciar) },
+              ...(filaActiva && montoFinanciar > 0 && !bajoDeMinimoMsg ? [
+                { label: 'Plan de pagos', value: `${filaActiva.cuotas} meses — ${filaActiva.pct.toFixed(2)}%`, highlight: true },
+              ] : []),
             ].map(row => (
               <div key={row.label}
                 className={cn("flex justify-between items-center py-1 transition-all duration-300", 
