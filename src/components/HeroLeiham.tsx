@@ -111,7 +111,8 @@ export default function HeroLeiham({ isDark = true }: { isDark?: boolean }) {
     });
 
     // Call hooks unconditionally to comply with React's Rules of Hooks
-    const springProgress = useSpring(scrollYProgress, { stiffness: 100, damping: 30 });
+    // Higher stiffness = snappier tracking, less perceived lag vs stiffness:100
+    const springProgress = useSpring(scrollYProgress, { stiffness: 200, damping: 35, restDelta: 0.001 });
     const desktopBlur = useTransform(springProgress, [0.5, 0.65], [0, 20]);
     const blurStyle = useTransform(desktopBlur, v => `blur(${v}px)`);
 
@@ -152,15 +153,18 @@ export default function HeroLeiham({ isDark = true }: { isDark?: boolean }) {
                             filter: 'blur(15px)' 
                         }} />
                     </div>
-                    {/* Gradiente de fondo sutil azul */}
-                    <div className={cn("absolute inset-0 blur-3xl transition-opacity duration-300", isDark ? "bg-gradient-to-br from-[#0066B3]/[0.08] via-transparent to-[#0066B3]/[0.15]" : "bg-gradient-to-br from-[#0066B3]/[0.03] via-transparent to-[#0066B3]/[0.05]")} />
+                    {/* Gradiente de fondo sutil azul — promoted to GPU layer so it doesn't repaint during scroll */}
+                    <div className={cn("absolute inset-0 blur-3xl transition-opacity duration-300", isDark ? "bg-gradient-to-br from-[#0066B3]/[0.08] via-transparent to-[#0066B3]/[0.15]" : "bg-gradient-to-br from-[#0066B3]/[0.03] via-transparent to-[#0066B3]/[0.05]")} style={{ transform: 'translateZ(0)', backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' }} />
 
-                    {/* Patrón de puntos refinado */}
+                    {/* Patrón de puntos refinado — GPU layer to prevent repaint on scroll */}
                     <div
                         className={cn("absolute inset-0 transition-opacity duration-300", isDark ? "opacity-[0.03]" : "opacity-[0.06]")}
                         style={{
                             backgroundImage: `radial-gradient(circle at 1px 1px, rgba(0, 102, 179, 0.4) 1px, transparent 0)`,
                             backgroundSize: "50px 50px",
+                            transform: 'translateZ(0)',
+                            backfaceVisibility: 'hidden',
+                            WebkitBackfaceVisibility: 'hidden',
                         }}
                     />
 
@@ -342,6 +346,10 @@ function FloatingProduct({
                 x: moveX,
                 y: moveY,
                 willChange: "transform, opacity",
+                // Force 3D compositing context on Safari — more reliable than willChange alone
+                perspective: 1000,
+                backfaceVisibility: 'hidden',
+                WebkitBackfaceVisibility: 'hidden',
             }}
             className={cn("absolute z-20", finalPosition)}
         >

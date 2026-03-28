@@ -308,7 +308,6 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
                     {filtered.filter(p => p.category === cat).map(product => (
                         <motion.div
                             key={product.code + product.name}
-                            layout
                             className={cn("flex items-center gap-3 px-3 py-2 rounded-xl transition-all cursor-pointer border", 
                                 isSelected(product) 
                                     ? (isDark ? 'bg-[#0066B3]/10 border-[#0066B3]/20' : 'bg-[#0066B3]/5 border-[#0066B3]/30') 
