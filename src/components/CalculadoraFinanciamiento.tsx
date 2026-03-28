@@ -428,7 +428,6 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
               { label: 'Valor productos', value: fmt(totalProductos) },
               { label: 'Inicial aplicado', value: fmt(inicialDadoNum) },
               { label: 'Equivalencia %', value: `${porcentaje.toFixed(2)}%` },
-              { label: 'Pago de entrada', value: fmt(pagoInicial) },
               { label: 'Monto a financiar', value: fmt(montoFinanciar) },
             ].map(row => (
               <div key={row.label}
