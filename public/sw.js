@@ -1,4 +1,4 @@
-const CACHE_NAME = 'leiham-v2';
+const CACHE_NAME = 'leiham-v3';
 const urlsToCache = [
   '/',
   '/manifest.json',
