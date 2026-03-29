@@ -32,6 +32,13 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
   const [selectedRegalos, setSelectedRegalos] = useState<typeof products>([]);
   const [cuotaInput, setCuotaInput] = useState("");
   const [mesSeleccionado, setMesSeleccionado] = useState<number | null>(null);
+  const [isClearing, setIsClearing] = useState(false);
+
+  const handleClearItems = () => {
+    setIsClearing(true);
+    setSelectedItems([]);
+    setTimeout(() => setIsClearing(false), 200);
+  };
 
   const toggleRegalo = (p: typeof products[0]) => {
     setSelectedRegalos(prev =>
@@ -283,8 +290,8 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
             <h3 className={cn("font-semibold text-base tracking-tight transition-colors duration-200 ease-out", isDark ? "text-white" : "text-slate-900")}>Productos</h3>
             {selectedItems.length > 0 && (
               <button
-                onClick={() => setSelectedItems([])}
-                className={cn("text-[11px] font-medium transition-colors", isDark ? "text-white/30 hover:text-red-400" : "text-slate-400 hover:text-red-500")}
+                onClick={handleClearItems}
+                className={cn("text-[11px] font-medium transition-colors active:scale-[0.97]", isDark ? "text-white/30 hover:text-red-400" : "text-slate-400 hover:text-red-500")}
               >
                 Limpiar
               </button>
@@ -331,9 +338,12 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
                   {cat}
                 </p>
                 <div className="space-y-0.5">
-                    {filtered.filter(p => p.category === cat).map(product => (
+                    {filtered.filter(p => p.category === cat).map((product, index) => (
                         <motion.div
                             key={product.code + product.name}
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.2, ease: "easeOut", delay: Math.min(index * 0.04, 0.4) }}
                             className={cn("flex items-center gap-3 px-3 py-2.5 rounded-xl transition duration-200 ease-out", 
                                 getCantidad(product) > 0
                                     ? (isDark ? 'bg-[#0066B3]/12 ring-1 ring-[#0066B3]/25' : 'bg-white ring-1 ring-[#0066B3]/30 shadow-sm') 
@@ -401,7 +411,10 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
         </div>
 
         {/* COLUMNA 3 — Calculadora (Unificada para todos los tamaños) */}
-        <div className={cn("rounded-2xl p-5 flex flex-col gap-4 border transition duration-200 ease-out h-full overflow-y-auto custom-scrollbar", 
+        <motion.div 
+          animate={{ filter: isClearing ? "blur(4px)" : "blur(0px)", opacity: isClearing ? 0.6 : 1 }}
+          transition={{ duration: 0.2 }}
+          className={cn("rounded-2xl p-5 flex flex-col gap-4 border transition duration-200 ease-out h-full overflow-y-auto custom-scrollbar", 
           isDark ? "bg-white/[0.03] border-white/8 shadow-2xl shadow-black/30" : "bg-white border-slate-200/80 shadow-xl shadow-slate-100")} data-lenis-prevent>
 
           {/* Card Total — estilo Apple: número flotante, sin fondo saturado */}
@@ -624,7 +637,7 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
           </div>
 
 
-        </div>
+        </motion.div>
 
         {/* COLUMNA 4 — Regalos */}
         <div className={cn("rounded-2xl p-4 flex flex-col border transition duration-200 ease-out h-full overflow-hidden",
@@ -724,14 +737,19 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
                 {/* Lista vertical scrolleable */}
                 <div className="flex-1 overflow-y-auto space-y-1 pr-1" data-lenis-prevent
                   style={{ scrollbarWidth: 'thin', scrollbarColor: isDark ? 'rgba(255,255,255,0.06) transparent' : 'rgba(0,0,0,0.08) transparent' }}>
-                  {elegibles.length > 0 ? elegibles.map(p => {
+                  <AnimatePresence mode="popLayout">
+                  {elegibles.length > 0 ? elegibles.map((p, index) => {
                     const sel = isRegaloSelected(p);
                     const totalRegalosActual = selectedRegalos.reduce((s, r) => s + r.total, 0);
                     const fueraDeRango = REGALOS_VOLUMEN.includes(p.code) && p.total > maxR;
                     const excederiaSiAgrego = !sel && (totalRegalosActual + p.total) > maxR;
                     return (
-                      <div
+                      <motion.div
                         key={p.code + p.name}
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.95 }}
+                        transition={{ duration: 0.2, ease: "easeOut", delay: Math.min(index * 0.03, 0.3) }}
                         onClick={() => !fueraDeRango && (!excederiaSiAgrego || sel) ? toggleRegalo(p) : null}
                         className={cn(
                           "px-3 py-2 rounded-xl border transition cursor-pointer relative active:scale-[0.99]",
@@ -769,14 +787,16 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
                           <p className={cn("text-[10px]", isDark ? "text-white/20" : "text-slate-400")}>{p.category}</p>
                           <p className={cn("text-xs font-bold", sel ? 'text-[#0066B3]' : 'text-[#0066B3]')}>{fmt(p.total)}</p>
                         </div>
-                      </div>
+                      </motion.div>
                     );
                   }) : (
-                    <p className={cn("text-xs text-center py-4", isDark ? "text-white/20" : "text-slate-400")}>
-                      Ningún producto califica
-                    </p>
+                    <div className="text-center py-10 opacity-50">
+                      <Gift className="w-8 h-8 mx-auto mb-2" />
+                      <p className="text-xs">No hay regalos<br/>para este monto</p>
+                    </div>
                   )}
-                  </div>
+                  </AnimatePresence>
+                </div>
 
                 <div className={cn("flex items-start gap-1.5 flex-shrink-0 pt-1",
                   isDark ? "text-white/20" : "text-slate-400")}>
