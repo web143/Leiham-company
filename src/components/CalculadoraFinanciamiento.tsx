@@ -1,6 +1,6 @@
 "use client";
 import { useState, useMemo, useEffect, useRef } from "react";
-import { Search, Plus, Check, X } from "lucide-react";
+import { Search, Plus, Check, X, Gift, AlertTriangle, CheckCircle2, AlertCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { products } from "@/lib/products";
 import { cn } from "@/lib/utils";
@@ -596,25 +596,33 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
 
         {/* COLUMNA 4 — Regalos */}
         <div className={cn("rounded-2xl p-4 flex flex-col border transition-all duration-300 h-full overflow-hidden",
-          isDark ? "bg-white/[0.03] border-white/8" : "bg-white border-slate-200/80")}>
+          isDark ? "bg-white/[0.03] border-white/8" : "bg-slate-50 border-slate-200/80")}>
           
           {/* Header */}
           <div className="flex flex-wrap items-center gap-2 mb-3">
-            <span>🎁</span>
+            <div className={cn("w-6 h-6 rounded-lg flex items-center justify-center flex-shrink-0",
+              isDark ? "bg-white/8" : "bg-white shadow-sm border border-slate-100")}>
+              <Gift className={cn("w-3.5 h-3.5", isDark ? "text-white/60" : "text-slate-500")} />
+            </div>
             <h3 className={cn("text-[13px] font-semibold tracking-tight", isDark ? "text-white" : "text-slate-900")}>
               Regalos
             </h3>
             {totalProductos > 0 && (
-              <span className="text-xs font-bold text-[#0066B3] bg-[#0066B3]/10 px-2 py-0.5 rounded-full">
+              <span className={cn("text-[11px] font-medium px-2 py-0.5 rounded-full",
+                isDark ? "text-white/50 bg-white/6 border border-white/8" : "text-slate-500 bg-white border border-slate-200 shadow-sm")}>
                 Hasta {fmt(totalProductos * 0.10)}
               </span>
             )}
           </div>
 
           {totalProductos === 0 ? (
-            <div className="flex-1 flex items-center justify-center">
-              <p className={cn("text-xs text-center", isDark ? "text-white/20" : "text-slate-400")}>
-                Selecciona productos para ver los regalos disponibles
+            <div className="flex-1 flex flex-col items-center justify-center gap-2">
+              <div className={cn("w-10 h-10 rounded-2xl flex items-center justify-center",
+                isDark ? "bg-white/5" : "bg-slate-100")}>
+                <Gift className={cn("w-5 h-5", isDark ? "text-white/20" : "text-slate-300")} />
+              </div>
+              <p className={cn("text-[11px] text-center leading-relaxed", isDark ? "text-white/25" : "text-slate-400")}>
+                Selecciona productos para<br/>ver los regalos disponibles
               </p>
             </div>
           ) : (() => {
@@ -637,27 +645,34 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
 
                 {/* Alerta */}
                 {selectedRegalos.length > 0 && (
-                  <div className={cn("flex items-center justify-between px-3 py-2 rounded-xl text-xs font-bold flex-shrink-0",
+                  <div className={cn("flex items-center justify-between px-3 py-2 rounded-xl text-[11px] font-medium flex-shrink-0 gap-2",
                     excedido
-                      ? 'bg-red-500/15 border border-red-500/30 text-red-400'
+                      ? (isDark ? 'bg-red-500/10 border border-red-500/20 text-red-400' : 'bg-red-50 border border-red-200 text-red-600')
                       : cerca
-                      ? 'bg-yellow-500/15 border border-yellow-500/30 text-yellow-400'
-                      : 'bg-[#0066B3]/10 border border-[#0066B3]/20 text-[#0066B3]'
+                      ? (isDark ? 'bg-amber-500/10 border border-amber-500/20 text-amber-400' : 'bg-amber-50 border border-amber-200 text-amber-700')
+                      : (isDark ? 'bg-white/5 border border-white/8 text-white/60' : 'bg-white border border-slate-100 text-slate-600 shadow-sm')
                   )}>
-                    <span>
+                    <div className="flex items-center gap-1.5">
                       {excedido
-                        ? `⛔ +${fmt(totalRegalos - maxR)}`
+                        ? <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" />
                         : cerca
-                        ? `⚠️ Quedan ${fmt(maxR - totalRegalos)}`
-                        : `✓ ${selectedRegalos.length} seleccionado${selectedRegalos.length > 1 ? 's' : ''}`}
-                    </span>
-                    <span>{fmt(totalRegalos)}</span>
+                        ? <AlertTriangle className="w-3.5 h-3.5 flex-shrink-0" />
+                        : <CheckCircle2 className="w-3.5 h-3.5 flex-shrink-0" />}
+                      <span>
+                        {excedido
+                          ? `Excede ${fmt(totalRegalos - maxR)}`
+                          : cerca
+                          ? `Quedan ${fmt(maxR - totalRegalos)}`
+                          : `${selectedRegalos.length} seleccionado${selectedRegalos.length > 1 ? 's' : ''}`}
+                      </span>
+                    </div>
+                    <span className="font-semibold">{fmt(totalRegalos)}</span>
                   </div>
                 )}
 
                 {/* Nota política */}
-                <p className={cn("text-[10px] flex-shrink-0", isDark ? "text-white/20" : "text-slate-400")}>
-                  Máx. 10% · Solo descuento O regalo · Financiamiento 6-12 meses: no aplica
+                <p className={cn("text-[10px] flex-shrink-0 leading-relaxed", isDark ? "text-white/20" : "text-slate-400")}>
+                  Máx. 10% · Solo descuento O regalo · 6-12 meses: no aplica
                 </p>
 
                 {/* Lista vertical scrolleable */}
@@ -672,23 +687,34 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
                         key={p.code + p.name}
                         onClick={() => (!excederiaSiAgrego || sel) ? toggleRegalo(p) : null}
                         className={cn(
-                          "px-3 py-2 rounded-xl border transition-all cursor-pointer",
+                          "px-3 py-2.5 rounded-xl transition-all duration-200 cursor-pointer",
                           sel
-                            ? (isDark ? 'bg-[#0066B3]/12 ring-1 ring-[#0066B3]/30' : 'bg-[#0066B3]/6 ring-1 ring-[#0066B3]/20')
+                            ? (isDark
+                                ? 'bg-[#0066B3]/10 ring-1 ring-[#0066B3]/25'
+                                : 'bg-white ring-1 ring-[#0066B3]/25 shadow-sm')
                             : excederiaSiAgrego
-                            ? (isDark ? 'opacity-25 cursor-not-allowed bg-white/[0.02]' : 'opacity-30 cursor-not-allowed bg-slate-50')
-                            : (isDark ? 'bg-white/[0.04] border border-white/8 hover:bg-white/[0.07] hover:border-[#0066B3]/25' : 'bg-white border border-slate-100 shadow-sm hover:border-[#0066B3]/30 hover:shadow-md')
+                            ? (isDark
+                                ? 'opacity-20 cursor-not-allowed bg-white/[0.02]'
+                                : 'opacity-25 cursor-not-allowed bg-slate-50')
+                            : (isDark
+                                ? 'bg-white/[0.04] border border-white/6 hover:bg-white/[0.07] hover:border-white/10'
+                                : 'bg-white border border-slate-100 shadow-sm hover:shadow-md hover:border-slate-200')
                         )}>
-                        <div className="flex justify-between items-start">
-                          <p className={cn("text-xs font-semibold leading-tight flex-1 mr-2",
-                            sel ? 'text-[#0066B3]' : (isDark ? "text-white/80" : "text-slate-700"))}>
+                        <div className="flex justify-between items-start gap-2">
+                          <p className={cn("text-[12px] font-medium leading-tight flex-1",
+                            sel
+                              ? (isDark ? 'text-white' : 'text-slate-900')
+                              : (isDark ? 'text-white/70' : 'text-slate-700'))}>
                             {p.name}
                           </p>
-                          {sel && <Check className="w-3 h-3 text-[#0066B3] flex-shrink-0 mt-0.5" />}
+                          {sel && <Check className="w-3.5 h-3.5 text-[#0066B3] flex-shrink-0 mt-0.5" />}
                         </div>
-                        <div className="flex justify-between items-center mt-0.5">
-                          <p className={cn("text-[10px]", isDark ? "text-white/20" : "text-slate-400")}>{p.category}</p>
-                          <p className="text-[#0066B3] text-xs font-bold">{fmt(p.total)}</p>
+                        <div className="flex justify-between items-center mt-1">
+                          <p className={cn("text-[10px]", isDark ? "text-white/25" : "text-slate-400")}>{p.category}</p>
+                          <p className={cn("text-[12px] font-semibold",
+                            sel ? 'text-[#0066B3]' : (isDark ? 'text-white/60' : 'text-slate-600'))}>
+                            {fmt(p.total)}
+                          </p>
                         </div>
                       </div>
                     );
@@ -697,11 +723,15 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
                       Ningún producto califica
                     </p>
                   )}
-                </div>
+                  </div>
 
-                <p className={cn("text-[10px] flex-shrink-0", isDark ? "text-white/20" : "text-slate-400")}>
-                  ⚠️ Extractor, Power Blender, Easy Release y Purificador: máx. 5%
-                </p>
+                <div className={cn("flex items-start gap-1.5 flex-shrink-0 pt-1",
+                  isDark ? "text-white/20" : "text-slate-400")}>
+                  <AlertTriangle className="w-3 h-3 flex-shrink-0 mt-0.5" />
+                  <p className="text-[10px] leading-relaxed">
+                    Extractor, Power Blender, Easy Release y Purificador: máx. 5%
+                  </p>
+                </div>
               </div>
             );
           })()}
