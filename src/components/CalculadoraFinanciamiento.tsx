@@ -1,7 +1,7 @@
 "use client";
 import { useState, useMemo, useEffect, useRef } from "react";
 import { Search, Plus, Check, X, Gift, AlertTriangle, CheckCircle2, AlertCircle } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { products } from "@/lib/products";
 import { cn } from "@/lib/utils";
 
@@ -34,6 +34,16 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
   const [mesSeleccionado, setMesSeleccionado] = useState<number | null>(null);
   const [isClearing, setIsClearing] = useState(false);
   const mobileChipsRef = useRef<HTMLDivElement>(null);
+  // Emil: respect iOS "Reduce Motion" system preference
+  const shouldReduceMotion = useReducedMotion();
+  // Emil: disable stagger + complex animations on small screens for perf
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
 
   const toggleRegalo = (p: typeof products[0]) => {
     setSelectedRegalos(prev =>
@@ -231,21 +241,23 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
         {/* Chips móvil — solo visible en móvil */}
         <div className="md:hidden flex gap-2 overflow-x-auto pb-2 custom-scrollbar"
              style={{ scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' }}>
-          <button onClick={() => setActiveCategory(null)}
-            className={cn("flex-shrink-0 px-4 py-2 rounded-full text-[11px] font-semibold transition duration-200 ease-out active:scale-[0.97]", 
+          <motion.button onClick={() => setActiveCategory(null)}
+            whileTap={shouldReduceMotion ? {} : { scale: 0.97, transition: { type: 'spring', stiffness: 400, damping: 30 } }}
+            className={cn("flex-shrink-0 px-4 py-2 rounded-full text-[11px] font-semibold transition duration-200 ease-out", 
               !activeCategory ? 'bg-[#0066B3] text-white shadow-sm shadow-[#0066B3]/30' : (isDark ? 'bg-white/8 text-white/60 hover:text-white/90' : 'bg-slate-100 text-slate-500 hover:text-slate-800')
             )}>
             Todos
-          </button>
+          </motion.button>
           {allCategories.map(cat => (
-            <button key={cat} onClick={() => handleCategoryClick(cat)}
-              className={cn("flex-shrink-0 px-4 py-2 rounded-full text-[11px] font-semibold whitespace-nowrap transition duration-200 ease-out active:scale-[0.97]", 
+            <motion.button key={cat} onClick={() => handleCategoryClick(cat)}
+              whileTap={shouldReduceMotion ? {} : { scale: 0.97, transition: { type: 'spring', stiffness: 400, damping: 30 } }}
+              className={cn("flex-shrink-0 px-4 py-2 rounded-full text-[11px] font-semibold whitespace-nowrap transition duration-200 ease-out", 
                 activeCategory === cat ? 'bg-[#0066B3] text-white shadow-sm shadow-[#0066B3]/30' : (isDark ? 'bg-white/8 text-white/60 hover:text-white/90' : 'bg-slate-100 text-slate-500 hover:text-slate-800')
               )}>
               {cat}
               {selectedItems.filter(i => i.category === cat).length > 0 &&
                 <span className="ml-1 opacity-80">·{selectedItems.filter(i => i.category === cat).length}</span>}
-            </button>
+            </motion.button>
           ))}
         </div>
 
@@ -336,9 +348,13 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
                     {filtered.filter(p => p.category === cat).map((product, productIdx) => (
                         <motion.div
                             key={product.code + product.name}
-                            initial={{ opacity: 0, y: 8 }}
+                            initial={shouldReduceMotion ? {} : { opacity: 0, y: 8 }}
                             animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.2, delay: Math.min(productIdx * 0.03, 0.25), ease: [0.23, 1, 0.32, 1] }}
+                            transition={{
+                              duration: shouldReduceMotion ? 0 : 0.2,
+                              delay: (isMobile || shouldReduceMotion) ? 0 : Math.min(productIdx * 0.03, 0.25),
+                              ease: [0.23, 1, 0.32, 1]
+                            }}
                             className={cn("flex items-center gap-3 px-3 py-2.5 rounded-xl transition duration-200 ease-out", 
                                 getCantidad(product) > 0
                                     ? (isDark ? 'bg-[#0066B3]/12 ring-1 ring-[#0066B3]/25' : 'bg-white ring-1 ring-[#0066B3]/30 shadow-sm') 
@@ -362,20 +378,22 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
                             <div className="flex items-center gap-1 flex-shrink-0" onClick={e => e.stopPropagation()}>
                               {getCantidad(product) > 0 && (
                                 <>
-                                  <button
+                                  <motion.button
                                     onClick={() => removeOne(product)}
+                                    whileTap={shouldReduceMotion ? {} : { scale: 0.88, transition: { type: 'spring', stiffness: 500, damping: 30 } }}
                                     className={cn("w-6 h-6 rounded-lg flex items-center justify-center transition text-sm font-bold",
                                       isDark ? "bg-white/8 text-white/60 hover:bg-red-500/40 hover:text-red-300" : "bg-slate-100 text-slate-500 hover:bg-red-100 hover:text-red-500")}
                                   >
                                     −
-                                  </button>
+                                  </motion.button>
                                   <span className="text-[#0066B3] font-bold text-sm w-5 text-center">
                                     {getCantidad(product)}
                                   </span>
                                 </>
                               )}
-                              <button
+                              <motion.button
                                 onClick={() => addOne(product)}
+                                whileTap={shouldReduceMotion ? {} : { scale: 0.88, transition: { type: 'spring', stiffness: 500, damping: 30 } }}
                                 className={cn("w-6 h-6 rounded-lg flex items-center justify-center transition text-sm font-bold",
                                   getCantidad(product) > 0
                                     ? 'bg-[#0066B3] text-white hover:bg-[#0066B3]/80'
@@ -383,7 +401,7 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
                                 )}
                               >
                                 +
-                              </button>
+                              </motion.button>
                             </div>
                         </motion.div>
                     ))}
