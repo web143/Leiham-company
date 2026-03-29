@@ -740,7 +740,7 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
                             ? (isDark ? 'opacity-30 border-transparent cursor-not-allowed' : 'opacity-30 border-transparent cursor-not-allowed')
                             : REGALOS_VOLUMEN.includes(p.code)
                             ? (isDark ? 'bg-yellow-500/5 border-yellow-500/20 hover:border-yellow-500/40' : 'bg-yellow-50 border-yellow-200 hover:border-yellow-400')
-                            : (isDark ? 'bg-slate-800/40 border-transparent hover:border-[#0066B3]/30' : 'bg-white border-slate-200 hover:border-[#0066B3]/30')
+                            : (isDark ? 'bg-white/[0.04] border border-white/6 hover:bg-white/[0.07] hover:border-white/10' : 'bg-white border border-slate-100 shadow-sm hover:shadow-md hover:border-slate-200')
                         )}>
                         
                         {/* Badge de volumen */}
