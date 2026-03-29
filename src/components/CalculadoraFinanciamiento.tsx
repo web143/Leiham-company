@@ -671,20 +671,20 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
               'CO2124', 'CU0825'
             ];
 
-            const elegibles = products
-              .filter(p =>
-                !EXCLUIR.some(ex =>
-                  p.category.toLowerCase().includes(ex) ||
-                  p.name.toLowerCase().includes(ex)
-                ) && p.total <= maxR
-              )
-              .sort((a, b) => {
-                const aEsVolumen = REGALOS_VOLUMEN.includes(a.code);
-                const bEsVolumen = REGALOS_VOLUMEN.includes(b.code);
-                if (aEsVolumen && !bEsVolumen) return -1;
-                if (!aEsVolumen && bEsVolumen) return 1;
-                return 0;
-              });
+            const elegiblesNormales = products.filter(p =>
+              !EXCLUIR.some(ex =>
+                p.category.toLowerCase().includes(ex) ||
+                p.name.toLowerCase().includes(ex)
+              ) && p.total <= maxR && !REGALOS_VOLUMEN.includes(p.code)
+            );
+
+            // Volumen siempre se muestran, sin importar maxR o EXCLUIR
+            const elegiblesVolumen = products.filter(p =>
+              REGALOS_VOLUMEN.includes(p.code)
+            );
+
+            // Combinar — volumen siempre primero
+            const elegibles = [...elegiblesVolumen, ...elegiblesNormales];
 
             return (
               <div className="flex flex-col flex-1 overflow-hidden gap-3">
@@ -727,14 +727,17 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
                   {elegibles.length > 0 ? elegibles.map(p => {
                     const sel = isRegaloSelected(p);
                     const totalRegalosActual = selectedRegalos.reduce((s, r) => s + r.total, 0);
+                    const fueraDeRango = REGALOS_VOLUMEN.includes(p.code) && p.total > maxR;
                     const excederiaSiAgrego = !sel && (totalRegalosActual + p.total) > maxR;
                     return (
                       <div
                         key={p.code + p.name}
-                        onClick={() => (!excederiaSiAgrego || sel) ? toggleRegalo(p) : null}
+                        onClick={() => !fueraDeRango && (!excederiaSiAgrego || sel) ? toggleRegalo(p) : null}
                         className={cn(
                           "px-3 py-2 rounded-xl border transition-all cursor-pointer relative",
-                          sel
+                          fueraDeRango
+                            ? (isDark ? 'bg-yellow-500/5 border-yellow-500/10 opacity-50 cursor-not-allowed' : 'bg-yellow-50 border-yellow-100 opacity-50 cursor-not-allowed')
+                            : sel
                             ? 'bg-[#0066B3]/20 border-[#0066B3]/40'
                             : excederiaSiAgrego
                             ? (isDark ? 'opacity-30 border-transparent cursor-not-allowed' : 'opacity-30 border-transparent cursor-not-allowed')
@@ -745,7 +748,9 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
                         
                         {/* Badge de volumen */}
                         {REGALOS_VOLUMEN.includes(p.code) && (
-                          <span className="absolute -top-1.5 -right-1.5 text-[9px] font-black bg-yellow-500 text-black px-1.5 py-0.5 rounded-full leading-none">
+                          <span className={cn("absolute -top-1.5 -right-1.5 text-[9px] font-black text-black px-1.5 py-0.5 rounded-full leading-none",
+                            fueraDeRango ? 'bg-yellow-500/50' : 'bg-yellow-500'
+                          )}>
                             ⭐ VOL
                           </span>
                         )}
