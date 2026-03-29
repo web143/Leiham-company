@@ -228,15 +228,9 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
       {/* Layout cuatro columnas */}
       <div className="max-w-[1400px] mx-auto px-4 pb-8 grid grid-cols-1 md:grid-cols-[220px_1fr_300px_300px] gap-4 h-auto md:h-[680px]">
 
-        {/* Chips móvil — solo visible en móvil, con spring drag elástico */}
-        <div ref={mobileChipsRef} className="md:hidden overflow-hidden pb-2">
-          <motion.div
-            className="flex gap-2"
-            drag="x"
-            dragConstraints={mobileChipsRef}
-            dragElastic={{ left: 0.1, right: 0.1 }}
-            style={{ touchAction: 'pan-y', userSelect: 'none' }}
-          >
+        {/* Chips móvil — solo visible en móvil */}
+        <div className="md:hidden flex gap-2 overflow-x-auto pb-2 custom-scrollbar"
+             style={{ scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' }}>
           <button onClick={() => setActiveCategory(null)}
             className={cn("flex-shrink-0 px-4 py-2 rounded-full text-[11px] font-semibold transition duration-200 ease-out active:scale-[0.97]", 
               !activeCategory ? 'bg-[#0066B3] text-white shadow-sm shadow-[#0066B3]/30' : (isDark ? 'bg-white/8 text-white/60 hover:text-white/90' : 'bg-slate-100 text-slate-500 hover:text-slate-800')
@@ -253,7 +247,6 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
                 <span className="ml-1 opacity-80">·{selectedItems.filter(i => i.category === cat).length}</span>}
             </button>
           ))}
-          </motion.div>
         </div>
 
         {/* COLUMNA 1 — Navegación / categorías (Solo Desktop) */}
