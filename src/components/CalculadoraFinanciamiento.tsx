@@ -261,7 +261,7 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
         </div>
 
         {/* COLUMNA 2 — Lista de productos con buscador */}
-        <div className={cn("rounded-2xl p-4 flex flex-col h-auto md:h-full overflow-hidden transition-all duration-300", isDark ? "bg-white/[0.03] border border-white/8" : "bg-white border border-slate-200/80")}>
+        <div className={cn("rounded-2xl p-4 flex flex-col h-auto md:h-full overflow-hidden transition-all duration-300", isDark ? "bg-white/[0.03] border border-white/8" : "bg-slate-50 border border-slate-200/80")}>
 
           {/* Header */}
           <div className="flex justify-between items-center mb-5">
@@ -321,8 +321,8 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
                             key={product.code + product.name}
                             className={cn("flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 cursor-pointer", 
                                 isSelected(product) 
-                                    ? (isDark ? 'bg-[#0066B3]/12 ring-1 ring-[#0066B3]/25' : 'bg-[#0066B3]/6 ring-1 ring-[#0066B3]/20') 
-                                    : (isDark ? 'hover:bg-white/5' : 'hover:bg-slate-50')
+                                    ? (isDark ? 'bg-[#0066B3]/12 ring-1 ring-[#0066B3]/25' : 'bg-white ring-1 ring-[#0066B3]/30 shadow-sm') 
+                                    : (isDark ? 'hover:bg-white/5' : 'bg-white border border-slate-100 shadow-sm hover:border-[#0066B3]/20 hover:shadow-md')
                             )}
                             onClick={() => toggle(product)}
                         >
@@ -596,12 +596,12 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
 
         {/* COLUMNA 4 — Regalos */}
         <div className={cn("rounded-2xl p-4 flex flex-col border transition-all duration-300 h-full overflow-hidden",
-          isDark ? "bg-slate-900/40 border-white/5" : "bg-slate-100 border-slate-200")}>
+          isDark ? "bg-white/[0.03] border-white/8" : "bg-white border-slate-200/80")}>
           
           {/* Header */}
           <div className="flex flex-wrap items-center gap-2 mb-3">
             <span>🎁</span>
-            <h3 className={cn("text-sm font-black uppercase tracking-widest", isDark ? "text-white" : "text-slate-900")}>
+            <h3 className={cn("text-[13px] font-semibold tracking-tight", isDark ? "text-white" : "text-slate-900")}>
               Regalos
             </h3>
             {totalProductos > 0 && (
@@ -661,8 +661,8 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
                 </p>
 
                 {/* Lista vertical scrolleable */}
-                <div className="flex-1 overflow-y-auto space-y-1.5 pr-1"
-                  style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(0,102,179,0.2) transparent' }}>
+                <div className="flex-1 overflow-y-auto space-y-1 pr-1" data-lenis-prevent
+                  style={{ scrollbarWidth: 'thin', scrollbarColor: isDark ? 'rgba(255,255,255,0.06) transparent' : 'rgba(0,0,0,0.08) transparent' }}>
                   {elegibles.length > 0 ? elegibles.map(p => {
                     const sel = isRegaloSelected(p);
                     const totalRegalosActual = selectedRegalos.reduce((s, r) => s + r.total, 0);
@@ -674,10 +674,10 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
                         className={cn(
                           "px-3 py-2 rounded-xl border transition-all cursor-pointer",
                           sel
-                            ? 'bg-[#0066B3]/20 border-[#0066B3]/40'
+                            ? (isDark ? 'bg-[#0066B3]/12 ring-1 ring-[#0066B3]/30' : 'bg-[#0066B3]/6 ring-1 ring-[#0066B3]/20')
                             : excederiaSiAgrego
-                            ? (isDark ? 'opacity-30 border-transparent cursor-not-allowed' : 'opacity-30 border-transparent cursor-not-allowed')
-                            : (isDark ? 'bg-slate-800/40 border-transparent hover:border-[#0066B3]/30' : 'bg-white border-slate-200 hover:border-[#0066B3]/30')
+                            ? (isDark ? 'opacity-25 cursor-not-allowed bg-white/[0.02]' : 'opacity-30 cursor-not-allowed bg-slate-50')
+                            : (isDark ? 'bg-white/[0.04] border border-white/8 hover:bg-white/[0.07] hover:border-[#0066B3]/25' : 'bg-white border border-slate-100 shadow-sm hover:border-[#0066B3]/30 hover:shadow-md')
                         )}>
                         <div className="flex justify-between items-start">
                           <p className={cn("text-xs font-semibold leading-tight flex-1 mr-2",
