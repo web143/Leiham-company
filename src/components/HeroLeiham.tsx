@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useRef, useState, useEffect } from "react";
-import { motion, useScroll, useTransform, useSpring, useMotionValue, MotionValue } from "framer-motion";
+import { motion, useScroll, useTransform, useSpring, useMotionValue, MotionValue, useMotionTemplate } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
@@ -296,6 +296,9 @@ function FloatingProduct({
     const moveY = useTransform(progress, [0, 0.5], [0, scrollTarget.y]);
     const scaleOut = useTransform(progress, [0, 0.5], [1, scrollTarget.scale]);
     const opacityOut = useTransform(progress, [0, 0.4], [1, 0]);
+    
+    // Emil Kowalski GPU-acceleration fix: use string interpolation instead of individual x/y props
+    const transformString = useMotionTemplate`translateX(${moveX}px) translateY(${moveY}px) scale(${scaleOut})`;
 
     useEffect(() => {
         if (typeof window === 'undefined') return;
@@ -342,9 +345,7 @@ function FloatingProduct({
             ref={ref}
             style={{
                 opacity: opacityOut,
-                scale: scaleOut,
-                x: moveX,
-                y: moveY,
+                transform: transformString,
                 willChange: "transform, opacity",
                 // Force 3D compositing context on Safari — more reliable than willChange alone
                 perspective: 1000,

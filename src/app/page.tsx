@@ -37,7 +37,7 @@ export default function Home() {
     <main className={`transition-colors duration-300 ${mounted ? (isDark ? 'bg-black' : 'bg-white') : 'bg-black'}`}>
       <button
         onClick={toggleTheme}
-        className="fixed top-3 right-3 z-[100] flex items-center gap-1 p-1 rounded-full transition-all duration-300 border bg-slate-800 border-slate-700"
+        className="fixed top-3 right-3 z-[100] flex items-center gap-1 p-1 rounded-full border bg-slate-800 border-slate-700 transition duration-200 ease-out active:scale-[0.97]"
         style={{ width: '56px', height: '28px' }}
       >
         <span className={`text-sm flex-1 flex justify-center ${!isDark ? 'opacity-100' : 'opacity-30'}`}>☀️</span>

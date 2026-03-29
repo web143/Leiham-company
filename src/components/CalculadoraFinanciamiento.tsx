@@ -214,11 +214,11 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
   }, [selectedItems]);
 
   return (
-    <section className={cn("w-full min-h-screen transition-colors duration-300", isDark ? "bg-black" : "bg-white")}>
+    <section className={cn("w-full min-h-screen transition-colors duration-200 ease-out", isDark ? "bg-black" : "bg-white")}>
       
       <div className="text-center py-4 px-4">
         <p className="text-[#0066B3] text-[11px] tracking-[0.25em] uppercase mb-2 font-medium">Leiham Company</p>
-        <h2 className={cn("text-2xl font-semibold tracking-tight transition-colors duration-300", isDark ? "text-white" : "text-slate-900")}>
+        <h2 className={cn("text-2xl font-semibold tracking-tight transition-colors duration-200 ease-out", isDark ? "text-white" : "text-slate-900")}>
           Calculadora de <span className="text-[#0066B3]">Financiamiento</span>
         </h2>
       </div>
@@ -230,14 +230,14 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
         <div className="md:hidden flex gap-2 overflow-x-auto pb-2 custom-scrollbar"
              style={{ scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' }}>
           <button onClick={() => setActiveCategory(null)}
-            className={cn("flex-shrink-0 px-4 py-2 rounded-full text-[11px] font-semibold transition-all duration-200", 
+            className={cn("flex-shrink-0 px-4 py-2 rounded-full text-[11px] font-semibold transition duration-200 ease-out", 
               !activeCategory ? 'bg-[#0066B3] text-white shadow-sm shadow-[#0066B3]/30' : (isDark ? 'bg-white/8 text-white/60 hover:text-white/90' : 'bg-slate-100 text-slate-500 hover:text-slate-800')
             )}>
             Todos
           </button>
           {allCategories.map(cat => (
             <button key={cat} onClick={() => handleCategoryClick(cat)}
-              className={cn("flex-shrink-0 px-4 py-2 rounded-full text-[11px] font-semibold whitespace-nowrap transition-all duration-200", 
+              className={cn("flex-shrink-0 px-4 py-2 rounded-full text-[11px] font-semibold whitespace-nowrap transition duration-200 ease-out", 
                 activeCategory === cat ? 'bg-[#0066B3] text-white shadow-sm shadow-[#0066B3]/30' : (isDark ? 'bg-white/8 text-white/60 hover:text-white/90' : 'bg-slate-100 text-slate-500 hover:text-slate-800')
               )}>
               {cat}
@@ -248,8 +248,8 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
         </div>
 
         {/* COLUMNA 1 — Navegación / categorías (Solo Desktop) */}
-        <div className={cn("hidden md:flex rounded-2xl p-4 flex-col h-full overflow-hidden transition-all duration-300", isDark ? "bg-white/[0.03] border border-white/8" : "bg-slate-50 border border-slate-200/80")}>
-          <h3 className={cn("font-semibold text-base mb-4 tracking-tight transition-colors duration-300", isDark ? "text-white" : "text-slate-900")}>Categorías</h3>
+        <div className={cn("hidden md:flex rounded-2xl p-4 flex-col h-full overflow-hidden transition duration-200 ease-out", isDark ? "bg-white/[0.03] border border-white/8" : "bg-slate-50 border border-slate-200/80")}>
+          <h3 className={cn("font-semibold text-base mb-4 tracking-tight transition-colors duration-200 ease-out", isDark ? "text-white" : "text-slate-900")}>Categorías</h3>
           <div className="space-y-0.5 flex-1 overflow-y-auto pr-1 custom-scrollbar" data-lenis-prevent>
             {allCategories.map(cat => {
               const count = selectedItems.filter(i => i.category === cat).length;
@@ -257,7 +257,7 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
                 <button
                   key={cat}
                   onClick={() => handleCategoryClick(cat)}
-                  className={cn("w-full text-left px-3 py-2 rounded-xl text-[11px] flex justify-between items-center transition-all duration-200 cursor-pointer", 
+                  className={cn("w-full text-left px-3 py-2 rounded-xl text-[11px] flex justify-between items-center transition duration-200 ease-out cursor-pointer", 
                     activeCategory === cat 
                       ? (isDark ? 'bg-white/10 text-white font-medium' : 'bg-[#0066B3]/8 text-[#0066B3] font-medium') 
                       : (isDark ? 'text-white/40 hover:text-white/80 hover:bg-white/5' : 'text-slate-500 hover:text-slate-800 hover:bg-slate-100')
@@ -276,11 +276,11 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
         </div>
 
         {/* COLUMNA 2 — Lista de productos con buscador */}
-        <div className={cn("rounded-2xl p-4 flex flex-col h-auto md:h-full overflow-hidden transition-all duration-300", isDark ? "bg-white/[0.03] border border-white/8" : "bg-slate-50 border border-slate-200/80")}>
+        <div className={cn("rounded-2xl p-4 flex flex-col h-auto md:h-full overflow-hidden transition duration-200 ease-out", isDark ? "bg-white/[0.03] border border-white/8" : "bg-slate-50 border border-slate-200/80")}>
 
           {/* Header */}
           <div className="flex justify-between items-center mb-5">
-            <h3 className={cn("font-semibold text-base tracking-tight transition-colors duration-300", isDark ? "text-white" : "text-slate-900")}>Productos</h3>
+            <h3 className={cn("font-semibold text-base tracking-tight transition-colors duration-200 ease-out", isDark ? "text-white" : "text-slate-900")}>Productos</h3>
             {selectedItems.length > 0 && (
               <button
                 onClick={() => setSelectedItems([])}
@@ -298,7 +298,7 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
               value={search}
               onChange={e => setSearch(e.target.value)}
               placeholder="Buscar producto o código..."
-              className={cn("w-full pl-10 pr-9 py-3 rounded-xl border outline-none text-[13px] transition-all duration-200", 
+              className={cn("w-full pl-10 pr-9 py-3 rounded-xl border outline-none text-[13px] transition duration-200 ease-out", 
                 isDark 
                   ? "bg-white/5 border-white/8 text-white placeholder:text-white/20 focus:border-[#0066B3]/60 focus:bg-white/8 focus:shadow-[0_0_0_3px_rgba(0,102,179,0.12)]" 
                   : "bg-slate-50 border-slate-200 text-slate-900 placeholder:text-slate-400 focus:border-[#0066B3]/50 focus:bg-white focus:shadow-[0_0_0_3px_rgba(0,102,179,0.08)]")}
@@ -326,7 +326,7 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
                 ref={el => { categoryRefs.current[cat] = el; }}
                 className="mb-4 last:mb-0"
               >
-                <p className={cn("text-[10px] font-semibold uppercase tracking-[0.15em] py-2 px-2 sticky top-0 backdrop-blur-md rounded-lg z-10 mb-1 border-b transition-all duration-300", 
+                <p className={cn("text-[10px] font-semibold uppercase tracking-[0.15em] py-2 px-2 sticky top-0 backdrop-blur-md rounded-lg z-10 mb-1 border-b transition duration-200 ease-out", 
                   isDark ? "text-white/25 bg-black/60 border-white/6" : "text-slate-400 bg-white/95 border-slate-100")}>
                   {cat}
                 </p>
@@ -334,7 +334,7 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
                     {filtered.filter(p => p.category === cat).map(product => (
                         <motion.div
                             key={product.code + product.name}
-                            className={cn("flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200", 
+                            className={cn("flex items-center gap-3 px-3 py-2.5 rounded-xl transition duration-200 ease-out", 
                                 getCantidad(product) > 0
                                     ? (isDark ? 'bg-[#0066B3]/12 ring-1 ring-[#0066B3]/25' : 'bg-white ring-1 ring-[#0066B3]/30 shadow-sm') 
                                     : (isDark ? 'hover:bg-white/5' : 'bg-white border border-slate-100 shadow-sm hover:border-[#0066B3]/20 hover:shadow-md')
@@ -359,7 +359,7 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
                                 <>
                                   <button
                                     onClick={() => removeOne(product)}
-                                    className={cn("w-6 h-6 rounded-lg flex items-center justify-center transition-all text-sm font-bold",
+                                    className={cn("w-6 h-6 rounded-lg flex items-center justify-center transition text-sm font-bold",
                                       isDark ? "bg-white/8 text-white/60 hover:bg-red-500/40 hover:text-red-300" : "bg-slate-100 text-slate-500 hover:bg-red-100 hover:text-red-500")}
                                   >
                                     −
@@ -371,7 +371,7 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
                               )}
                               <button
                                 onClick={() => addOne(product)}
-                                className={cn("w-6 h-6 rounded-lg flex items-center justify-center transition-all text-sm font-bold",
+                                className={cn("w-6 h-6 rounded-lg flex items-center justify-center transition text-sm font-bold",
                                   getCantidad(product) > 0
                                     ? 'bg-[#0066B3] text-white hover:bg-[#0066B3]/80'
                                     : (isDark ? 'bg-white/8 text-white/40 hover:bg-[#0066B3]/40 hover:text-white' : 'bg-slate-100 text-slate-400 hover:bg-[#0066B3]/15 hover:text-[#0066B3]')
@@ -388,7 +388,7 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
           </div>
 
           {/* Footer total */}
-          <div className={cn("border-t pt-3 mt-3 flex justify-between items-center transition-all duration-300", isDark ? "border-white/6" : "border-slate-100")}>
+          <div className={cn("border-t pt-3 mt-3 flex justify-between items-center transition duration-200 ease-out", isDark ? "border-white/6" : "border-slate-100")}>
             <div>
               <p className={cn("text-[11px] font-medium mb-0.5 transition-colors", isDark ? "text-white/30" : "text-slate-400")}>Seleccionados</p>
               <p className={cn("text-base font-semibold transition-colors", isDark ? "text-white" : "text-slate-900")}>{selectedItems.length} <span className={cn("text-[11px] font-normal", isDark ? "text-white/30" : "text-slate-400")}>productos</span></p>
@@ -401,11 +401,11 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
         </div>
 
         {/* COLUMNA 3 — Calculadora (Unificada para todos los tamaños) */}
-        <div className={cn("rounded-2xl p-5 flex flex-col gap-4 border transition-all duration-300 h-full overflow-y-auto custom-scrollbar", 
+        <div className={cn("rounded-2xl p-5 flex flex-col gap-4 border transition duration-200 ease-out h-full overflow-y-auto custom-scrollbar", 
           isDark ? "bg-white/[0.03] border-white/8 shadow-2xl shadow-black/30" : "bg-white border-slate-200/80 shadow-xl shadow-slate-100")} data-lenis-prevent>
 
           {/* Card Total — estilo Apple: número flotante, sin fondo saturado */}
-          <div className={cn("rounded-2xl px-5 py-4 border transition-all duration-300", isDark ? "bg-white/[0.04] border-white/8" : "bg-slate-50 border-slate-100")}>
+          <div className={cn("rounded-2xl px-5 py-4 border transition duration-200 ease-out", isDark ? "bg-white/[0.04] border-white/8" : "bg-slate-50 border-slate-100")}>
             <p className={cn("text-[11px] font-medium mb-1 transition-colors", isDark ? "text-white/35" : "text-slate-400")}>Total a pagar</p>
             <p className={cn("text-3xl font-light tracking-tight transition-colors", isDark ? "text-white" : "text-slate-900")}>{fmt(totalProductos)}</p>
           </div>
@@ -422,7 +422,7 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
                     value={inicialDado}
                     onChange={e => handleInicialChange(e.target.value)}
                     placeholder="0.00"
-                    className={cn("w-full pl-8 pr-4 py-3.5 rounded-xl border outline-none transition-all font-mono text-[15px] md:text-sm", 
+                    className={cn("w-full pl-8 pr-4 py-3.5 rounded-xl border outline-none transition font-mono text-[15px] md:text-sm", 
                       isDark 
                         ? "bg-white/5 border-white/8 text-white placeholder:text-white/15 focus:border-[#0066B3]/60 focus:shadow-[0_0_0_3px_rgba(0,102,179,0.12)]" 
                         : "bg-slate-50 border-slate-200 text-slate-900 placeholder:text-slate-300 focus:border-[#0066B3]/50 focus:bg-white focus:shadow-[0_0_0_3px_rgba(0,102,179,0.08)]")}
@@ -447,7 +447,7 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
                           setPorcentaje(4);
                         }
                       }}
-                      className={cn("w-16 text-center px-2 py-1 rounded-lg border outline-none text-sm font-semibold transition-all", 
+                      className={cn("w-16 text-center px-2 py-1 rounded-lg border outline-none text-sm font-semibold transition", 
                         isDark ? "bg-white/8 border-white/10 text-white" : "bg-white border-slate-200 text-slate-800")}
                     />
                     <span className={cn("text-sm font-medium", isDark ? "text-white/40" : "text-slate-500")}>%</span>
@@ -458,7 +458,7 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
                   step={0.01}
                   value={porcentaje}
                   onChange={e => handlePorcentajeChange(Number(e.target.value))}
-                  className={cn("w-full h-1.5 rounded-full appearance-none cursor-pointer accent-[#0066B3] transition-all", 
+                  className={cn("w-full h-1.5 rounded-full appearance-none cursor-pointer accent-[#0066B3] transition", 
                     isDark ? "bg-white/10" : "bg-slate-200")}
                 />
                 <div className={cn("flex justify-between text-[10px] font-medium mt-2 transition-colors", 
@@ -469,7 +469,7 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
           </div>
 
           {/* Desglose */}
-          <div className={cn("space-y-2 border-t pt-3 transition-all duration-300", isDark ? "border-white/10" : "border-slate-200")}>
+          <div className={cn("space-y-2 border-t pt-3 transition duration-200 ease-out", isDark ? "border-white/10" : "border-slate-200")}>
             {[
               { label: 'Precio de compra', value: fmt(precioSinItbis) },
               { label: 'ITBIS', value: fmt(itbisTotal) },
@@ -483,7 +483,7 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
               ] : []),
             ].map((row) => (
               <div key={row.label}
-                className="flex justify-between items-center py-1 transition-all duration-300">
+                className="flex justify-between items-center py-1 transition duration-200 ease-out">
                 <span className={cn(isDark ? 'text-white/30 text-[9px] font-bold uppercase tracking-widest' : 'text-slate-400 text-[9px] font-bold uppercase tracking-widest')}>
                   {row.label}
                 </span>
@@ -514,7 +514,7 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
                   <select
                     value={mesSeleccionado ?? ""}
                     onChange={e => handleMesChange(Number(e.target.value))}
-                    className={cn("w-full pl-4 pr-9 py-3 rounded-xl border outline-none text-[13px] font-medium transition-all cursor-pointer appearance-none",
+                    className={cn("w-full pl-4 pr-9 py-3 rounded-xl border outline-none text-[13px] font-medium transition cursor-pointer appearance-none",
                       isDark
                         ? "bg-white/5 border-white/8 text-white focus:border-[#0066B3]/60 focus:shadow-[0_0_0_3px_rgba(0,102,179,0.12)]"
                         : "bg-slate-50 border-slate-200 text-slate-800 focus:border-[#0066B3]/50 focus:bg-white focus:shadow-[0_0_0_3px_rgba(0,102,179,0.08)]")}
@@ -546,7 +546,7 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
                     value={cuotaInput}
                     onChange={e => handleCuotaChange(e.target.value)}
                     placeholder="0.00"
-                    className={cn("w-full pl-8 pr-4 py-3 rounded-xl border outline-none font-mono text-[13px] transition-all",
+                    className={cn("w-full pl-8 pr-4 py-3 rounded-xl border outline-none font-mono text-[13px] transition",
                       isDark
                         ? "bg-white/5 border-white/8 text-white placeholder:text-white/15 focus:border-[#0066B3]/60 focus:shadow-[0_0_0_3px_rgba(0,102,179,0.12)]"
                         : "bg-slate-50 border-slate-200 text-slate-900 placeholder:text-slate-300 focus:border-[#0066B3]/50 focus:bg-white focus:shadow-[0_0_0_3px_rgba(0,102,179,0.08)]")}
@@ -608,7 +608,7 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
 
               {/* Resultado del dropdown */}
               {mesSeleccionado && filaActiva && montoFinanciar > 0 && (
-                <div className={cn("px-4 py-3 rounded-xl border transition-all duration-300",
+                <div className={cn("px-4 py-3 rounded-xl border transition duration-200 ease-out",
                   isDark ? "bg-[#0066B3]/10 border-[#0066B3]/20 shadow-lg shadow-[#0066B3]/5" : "bg-[#0066B3]/5 border-[#0066B3]/20 shadow-md shadow-slate-200")}>
                   <div className="flex justify-between items-center">
                     <div>
@@ -627,7 +627,7 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
         </div>
 
         {/* COLUMNA 4 — Regalos */}
-        <div className={cn("rounded-2xl p-4 flex flex-col border transition-all duration-300 h-full overflow-hidden",
+        <div className={cn("rounded-2xl p-4 flex flex-col border transition duration-200 ease-out h-full overflow-hidden",
           isDark ? "bg-white/[0.03] border-white/8" : "bg-slate-50 border-slate-200/80")}>
           
           {/* Header */}
@@ -734,7 +734,7 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
                         key={p.code + p.name}
                         onClick={() => !fueraDeRango && (!excederiaSiAgrego || sel) ? toggleRegalo(p) : null}
                         className={cn(
-                          "px-3 py-2 rounded-xl border transition-all cursor-pointer relative",
+                          "px-3 py-2 rounded-xl border transition cursor-pointer relative active:scale-[0.99]"",
                           fueraDeRango
                             ? (isDark ? 'bg-yellow-500/5 border-yellow-500/10 opacity-50 cursor-not-allowed' : 'bg-yellow-50 border-yellow-100 opacity-50 cursor-not-allowed')
                             : sel
