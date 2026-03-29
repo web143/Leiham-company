@@ -665,12 +665,26 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
             const cerca = totalRegalos > 0 && porcentajeUsado >= 7 && totalRegalos <= maxR;
             const excedido = totalRegalos > maxR;
 
-            const elegibles = products.filter(p =>
-              !EXCLUIR.some(ex =>
-                p.category.toLowerCase().includes(ex) ||
-                p.name.toLowerCase().includes(ex)
-              ) && p.total <= maxR
-            );
+            const REGALOS_VOLUMEN = [
+              'PR1044', 'PR0196', 'PR1675', 'PR1685',
+              'PR2128', 'PR2129', 'PR0008', 'PR0021',
+              'CO2124', 'CU0825'
+            ];
+
+            const elegibles = products
+              .filter(p =>
+                !EXCLUIR.some(ex =>
+                  p.category.toLowerCase().includes(ex) ||
+                  p.name.toLowerCase().includes(ex)
+                ) && p.total <= maxR
+              )
+              .sort((a, b) => {
+                const aEsVolumen = REGALOS_VOLUMEN.includes(a.code);
+                const bEsVolumen = REGALOS_VOLUMEN.includes(b.code);
+                if (aEsVolumen && !bEsVolumen) return -1;
+                if (!aEsVolumen && bEsVolumen) return 1;
+                return 0;
+              });
 
             return (
               <div className="flex flex-col flex-1 overflow-hidden gap-3">
@@ -719,34 +733,36 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
                         key={p.code + p.name}
                         onClick={() => (!excederiaSiAgrego || sel) ? toggleRegalo(p) : null}
                         className={cn(
-                          "px-3 py-2.5 rounded-xl transition-all duration-200 cursor-pointer",
+                          "px-3 py-2 rounded-xl border transition-all cursor-pointer relative",
                           sel
-                            ? (isDark
-                                ? 'bg-[#0066B3]/10 ring-1 ring-[#0066B3]/25'
-                                : 'bg-white ring-1 ring-[#0066B3]/25 shadow-sm')
+                            ? 'bg-[#0066B3]/20 border-[#0066B3]/40'
                             : excederiaSiAgrego
-                            ? (isDark
-                                ? 'opacity-20 cursor-not-allowed bg-white/[0.02]'
-                                : 'opacity-25 cursor-not-allowed bg-slate-50')
-                            : (isDark
-                                ? 'bg-white/[0.04] border border-white/6 hover:bg-white/[0.07] hover:border-white/10'
-                                : 'bg-white border border-slate-100 shadow-sm hover:shadow-md hover:border-slate-200')
+                            ? (isDark ? 'opacity-30 border-transparent cursor-not-allowed' : 'opacity-30 border-transparent cursor-not-allowed')
+                            : REGALOS_VOLUMEN.includes(p.code)
+                            ? (isDark ? 'bg-yellow-500/5 border-yellow-500/20 hover:border-yellow-500/40' : 'bg-yellow-50 border-yellow-200 hover:border-yellow-400')
+                            : (isDark ? 'bg-slate-800/40 border-transparent hover:border-[#0066B3]/30' : 'bg-white border-slate-200 hover:border-[#0066B3]/30')
                         )}>
-                        <div className="flex justify-between items-start gap-2">
-                          <p className={cn("text-[12px] font-medium leading-tight flex-1",
-                            sel
-                              ? (isDark ? 'text-white' : 'text-slate-900')
-                              : (isDark ? 'text-white/70' : 'text-slate-700'))}>
+                        
+                        {/* Badge de volumen */}
+                        {REGALOS_VOLUMEN.includes(p.code) && (
+                          <span className="absolute -top-1.5 -right-1.5 text-[9px] font-black bg-yellow-500 text-black px-1.5 py-0.5 rounded-full leading-none">
+                            ⭐ VOL
+                          </span>
+                        )}
+
+                        <div className="flex justify-between items-start">
+                          <p className={cn("text-xs font-semibold leading-tight flex-1 mr-2",
+                            sel ? 'text-[#0066B3]' : 
+                            REGALOS_VOLUMEN.includes(p.code) 
+                              ? (isDark ? 'text-yellow-400/90' : 'text-yellow-700')
+                              : (isDark ? "text-white/80" : "text-slate-700"))}>
                             {p.name}
                           </p>
-                          {sel && <Check className="w-3.5 h-3.5 text-[#0066B3] flex-shrink-0 mt-0.5" />}
+                          {sel && <Check className="w-3 h-3 text-[#0066B3] flex-shrink-0 mt-0.5" />}
                         </div>
-                        <div className="flex justify-between items-center mt-1">
-                          <p className={cn("text-[10px]", isDark ? "text-white/25" : "text-slate-400")}>{p.category}</p>
-                          <p className={cn("text-[12px] font-semibold",
-                            sel ? 'text-[#0066B3]' : (isDark ? 'text-white/60' : 'text-slate-600'))}>
-                            {fmt(p.total)}
-                          </p>
+                        <div className="flex justify-between items-center mt-0.5">
+                          <p className={cn("text-[10px]", isDark ? "text-white/20" : "text-slate-400")}>{p.category}</p>
+                          <p className={cn("text-xs font-bold", sel ? 'text-[#0066B3]' : 'text-[#0066B3]')}>{fmt(p.total)}</p>
                         </div>
                       </div>
                     );
