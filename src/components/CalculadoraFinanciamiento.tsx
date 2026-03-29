@@ -734,7 +734,7 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
                         key={p.code + p.name}
                         onClick={() => !fueraDeRango && (!excederiaSiAgrego || sel) ? toggleRegalo(p) : null}
                         className={cn(
-                          "px-3 py-2 rounded-xl border transition cursor-pointer relative active:scale-[0.99]"",
+                          "px-3 py-2 rounded-xl border transition cursor-pointer relative active:scale-[0.99]",
                           fueraDeRango
                             ? (isDark ? 'bg-yellow-500/5 border-yellow-500/10 opacity-50 cursor-not-allowed' : 'bg-yellow-50 border-yellow-100 opacity-50 cursor-not-allowed')
                             : sel
