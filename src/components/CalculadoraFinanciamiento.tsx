@@ -468,8 +468,8 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
               </div>
           </div>
 
-          {/* Desglose — estilo iOS Settings rows */}
-          <div className={cn("rounded-xl overflow-hidden border transition-all duration-300", isDark ? "border-white/6" : "border-slate-100")}>
+          {/* Desglose */}
+          <div className={cn("space-y-2 border-t pt-3 transition-all duration-300", isDark ? "border-white/10" : "border-slate-200")}>
             {[
               { label: 'Precio de compra', value: fmt(precioSinItbis) },
               { label: 'ITBIS', value: fmt(itbisTotal) },
@@ -481,21 +481,17 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
               ...(filaActiva && montoFinanciar > 0 && !bajoDeMinimoMsg ? [
                 { label: 'Plan de pagos', value: `${filaActiva.cuotas} meses — ${filaActiva.pct.toFixed(2)}%`, highlight: true },
               ] : []),
-            ].map((row, i, arr) => (
+            ].map((row) => (
               <div key={row.label}
-                className={cn(
-                  "flex justify-between items-center px-4 py-2.5 transition-all duration-200",
-                  isDark ? "bg-white/[0.025]" : "bg-white",
-                  i < arr.length - 1 && (isDark ? "border-b border-white/5" : "border-b border-slate-100")
-                )}>
-                <span className={cn(isDark ? 'text-white/35 text-[11px] font-medium' : 'text-slate-500 text-[11px] font-medium')}>
+                className="flex justify-between items-center py-1 transition-all duration-300">
+                <span className={cn(isDark ? 'text-white/30 text-[9px] font-bold uppercase tracking-widest' : 'text-slate-400 text-[9px] font-bold uppercase tracking-widest')}>
                   {row.label}
                 </span>
                 <span className={cn(
-                  'text-[13px] font-mono',
+                  'text-xs font-mono font-bold',
                   (row as { highlight?: boolean }).highlight
-                    ? 'text-[#0066B3] font-semibold'
-                    : isDark ? 'text-white/90 font-medium' : 'text-slate-800 font-medium'
+                    ? 'text-[#0066B3]'
+                    : isDark ? 'text-white' : 'text-slate-900'
                 )}>
                   {row.value}
                 </span>
