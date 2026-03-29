@@ -667,7 +667,7 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
 
             const REGALOS_VOLUMEN = [
               'PR1044', 'PR0196', 'PR1675', 'PR1685',
-              'PR2128', 'PR2129', 'PR0008', 'PR0021',
+              'PR2120', 'PR2129', 'PR0008', 'PR0021',
               'CO2124', 'CU0825'
             ];
 

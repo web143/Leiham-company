@@ -78,7 +78,7 @@ export const products = [
     { code: "PR2134", name: "Kit Completo Baristart", category: "Café / Té / Chocolate", price: 4491.53, itbis: 808.47, total: 5300 },
     { code: "CO0801", name: "Royal Prestige Expertea", category: "Café / Té / Chocolate", price: 32627.12, itbis: 5872.88, total: 38500 },
     { code: "PR2129", name: "Cafetera RP (Greca) Royal Espresso 10 Tazas Doble Pared", category: "Café / Té / Chocolate", price: 14406.78, itbis: 2593.22, total: 17000 },
-    { code: "PR2128", name: "Cafetera RP (Greca) Royal Espresso 4 Tazas", category: "Café / Té / Chocolate", price: 11864.41, itbis: 2135.59, total: 14000 },
+    { code: "PR2120", name: "Cafetera RP (Greca) Royal Espresso 4 Tazas", category: "Café / Té / Chocolate", price: 11864.41, itbis: 2135.59, total: 14000 },
     { code: "CO0101", name: "Chocolatera RP", category: "Café / Té / Chocolate", price: 22033.90, itbis: 3966.10, total: 26000 },
 
     // ── ELECTRODOMÉSTICOS ────────────────────────────────────────
