@@ -23,7 +23,7 @@ const TABLA_PAGOS = [
 ];
 
 export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: boolean }) {
-  const [selectedItems, setSelectedItems] = useState<(typeof products[0] & { cantidad: number })[]>([]);
+  const [selectedItems, setSelectedItems] = useState<typeof products>([]);
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [inicialDado, setInicialDado] = useState("");
@@ -64,38 +64,30 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
     }, 50);
   };
 
-  const getItem = (p: typeof products[0]) =>
-    selectedItems.find(i => i.code === p.code && i.name === p.name);
-
-  const isSelected = (p: typeof products[0]) => !!getItem(p);
-
-  const getCantidad = (p: typeof products[0]) => getItem(p)?.cantidad ?? 0;
+  const getCantidad = (p: typeof products[0]) =>
+    selectedItems.filter(i => i.code === p.code && i.name === p.name).length;
 
   const addOne = (p: typeof products[0]) => {
-    setSelectedItems(prev => {
-      const existing = prev.find(i => i.code === p.code && i.name === p.name);
-      if (existing) {
-        return prev.map(i => i.code === p.code && i.name === p.name
-          ? { ...i, cantidad: i.cantidad + 1 }
-          : i
-        );
-      }
-      return [...prev, { ...p, cantidad: 1 }];
-    });
+    setSelectedItems(prev => [...prev, p]);
   };
 
   const removeOne = (p: typeof products[0]) => {
     setSelectedItems(prev => {
-      const existing = prev.find(i => i.code === p.code && i.name === p.name);
-      if (!existing) return prev;
-      if (existing.cantidad <= 1) {
-        return prev.filter(i => !(i.code === p.code && i.name === p.name));
-      }
-      return prev.map(i => i.code === p.code && i.name === p.name
-        ? { ...i, cantidad: i.cantidad - 1 }
-        : i
-      );
+      const idx = prev.findLastIndex(i => i.code === p.code && i.name === p.name);
+      if (idx === -1) return prev;
+      return [...prev.slice(0, idx), ...prev.slice(idx + 1)];
     });
+  };
+
+  const isSelected = (p: typeof products[0]) => getCantidad(p) > 0;
+
+  // toggle kept for compatibility (not used in product list anymore)
+  const toggle = (p: typeof products[0]) => {
+    if (isSelected(p)) {
+      setSelectedItems(prev => prev.filter(i => !(i.code === p.code && i.name === p.name)));
+    } else {
+      setSelectedItems(prev => [...prev, p]);
+    }
   };
 
   const fmt = (n: number) => `RD$ ${n.toLocaleString("es-DO", { minimumFractionDigits: 2 })}`;
@@ -122,16 +114,16 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
 
   const visibleCategories = useMemo(() => [...new Set(filtered.map(p => p.category))].sort(), [filtered]);
   const allCategories = useMemo(() => [...new Set(products.map(p => p.category))].sort(), []);
-  const totalProductos = selectedItems.reduce((s, p) => s + (p.total * p.cantidad), 0);
+  const totalProductos = selectedItems.reduce((s, p) => s + p.total, 0);
   const inicialDadoNum = parseFloat(inicialDado.replace(/[^0-9.]/g, '')) || 0;
   const pagoInicial = Math.min(inicialDadoNum, totalProductos);
   const montoFinanciar = Math.max(0, totalProductos - pagoInicial);
 
-  // Precio sin ITBIS (suma de p.price * cantidad)
-  const precioSinItbis = selectedItems.reduce((s, p) => s + (p.price * p.cantidad), 0);
+  // Precio sin ITBIS (suma de p.price de los items seleccionados)
+  const precioSinItbis = selectedItems.reduce((s, p) => s + p.price, 0);
 
-  // ITBIS total (suma de p.itbis * cantidad)
-  const itbisTotal = selectedItems.reduce((s, p) => s + (p.itbis * p.cantidad), 0);
+  // ITBIS total (suma de p.itbis de los items seleccionados)
+  const itbisTotal = selectedItems.reduce((s, p) => s + p.itbis, 0);
 
   // Tasa de interés anual fija
   const TASA_INTERES_ANUAL = 26;
@@ -343,7 +335,7 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
                         <motion.div
                             key={product.code + product.name}
                             className={cn("flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200", 
-                                isSelected(product) 
+                                getCantidad(product) > 0
                                     ? (isDark ? 'bg-[#0066B3]/12 ring-1 ring-[#0066B3]/25' : 'bg-white ring-1 ring-[#0066B3]/30 shadow-sm') 
                                     : (isDark ? 'hover:bg-white/5' : 'bg-white border border-slate-100 shadow-sm hover:border-[#0066B3]/20 hover:shadow-md')
                             )}
@@ -357,32 +349,32 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
                                     <p className={cn("text-[11px] transition-colors", isDark ? "text-white/25" : "text-slate-400")}>ITBIS: {fmt(product.itbis)}</p>
                                 </div>
                             </div>
-                            <div className="text-right flex-shrink-0 mr-1">
-                                <p className={cn("text-[13px] font-semibold", isSelected(product) ? 'text-[#0066B3]' : (isDark ? 'text-white/70' : 'text-slate-700'))}>{fmt(product.total)}</p>
+                            <div className="text-right flex-shrink-0 mr-2">
+                                <p className={cn("text-[13px] font-semibold", getCantidad(product) > 0 ? 'text-[#0066B3]' : (isDark ? 'text-white/70' : 'text-slate-700'))}>{fmt(product.total)}</p>
                                 <p className={cn("text-[11px] transition-colors", isDark ? "text-white/20" : "text-slate-400")}>sin ITBIS: {fmt(product.price)}</p>
                             </div>
                             {/* Controles de cantidad */}
-                            <div className="flex items-center gap-1 flex-shrink-0">
+                            <div className="flex items-center gap-1 flex-shrink-0" onClick={e => e.stopPropagation()}>
                               {getCantidad(product) > 0 && (
                                 <>
                                   <button
-                                    onClick={e => { e.stopPropagation(); removeOne(product); }}
-                                    className={cn("w-6 h-6 rounded-lg flex items-center justify-center transition-all text-sm font-bold leading-none",
+                                    onClick={() => removeOne(product)}
+                                    className={cn("w-6 h-6 rounded-lg flex items-center justify-center transition-all text-sm font-bold",
                                       isDark ? "bg-white/8 text-white/60 hover:bg-red-500/40 hover:text-red-300" : "bg-slate-100 text-slate-500 hover:bg-red-100 hover:text-red-500")}
                                   >
                                     −
                                   </button>
-                                  <span className="text-[#0066B3] font-bold text-sm w-5 text-center tabular-nums">
+                                  <span className="text-[#0066B3] font-bold text-sm w-5 text-center">
                                     {getCantidad(product)}
                                   </span>
                                 </>
                               )}
                               <button
-                                onClick={e => { e.stopPropagation(); addOne(product); }}
-                                className={cn("w-6 h-6 rounded-lg flex items-center justify-center transition-all text-sm font-bold leading-none",
+                                onClick={() => addOne(product)}
+                                className={cn("w-6 h-6 rounded-lg flex items-center justify-center transition-all text-sm font-bold",
                                   getCantidad(product) > 0
-                                    ? (isDark ? 'bg-[#0066B3] text-white hover:bg-[#0066B3]/80' : 'bg-[#0066B3] text-white hover:bg-[#0066B3]/80')
-                                    : (isDark ? 'bg-white/6 text-white/30 hover:bg-[#0066B3]/30 hover:text-white' : 'bg-slate-100 text-slate-400 hover:bg-[#0066B3]/15 hover:text-[#0066B3]')
+                                    ? 'bg-[#0066B3] text-white hover:bg-[#0066B3]/80'
+                                    : (isDark ? 'bg-white/8 text-white/40 hover:bg-[#0066B3]/40 hover:text-white' : 'bg-slate-100 text-slate-400 hover:bg-[#0066B3]/15 hover:text-[#0066B3]')
                                 )}
                               >
                                 +
@@ -399,10 +391,7 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
           <div className={cn("border-t pt-3 mt-3 flex justify-between items-center transition-all duration-300", isDark ? "border-white/6" : "border-slate-100")}>
             <div>
               <p className={cn("text-[11px] font-medium mb-0.5 transition-colors", isDark ? "text-white/30" : "text-slate-400")}>Seleccionados</p>
-              <p className={cn("text-base font-semibold transition-colors", isDark ? "text-white" : "text-slate-900")}>
-                {selectedItems.reduce((s, p) => s + p.cantidad, 0)}{" "}
-                <span className={cn("text-[11px] font-normal", isDark ? "text-white/30" : "text-slate-400")}>unidades</span>
-              </p>
+              <p className={cn("text-base font-semibold transition-colors", isDark ? "text-white" : "text-slate-900")}>{selectedItems.length} <span className={cn("text-[11px] font-normal", isDark ? "text-white/30" : "text-slate-400")}>productos</span></p>
             </div>
             <div className="text-right">
               <p className={cn("text-[11px] font-medium mb-0.5 transition-colors", isDark ? "text-white/30" : "text-slate-400")}>Total</p>
@@ -490,7 +479,7 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
               { label: 'Equivalencia %', value: `${porcentaje.toFixed(2)}%` },
               { label: 'Monto a financiar', value: fmt(montoFinanciar) },
               ...(filaActiva && montoFinanciar > 0 && !bajoDeMinimoMsg ? [
-                { label: 'Plan de pagos', value: `${filaActiva.cuotas}m — ${filaActiva.pct.toFixed(2)}%`, highlight: true },
+                { label: 'Plan de pagos', value: `${filaActiva.cuotas} meses — ${filaActiva.pct.toFixed(2)}%`, highlight: true },
               ] : []),
             ].map((row, i, arr) => (
               <div key={row.label}
