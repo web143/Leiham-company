@@ -235,7 +235,7 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
         {/* COLUMNA 1 — Navegación / categorías (Solo Desktop) */}
         <div className={cn("hidden md:flex rounded-2xl p-4 flex-col h-full overflow-hidden transition-all duration-300", isDark ? "bg-white/[0.03] border border-white/8" : "bg-slate-50 border border-slate-200/80")}>
           <h3 className={cn("font-semibold text-base mb-4 tracking-tight transition-colors duration-300", isDark ? "text-white" : "text-slate-900")}>Categorías</h3>
-          <div className="space-y-0.5 flex-1 overflow-y-auto pr-1 custom-scrollbar">
+          <div className="space-y-0.5 flex-1 overflow-y-auto pr-1 custom-scrollbar" data-lenis-prevent>
             {allCategories.map(cat => {
               const count = selectedItems.filter(i => i.category === cat).length;
               return (
@@ -296,7 +296,7 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
           </div>
 
           {/* Lista */}
-          <div className="flex-1 overflow-y-auto space-y-1 pr-1 max-h-[300px] md:max-h-[420px] custom-scrollbar"
+          <div className="flex-1 overflow-y-auto space-y-1 pr-1 max-h-[300px] md:max-h-[420px] custom-scrollbar" data-lenis-prevent
             style={{ 
               scrollbarWidth: 'thin', 
               scrollbarColor: isDark ? 'rgba(255,255,255,0.06) transparent' : 'rgba(0,0,0,0.08) transparent' 
@@ -366,7 +366,7 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
 
         {/* COLUMNA 3 — Calculadora (Unificada para todos los tamaños) */}
         <div className={cn("rounded-2xl p-5 flex flex-col gap-4 border transition-all duration-300 h-full overflow-y-auto custom-scrollbar", 
-          isDark ? "bg-white/[0.03] border-white/8 shadow-2xl shadow-black/30" : "bg-white border-slate-200/80 shadow-xl shadow-slate-100")}>
+          isDark ? "bg-white/[0.03] border-white/8 shadow-2xl shadow-black/30" : "bg-white border-slate-200/80 shadow-xl shadow-slate-100")} data-lenis-prevent>
 
           {/* Card Total — estilo Apple: número flotante, sin fondo saturado */}
           <div className={cn("rounded-2xl px-5 py-4 border transition-all duration-300", isDark ? "bg-white/[0.04] border-white/8" : "bg-slate-50 border-slate-100")}>

@@ -18,6 +18,7 @@ export const metadata: Metadata = {
 };
 
 import ErrorBoundary from "@/components/ErrorBoundary";
+import SmoothScroll from "@/components/SmoothScroll";
 
 export default function RootLayout({
   children,
@@ -44,9 +45,11 @@ export default function RootLayout({
         }} />
       </head>
       <body className={`${inter.variable} antialiased`}>
-        <ErrorBoundary>
-          {children}
-        </ErrorBoundary>
+        <SmoothScroll>
+          <ErrorBoundary>
+            {children}
+          </ErrorBoundary>
+        </SmoothScroll>
       </body>
     </html>
   );
