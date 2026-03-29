@@ -33,12 +33,7 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
   const [cuotaInput, setCuotaInput] = useState("");
   const [mesSeleccionado, setMesSeleccionado] = useState<number | null>(null);
   const [isClearing, setIsClearing] = useState(false);
-
-  const handleClearItems = () => {
-    setIsClearing(true);
-    setSelectedItems([]);
-    setTimeout(() => setIsClearing(false), 200);
-  };
+  const mobileChipsRef = useRef<HTMLDivElement>(null);
 
   const toggleRegalo = (p: typeof products[0]) => {
     setSelectedRegalos(prev =>
@@ -233,18 +228,24 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
       {/* Layout cuatro columnas */}
       <div className="max-w-[1400px] mx-auto px-4 pb-8 grid grid-cols-1 md:grid-cols-[220px_1fr_300px_300px] gap-4 h-auto md:h-[680px]">
 
-        {/* Chips móvil — solo visible en móvil */}
-        <div className="md:hidden flex gap-2 overflow-x-auto pb-2 custom-scrollbar"
-             style={{ scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' }}>
+        {/* Chips móvil — solo visible en móvil, con spring drag elástico */}
+        <div ref={mobileChipsRef} className="md:hidden overflow-hidden pb-2">
+          <motion.div
+            className="flex gap-2"
+            drag="x"
+            dragConstraints={mobileChipsRef}
+            dragElastic={{ left: 0.1, right: 0.1 }}
+            style={{ touchAction: 'pan-y', userSelect: 'none' }}
+          >
           <button onClick={() => setActiveCategory(null)}
-            className={cn("flex-shrink-0 px-4 py-2 rounded-full text-[11px] font-semibold transition duration-200 ease-out", 
+            className={cn("flex-shrink-0 px-4 py-2 rounded-full text-[11px] font-semibold transition duration-200 ease-out active:scale-[0.97]", 
               !activeCategory ? 'bg-[#0066B3] text-white shadow-sm shadow-[#0066B3]/30' : (isDark ? 'bg-white/8 text-white/60 hover:text-white/90' : 'bg-slate-100 text-slate-500 hover:text-slate-800')
             )}>
             Todos
           </button>
           {allCategories.map(cat => (
             <button key={cat} onClick={() => handleCategoryClick(cat)}
-              className={cn("flex-shrink-0 px-4 py-2 rounded-full text-[11px] font-semibold whitespace-nowrap transition duration-200 ease-out", 
+              className={cn("flex-shrink-0 px-4 py-2 rounded-full text-[11px] font-semibold whitespace-nowrap transition duration-200 ease-out active:scale-[0.97]", 
                 activeCategory === cat ? 'bg-[#0066B3] text-white shadow-sm shadow-[#0066B3]/30' : (isDark ? 'bg-white/8 text-white/60 hover:text-white/90' : 'bg-slate-100 text-slate-500 hover:text-slate-800')
               )}>
               {cat}
@@ -252,6 +253,7 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
                 <span className="ml-1 opacity-80">·{selectedItems.filter(i => i.category === cat).length}</span>}
             </button>
           ))}
+          </motion.div>
         </div>
 
         {/* COLUMNA 1 — Navegación / categorías (Solo Desktop) */}
@@ -290,8 +292,8 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
             <h3 className={cn("font-semibold text-base tracking-tight transition-colors duration-200 ease-out", isDark ? "text-white" : "text-slate-900")}>Productos</h3>
             {selectedItems.length > 0 && (
               <button
-                onClick={handleClearItems}
-                className={cn("text-[11px] font-medium transition-colors active:scale-[0.97]", isDark ? "text-white/30 hover:text-red-400" : "text-slate-400 hover:text-red-500")}
+                onClick={() => { setIsClearing(true); setSelectedItems([]); setTimeout(() => setIsClearing(false), 350); }}
+                className={cn("text-[11px] font-medium transition-colors", isDark ? "text-white/30 hover:text-red-400" : "text-slate-400 hover:text-red-500")}
               >
                 Limpiar
               </button>
@@ -338,12 +340,12 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
                   {cat}
                 </p>
                 <div className="space-y-0.5">
-                    {filtered.filter(p => p.category === cat).map((product, index) => (
+                    {filtered.filter(p => p.category === cat).map((product, productIdx) => (
                         <motion.div
                             key={product.code + product.name}
-                            initial={{ opacity: 0, y: 10 }}
+                            initial={{ opacity: 0, y: 8 }}
                             animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.2, ease: "easeOut", delay: Math.min(index * 0.04, 0.4) }}
+                            transition={{ duration: 0.2, delay: Math.min(productIdx * 0.03, 0.25), ease: [0.23, 1, 0.32, 1] }}
                             className={cn("flex items-center gap-3 px-3 py-2.5 rounded-xl transition duration-200 ease-out", 
                                 getCantidad(product) > 0
                                     ? (isDark ? 'bg-[#0066B3]/12 ring-1 ring-[#0066B3]/25' : 'bg-white ring-1 ring-[#0066B3]/30 shadow-sm') 
@@ -411,16 +413,17 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
         </div>
 
         {/* COLUMNA 3 — Calculadora (Unificada para todos los tamaños) */}
-        <motion.div 
-          animate={{ filter: isClearing ? "blur(4px)" : "blur(0px)", opacity: isClearing ? 0.6 : 1 }}
-          transition={{ duration: 0.2 }}
-          className={cn("rounded-2xl p-5 flex flex-col gap-4 border transition duration-200 ease-out h-full overflow-y-auto custom-scrollbar", 
+        <div className={cn("rounded-2xl p-5 flex flex-col gap-4 border transition duration-200 ease-out h-full overflow-y-auto custom-scrollbar", 
           isDark ? "bg-white/[0.03] border-white/8 shadow-2xl shadow-black/30" : "bg-white border-slate-200/80 shadow-xl shadow-slate-100")} data-lenis-prevent>
 
           {/* Card Total — estilo Apple: número flotante, sin fondo saturado */}
           <div className={cn("rounded-2xl px-5 py-4 border transition duration-200 ease-out", isDark ? "bg-white/[0.04] border-white/8" : "bg-slate-50 border-slate-100")}>
             <p className={cn("text-[11px] font-medium mb-1 transition-colors", isDark ? "text-white/35" : "text-slate-400")}>Total a pagar</p>
-            <p className={cn("text-3xl font-light tracking-tight transition-colors", isDark ? "text-white" : "text-slate-900")}>{fmt(totalProductos)}</p>
+            <motion.p
+              animate={{ filter: isClearing ? "blur(4px)" : "blur(0px)", opacity: isClearing ? 0.3 : 1 }}
+              transition={{ duration: 0.18, ease: [0.23, 1, 0.32, 1] }}
+              className={cn("text-3xl font-light tracking-tight", isDark ? "text-white" : "text-slate-900")}
+            >{fmt(totalProductos)}</motion.p>
           </div>
 
           {/* Inputs - Bloque 1: Inicial */}
@@ -637,7 +640,7 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
           </div>
 
 
-        </motion.div>
+        </div>
 
         {/* COLUMNA 4 — Regalos */}
         <div className={cn("rounded-2xl p-4 flex flex-col border transition duration-200 ease-out h-full overflow-hidden",
@@ -737,8 +740,9 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
                 {/* Lista vertical scrolleable */}
                 <div className="flex-1 overflow-y-auto space-y-1 pr-1" data-lenis-prevent
                   style={{ scrollbarWidth: 'thin', scrollbarColor: isDark ? 'rgba(255,255,255,0.06) transparent' : 'rgba(0,0,0,0.08) transparent' }}>
-                  <AnimatePresence mode="popLayout">
-                  {elegibles.length > 0 ? elegibles.map((p, index) => {
+                  {elegibles.length > 0 ? (
+                    <AnimatePresence mode="popLayout">
+                    {elegibles.map((p, giftIdx) => {
                     const sel = isRegaloSelected(p);
                     const totalRegalosActual = selectedRegalos.reduce((s, r) => s + r.total, 0);
                     const fueraDeRango = REGALOS_VOLUMEN.includes(p.code) && p.total > maxR;
@@ -749,7 +753,7 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, scale: 0.95 }}
-                        transition={{ duration: 0.2, ease: "easeOut", delay: Math.min(index * 0.03, 0.3) }}
+                        transition={{ duration: 0.15, delay: Math.min(giftIdx * 0.03, 0.2), ease: [0.23, 1, 0.32, 1] }}
                         onClick={() => !fueraDeRango && (!excederiaSiAgrego || sel) ? toggleRegalo(p) : null}
                         className={cn(
                           "px-3 py-2 rounded-xl border transition cursor-pointer relative active:scale-[0.99]",
@@ -789,14 +793,14 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
                         </div>
                       </motion.div>
                     );
-                  }) : (
-                    <div className="text-center py-10 opacity-50">
-                      <Gift className="w-8 h-8 mx-auto mb-2" />
-                      <p className="text-xs">No hay regalos<br/>para este monto</p>
-                    </div>
+                  })}
+                    </AnimatePresence>
+                  ) : (
+                    <p className={cn("text-xs text-center py-4", isDark ? "text-white/20" : "text-slate-400")}>
+                      Ningún producto califica
+                    </p>
                   )}
-                  </AnimatePresence>
-                </div>
+                  </div>
 
                 <div className={cn("flex items-start gap-1.5 flex-shrink-0 pt-1",
                   isDark ? "text-white/20" : "text-slate-400")}>
