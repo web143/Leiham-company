@@ -20,7 +20,7 @@ const CatalogoViewer = dynamic(() => import('../components/CatalogoViewer'), { s
 export default function Home() {
   const [isDark, setIsDark] = useState(true);
   const [mounted, setMounted] = useState(false);
-  const [catalogoItems, setCatalogoItems] = useState<typeof products>([]);
+  const [catalogoItems, setCatalogoItems] = useState<(typeof products[0] & { cantidad?: number })[]>([]);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;

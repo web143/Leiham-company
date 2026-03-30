@@ -24,7 +24,7 @@ const TABLA_PAGOS = [
 
 interface Props {
   isDark?: boolean;
-  initialItems?: typeof products;
+  initialItems?: (typeof products[0] & { cantidad?: number })[];
 }
 
 export default function CalculadoraFinanciamiento({ isDark = true, initialItems = [] }: Props) {
@@ -33,7 +33,7 @@ export default function CalculadoraFinanciamiento({ isDark = true, initialItems 
   // Cuando initialItems cambie desde el catálogo, actualizar selectedItems
   useEffect(() => {
     if (initialItems.length > 0) {
-      setSelectedItems(initialItems.map(p => ({ ...p, cantidad: 1 })));
+      setSelectedItems(initialItems.map(p => ({ ...p, cantidad: p.cantidad || 1 })));
     }
   }, [initialItems]);
   const [search, setSearch] = useState("");

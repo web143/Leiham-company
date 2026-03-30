@@ -48,7 +48,7 @@ const PAGES = [
 
 interface CatalogoViewerProps {
   isDark?: boolean;
-  onProductsChange?: (items: typeof products) => void;
+  onProductsChange?: (items: (typeof products[0] & { cantidad?: number })[]) => void;
 }
 
 export default function CatalogoViewer({ isDark = true, onProductsChange }: CatalogoViewerProps) {
@@ -87,30 +87,42 @@ export default function CatalogoViewer({ isDark = true, onProductsChange }: Cata
 
   const getCantidad = (p: typeof products[0]) => cantidades[getKey(p)] || 0;
 
+  const notifyParent = (items: typeof products, currentCants: { [key: string]: number }) => {
+    const enriched = items.map(item => ({
+      ...item,
+      cantidad: currentCants[getKey(item)] || 1
+    }));
+    onProductsChange?.(enriched);
+  };
+
   const addOne = (p: typeof products[0]) => {
     const key = getKey(p);
     const nuevaCantidad = (cantidades[key] || 0) + 1;
-    setCantidades(prev => ({ ...prev, [key]: nuevaCantidad }));
-    // Si no está en selectedItems, agregarlo
+    const nuevasCants = { ...cantidades, [key]: nuevaCantidad };
+    setCantidades(nuevasCants);
+    
     if (!isSelected(p)) {
       const newItems = [...selectedItems, p];
       setSelectedItems(newItems);
-      onProductsChange?.(newItems);
+      notifyParent(newItems, nuevasCants);
     } else {
-      onProductsChange?.(selectedItems);
+      notifyParent(selectedItems, nuevasCants);
     }
   };
 
   const removeOne = (p: typeof products[0]) => {
     const key = getKey(p);
     const nuevaCantidad = Math.max(0, (cantidades[key] || 0) - 1);
-    setCantidades(prev => ({ ...prev, [key]: nuevaCantidad }));
+    const nuevasCants = { ...cantidades, [key]: nuevaCantidad };
+    
+    setCantidades(nuevasCants);
+    
     if (nuevaCantidad === 0) {
       const newItems = selectedItems.filter(i => !(i.code === p.code && i.name === p.name));
       setSelectedItems(newItems);
-      onProductsChange?.(newItems);
+      notifyParent(newItems, nuevasCants);
     } else {
-      onProductsChange?.(selectedItems);
+      notifyParent(selectedItems, nuevasCants);
     }
   };
 
