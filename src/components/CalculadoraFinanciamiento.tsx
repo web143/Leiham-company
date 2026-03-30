@@ -515,7 +515,16 @@ export default function CalculadoraFinanciamiento({ isDark = true, externalItems
             const REGALOS_VOLUMEN = ['PR1044', 'PR0196', 'PR1675', 'PR1685', 'PR2120', 'PR2129', 'PR0008', 'PR0021', 'CO2124', 'CU0825'];
             const elegiblesNormales = products.filter(p => !EXCLUIR.some(ex => p.category.toLowerCase().includes(ex) || p.name.toLowerCase().includes(ex)) && p.total <= maxR && !REGALOS_VOLUMEN.includes(p.code));
             const elegiblesVolumen = products.filter(p => REGALOS_VOLUMEN.includes(p.code));
-            const elegibles = [...elegiblesVolumen, ...elegiblesNormales];
+            const elegibles = [...elegiblesVolumen, ...elegiblesNormales].map((p, index) => {
+              const sel = isRegaloSelected(p);
+              const fueraDeRango = REGALOS_VOLUMEN.includes(p.code) && p.total > maxR;
+              const excederiaSiAgrego = !sel && (totalRegalos + p.total) > maxR;
+              const disabled = fueraDeRango || excederiaSiAgrego;
+              return { ...p, sel, fueraDeRango, excederiaSiAgrego, disabled, originalIndex: index };
+            }).sort((a, b) => {
+              if (a.disabled === b.disabled) return a.originalIndex - b.originalIndex;
+              return a.disabled ? 1 : -1;
+            });
 
             return (
               <div className="flex flex-col flex-1 overflow-hidden gap-2">
@@ -529,22 +538,21 @@ export default function CalculadoraFinanciamiento({ isDark = true, externalItems
                 <p className="text-[9px] font-bold uppercase tracking-widest opacity-40">Máx 10% · Sin combinaciones</p>
                 
                 <div className="flex-1 overflow-y-auto space-y-1.5 pr-1 custom-scrollbar" data-lenis-prevent>
-                  {elegibles.map((p, i) => {
-                    const sel = isRegaloSelected(p);
-                    const fueraDeRango = REGALOS_VOLUMEN.includes(p.code) && p.total > maxR;
-                    const excederiaSiAgrego = !sel && (totalRegalos + p.total) > maxR;
-                    return (
-                      <motion.div key={p.code} initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: Math.min(i * 0.05, 0.2) }} onClick={() => !fueraDeRango && (!excederiaSiAgrego || sel) ? toggleRegalo(p) : null}
-                        className={cn("px-3 py-2 rounded-xl transition duration-200 relative", fueraDeRango ? "opacity-30 cursor-not-allowed border border-transparent" : sel ? "bg-[#0066B3]/15 border border-[#0066B3]/30 cursor-pointer" : excederiaSiAgrego ? "opacity-30 cursor-not-allowed border border-transparent" : cn(isDark ? "hover:bg-white/5 border border-transparent" : "bg-white border border-slate-100", "cursor-pointer"))}>
-                        {REGALOS_VOLUMEN.includes(p.code) && <span className="absolute -top-1 -right-1 text-[8px] font-black bg-amber-500 text-black px-1.5 py-0.5 rounded-full">VOL</span>}
-                        <p className={cn("text-[11px] font-bold truncate pr-3", sel ? "text-[#0066B3]" : textPrimary)}>{p.name}</p>
-                        <div className="flex justify-between items-end mt-1">
-                          <p className={cn("text-[9px] font-bold", textSecondary)}>{p.category}</p>
-                          <p className={cn("text-[11px] font-black tracking-tight", sel ? "text-[#0066B3]" : textPrimary)}>{fmt(p.total)}</p>
-                        </div>
-                      </motion.div>
-                    );
-                  })}
+                  <AnimatePresence mode="popLayout">
+                    {elegibles.map((p, i) => {
+                      return (
+                        <motion.div layout key={p.code} initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} transition={{ delay: Math.min(i * 0.05, 0.2) }} onClick={() => !p.fueraDeRango && (!p.excederiaSiAgrego || p.sel) ? toggleRegalo(p) : null}
+                          className={cn("px-3 py-2 rounded-xl transition duration-200 relative", p.fueraDeRango ? "opacity-30 cursor-not-allowed border border-transparent" : p.sel ? "bg-[#0066B3]/15 border border-[#0066B3]/30 cursor-pointer" : p.excederiaSiAgrego ? "opacity-30 cursor-not-allowed border border-transparent" : cn(isDark ? "hover:bg-white/5 border border-transparent" : "bg-white border border-slate-100", "cursor-pointer"))}>
+                          {REGALOS_VOLUMEN.includes(p.code) && <span className="absolute -top-1 -right-1 text-[8px] font-black bg-amber-500 text-black px-1.5 py-0.5 rounded-full">VOL</span>}
+                          <p className={cn("text-[11px] font-bold truncate pr-3", p.sel ? "text-[#0066B3]" : textPrimary)}>{p.name}</p>
+                          <div className="flex justify-between items-end mt-1">
+                            <p className={cn("text-[9px] font-bold", textSecondary)}>{p.category}</p>
+                            <p className={cn("text-[11px] font-black tracking-tight", p.sel ? "text-[#0066B3]" : textPrimary)}>{fmt(p.total)}</p>
+                          </div>
+                        </motion.div>
+                      );
+                    })}
+                  </AnimatePresence>
                 </div>
               </div>
             );
