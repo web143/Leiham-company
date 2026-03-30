@@ -1,10 +1,16 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
-import { motion, useReducedMotion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import Image from 'next/image';
-import { X, ShoppingCart, Plus, Check } from 'lucide-react';
+import { X } from 'lucide-react';
 import { products } from '@/lib/products';
 import { cn } from '@/lib/utils';
+import {
+  Carousel,
+  CarouselContent,
+  CarouselNavigation,
+  CarouselItem,
+} from '@/components/ui/Carousel';
 
 // Mapa de páginas individuales
 const PAGES = [
@@ -59,11 +65,7 @@ export default function CatalogoViewer({ isDark = true, onProductsChange }: Cata
   } | null>(null);
 
   const [currentPage, setCurrentPage] = useState(0);
-  const [direction, setDirection] = useState<'next' | 'prev'>('next');
-  const [isFlipping, setIsFlipping] = useState(false);
   const [pageInput, setPageInput] = useState('1');
-
-  const shouldReduceMotion = useReducedMotion();
 
   const fmt = (n: number) => `RD$ ${n.toLocaleString('es-DO', { minimumFractionDigits: 2 })}`;
 
@@ -139,14 +141,9 @@ export default function CatalogoViewer({ isDark = true, onProductsChange }: Cata
   const totalSeleccionado = selectedItems.reduce((s, p) => s + p.total, 0);
 
   const goToPage = (index: number) => {
-    if (index < 0 || index >= PAGES.length || isFlipping) return;
-    setDirection(index > currentPage ? 'next' : 'prev');
-    setIsFlipping(true);
-    setTimeout(() => {
-      setCurrentPage(index);
-      setPageInput(String(index + 1));
-      setIsFlipping(false);
-    }, shouldReduceMotion ? 0 : 400);
+    if (index < 0 || index >= PAGES.length) return;
+    setCurrentPage(index);
+    setPageInput(String(index + 1));
   };
 
   const handlePageInput = (value: string) => {
@@ -178,7 +175,7 @@ export default function CatalogoViewer({ isDark = true, onProductsChange }: Cata
     };
     window.addEventListener('keydown', handleKey);
     return () => window.removeEventListener('keydown', handleKey);
-  }, [currentPage, isFlipping]);
+  }, [currentPage]);
 
   return (
     <section className={cn(
@@ -196,68 +193,68 @@ export default function CatalogoViewer({ isDark = true, onProductsChange }: Cata
         </p>
       </div>
 
-      {/* Visor tipo revista 1 página */}
       <div className="max-w-[1100px] mx-auto px-4 pb-4">
-        
-        {/* Página actual */}
-        <div
-          className={cn(
-            'relative w-full overflow-hidden rounded-2xl shadow-2xl transition-transform duration-200',
-            PAGES[currentPage].type !== 'static' && 'cursor-pointer group'
-          )}
-          onClick={() => PAGES[currentPage].type !== 'static' && handlePageClick(PAGES[currentPage])}
-          onTouchStart={handleTouchStart}
-          onTouchEnd={handleTouchEnd}
+        <Carousel
+          index={currentPage}
+          onIndexChange={(i) => {
+            setCurrentPage(i);
+            setPageInput(String(i + 1));
+          }}
         >
-          <motion.div
-            key={currentPage}
-            className={cn(
-              'w-full h-full',
-              !shouldReduceMotion && !isFlipping && direction === 'next' && 'flip-in-next',
-              !shouldReduceMotion && !isFlipping && direction === 'prev' && 'flip-in-prev'
-            )}
+          <CarouselContent
+            transition={{
+              damping: 20,
+              stiffness: 80,
+              type: 'spring',
+              duration: 0.3,
+            }}
           >
-            <Image
-              src={`/catalogo_pages/webp/page-${PAGES[currentPage].page}.webp`}
-              alt={PAGES[currentPage].title}
-              width={1400}
-              height={1000}
-              className="w-full h-auto"
-              priority
-            />
-
-            {/* Overlay hover */}
-            {PAGES[currentPage].type !== 'static' && (
-              <div className="absolute inset-0 bg-[#0066B3]/0 group-hover:bg-[#0066B3]/8 transition-all duration-300 flex items-center justify-center">
-                <div className="opacity-0 group-hover:opacity-100 transition-all duration-300 bg-[#0066B3] text-white px-5 py-2.5 rounded-full text-sm font-bold shadow-xl flex items-center gap-2">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
-                    <circle cx="12" cy="12" r="3"/>
-                  </svg>
-                  Ver productos
+            {PAGES.map((pageInfo, i) => (
+              <CarouselItem key={pageInfo.page}>
+                <div
+                  className={cn(
+                    'relative w-full overflow-hidden rounded-2xl shadow-2xl',
+                    pageInfo.type !== 'static' && 'cursor-pointer group'
+                  )}
+                  onClick={() => pageInfo.type !== 'static' && handlePageClick(pageInfo)}
+                  onTouchStart={handleTouchStart}
+                  onTouchEnd={handleTouchEnd}
+                >
+                  <Image
+                    src={`/catalogo_pages/webp/page-${pageInfo.page}.webp`}
+                    alt={pageInfo.title}
+                    width={1400}
+                    height={1000}
+                    className="w-full h-auto"
+                    priority={i === 0}
+                  />
+                  {pageInfo.type !== 'static' && (
+                    <div className="absolute inset-0 bg-[#0066B3]/0 group-hover:bg-[#0066B3]/8 transition-all duration-300 flex items-center justify-center">
+                      <div className="opacity-0 group-hover:opacity-100 transition-all duration-300 bg-[#0066B3] text-white px-5 py-2.5 rounded-full text-sm font-bold shadow-xl flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
+                          <circle cx="12" cy="12" r="3"/>
+                        </svg>
+                        Ver productos
+                      </div>
+                    </div>
+                  )}
                 </div>
-              </div>
-            )}
-          </motion.div>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
 
-          {/* Flechas de navegación encima de la imagen */}
-          <motion.button
-            whileTap={shouldReduceMotion ? {} : { scale: 0.9, transition: { type: 'spring', stiffness: 400, damping: 30 } }}
-            onClick={e => { e.stopPropagation(); goToPage(currentPage - 1); }}
-            disabled={currentPage === 0}
-            className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/40 hover:bg-black/60 text-white flex items-center justify-center transition-all disabled:opacity-0 disabled:pointer-events-none"
-          >
-            ‹
-          </motion.button>
-          <motion.button
-            whileTap={shouldReduceMotion ? {} : { scale: 0.9, transition: { type: 'spring', stiffness: 400, damping: 30 } }}
-            onClick={e => { e.stopPropagation(); goToPage(currentPage + 1); }}
-            disabled={currentPage === PAGES.length - 1}
-            className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/40 hover:bg-black/60 text-white flex items-center justify-center transition-all disabled:opacity-0 disabled:pointer-events-none"
-          >
-            ›
-          </motion.button>
-        </div>
+          {/* Flechas de navegación estilo carousel */}
+          <CarouselNavigation
+            alwaysShow
+            classNameButton={cn(
+              'shadow-lg',
+              isDark
+                ? 'bg-slate-800 hover:bg-slate-700 border border-white/10'
+                : 'bg-white hover:bg-slate-50 border border-slate-200'
+            )}
+          />
+        </Carousel>
 
         {/* Controles inferiores */}
         <div className="flex items-center justify-center gap-3 mt-4">
@@ -265,33 +262,29 @@ export default function CatalogoViewer({ isDark = true, onProductsChange }: Cata
           <input
             type="number"
             min={1}
-            max={36}
+            max={PAGES.length}
             value={pageInput}
             onChange={e => handlePageInput(e.target.value)}
             className={cn(
-              'w-14 text-center px-2 py-1.5 rounded-lg border outline-none text-sm font-bold',
+              'w-14 text-center px-2 py-1.5 rounded-lg border outline-none text-sm font-bold transition-all',
               isDark
                 ? 'bg-slate-800 border-slate-700 text-white focus:border-[#0066B3]'
                 : 'bg-white border-slate-300 text-slate-900 focus:border-[#0066B3]'
             )}
           />
-          <span className={cn('text-xs', isDark ? 'text-white/30' : 'text-slate-400')}>de 36</span>
+          <span className={cn('text-xs', isDark ? 'text-white/30' : 'text-slate-400')}>de {PAGES.length}</span>
           <span className={cn('text-xs hidden md:block', isDark ? 'text-white/20' : 'text-slate-300')}>
-            · Usa ← → o desliza para navegar
+            · Arrastra o usa las flechas para navegar
           </span>
         </div>
 
         {/* Barra de progreso */}
         <div className={cn('w-full h-1 rounded-full mt-3 overflow-hidden', isDark ? 'bg-white/10' : 'bg-slate-200')}>
           <div
-            className="h-full bg-[#0066B3] rounded-full transition-all duration-500 ease-out"
+            className="h-full bg-[#0066B3] rounded-full transition-all duration-300"
             style={{ width: `${((currentPage + 1) / PAGES.length) * 100}%` }}
           />
         </div>
-
-        <p className={cn('text-center text-xs mt-2', isDark ? 'text-white/20' : 'text-slate-300')}>
-          Desliza o usa ← → para cambiar de página
-        </p>
       </div>
 
       {/* Panel de productos (modal) */}

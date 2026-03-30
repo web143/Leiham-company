@@ -70,17 +70,6 @@ html {
 /* Hide custom scrollbar tracks */
 .custom-scrollbar::-webkit-scrollbar { display: none; }
 
-/* Animación de navegación — Fade Suave */
-@keyframes fadePageIn {
-  0%   { opacity: 0; transform: scale(0.99); }
-  100% { opacity: 1; transform: scale(1); }
-}
-
-.flip-in-next,
-.flip-in-prev {
-  animation: fadePageIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  transform-origin: center center;
-}
 
 /* Respect user's reduced motion preference */
 @media (prefers-reduced-motion: reduce) {
