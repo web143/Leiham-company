@@ -237,23 +237,7 @@ export default function CalculadoraFinanciamiento({ isDark = true, externalItems
 
       <div className="max-w-[1400px] mx-auto px-4 pb-8 grid grid-cols-1 md:grid-cols-[220px_1fr_300px_300px] gap-4 h-auto md:h-[680px]">
 
-        {/* Móvil chips - Compacto original */}
-        <div className="md:hidden flex gap-2 overflow-x-auto pb-2 custom-scrollbar" style={{ scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' }}>
-          <motion.button onClick={() => setActiveCategory(null)}
-            whileTap={shouldReduceMotion ? {} : { scale: 0.95, transition: { type: 'spring' } }}
-            className={cn("flex-shrink-0 px-4 py-2 rounded-full text-[11px] font-bold transition duration-200 ease-out", 
-              !activeCategory ? 'bg-[#0066B3] text-white shadow-sm shadow-[#0066B3]/30' : cn(bgGlass, "border", textSecondary)
-            )}>Todos</motion.button>
-          {allCategories.map(cat => (
-            <motion.button key={cat} onClick={() => handleCategoryClick(cat)}
-              whileTap={shouldReduceMotion ? {} : { scale: 0.95, transition: { type: 'spring' } }}
-              className={cn("flex-shrink-0 px-4 py-2 rounded-full text-[11px] font-bold whitespace-nowrap transition duration-200", 
-                activeCategory === cat ? 'bg-[#0066B3] text-white shadow-sm shadow-[#0066B3]/30' : cn(bgGlass, "border", textSecondary)
-              )}>
-              {cat}
-            </motion.button>
-          ))}
-        </div>
+
 
         {/* COLUMNA 1 — Categorías */}
         <div className={cn("hidden md:flex flex-col", cardContainer)}>
