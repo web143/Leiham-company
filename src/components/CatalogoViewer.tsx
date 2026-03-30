@@ -215,7 +215,8 @@ export default function CatalogoViewer({ isDark = true, onProductsChange }: Cata
               <CarouselItem key={pageInfo.page} className="bg-transparent">
                 <div
                   className={cn(
-                    'relative w-full overflow-hidden rounded-2xl shadow-2xl bg-transparent',
+                    'relative w-full rounded-2xl shadow-2xl overflow-hidden bg-transparent',
+                    'aspect-[1400/1000]',
                     pageInfo.type !== 'static' && 'cursor-pointer group'
                   )}
                   onClick={() => pageInfo.type !== 'static' && handlePageClick(pageInfo)}
@@ -225,10 +226,10 @@ export default function CatalogoViewer({ isDark = true, onProductsChange }: Cata
                   <Image
                     src={`/catalogo_pages/webp/page-${pageInfo.page}.webp`}
                     alt={pageInfo.title}
-                    width={1400}
-                    height={1000}
-                    className="w-full h-auto"
+                    fill
+                    className="object-cover"
                     priority={i === 0}
+                    sizes="(max-width: 768px) 100vw, 1100px"
                   />
                   {pageInfo.type !== 'static' && (
                     <div className="absolute inset-0 bg-[#0066B3]/0 group-hover:bg-[#0066B3]/8 transition-all duration-300 flex items-center justify-center">
