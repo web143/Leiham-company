@@ -452,6 +452,14 @@ export default function CalculadoraFinanciamiento({ isDark = true, externalItems
                 />
               </div>
 
+              {bajoDeMinimoMsg && montoFinanciar > 0 && (
+                <div className="px-3 py-2.5 rounded-xl border bg-red-500/10 border-red-500/20 text-red-400 text-[11px] font-bold space-y-1">
+                  <p>⛔ Cuota equivale a <span className="text-red-500 font-black">{pctEscrito.toFixed(2)}%</span></p>
+                  <p>El mínimo permitido es <span className="font-black">4.00%</span> (41 meses)</p>
+                  <p>Cuota mínima: <span className="font-black">{fmt(cuotaMinimaRD)}</span></p>
+                </div>
+              )}
+
               {pctEscrito > 0 && !bajoDeMinimoMsg && !mesSeleccionado && montoFinanciar > 0 && (
                 <div className={cn("p-3 rounded-xl border space-y-1.5 font-bold text-[11px]", isDark ? "bg-[#0066B3]/10 border-[#0066B3]/20" : "bg-[#0066B3]/5 border-[#0066B3]/10")}>
                   <p className={textSecondary}>Cuota equivale a <span className="text-[#0066B3]">{pctEscrito.toFixed(2)}%</span></p>
