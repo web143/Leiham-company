@@ -50,11 +50,6 @@ export default function CalculadoraFinanciamiento({ isDark = true, externalItems
       }));
       
       setSelectedItems(newItems);
-      
-      // Scroll suave a la calculadora
-      setTimeout(() => {
-        document.getElementById('calculadora')?.scrollIntoView({ behavior: 'smooth' });
-      }, 300);
     } else if (externalItems.length === 0 && selectedItems.length > 0) {
       // Si limpiaron el catálogo, limpiar la calculadora también
       setSelectedItems([]);
