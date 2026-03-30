@@ -182,7 +182,7 @@ export default function CatalogoViewer({ isDark = true, onProductsChange }: Cata
       isDark ? 'bg-black' : 'bg-white'
     )}>
       {/* Título - Consolidado con el contenedor del catálogo para reducir espacio */}
-      <div className="max-w-[1100px] mx-auto px-4 pb-0">
+      <div className="max-w-[1100px] mx-auto px-4 overflow-hidden">
         <div className="text-center mb-8">
           <p className="text-[#0066B3] text-xs tracking-[0.3em] uppercase mb-2">Royal Prestige®</p>
           <h2 className={cn('text-3xl md:text-4xl font-black tracking-tight uppercase', isDark ? 'text-white' : 'text-slate-900')}>
@@ -193,10 +193,10 @@ export default function CatalogoViewer({ isDark = true, onProductsChange }: Cata
           </p>
         </div>
 
-        <Carousel className="w-full" index={currentPage} onIndexChange={(i) => { setCurrentPage(i); setPageInput(String(i + 1)); }}>
-          <CarouselContent className="-ml-0">
+        <Carousel className="w-full overflow-hidden" index={currentPage} onIndexChange={(i) => { setCurrentPage(i); setPageInput(String(i + 1)); }}>
+          <CarouselContent className="ml-0">
             {PAGES.map((pageInfo, i) => (
-              <CarouselItem key={pageInfo.page} className="pl-0">
+              <CarouselItem key={pageInfo.page} className="pl-0 min-w-0">
                 <div
                   className={cn(
                     'relative w-full rounded-2xl shadow-2xl overflow-hidden',
