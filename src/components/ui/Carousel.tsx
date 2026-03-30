@@ -312,7 +312,7 @@ function CarouselContent({
         }
       }
       className={cn(
-        'flex items-start',
+        'flex items-center',
         !disableDrag && 'cursor-grab active:cursor-grabbing',
         className
       )}

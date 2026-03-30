@@ -179,23 +179,22 @@ export default function CatalogoViewer({ isDark = true, onProductsChange }: Cata
 
   return (
     <section className={cn(
-      'w-full transition-colors duration-300',
+      'w-full pt-16 pb-12 transition-colors duration-300',
       isDark ? 'bg-black' : 'bg-white'
     )}>
       {/* Título - Consolidado con el contenedor del catálogo para reducir espacio */}
-      <div className="max-w-[1100px] mx-auto px-4 pt-2">
-        <div className="text-center pb-0">
-          <p className="text-[#0066B3] text-xs tracking-[0.3em] uppercase mb-1">Royal Prestige®</p>
-          <h2 className={cn('text-2xl md:text-3xl font-black tracking-tight uppercase', isDark ? 'text-white' : 'text-slate-900')}>
+      <div className="max-w-[1100px] mx-auto px-4">
+        <div className="text-center mb-8">
+          <p className="text-[#0066B3] text-xs tracking-[0.3em] uppercase mb-2">Royal Prestige®</p>
+          <h2 className={cn('text-3xl md:text-4xl font-black tracking-tight uppercase', isDark ? 'text-white' : 'text-slate-900')}>
             Catálogo de <span className="text-[#0066B3]">Productos</span>
           </h2>
-          <p className={cn('text-[10px] md:text-xs', isDark ? 'text-white/30' : 'text-slate-400')}>
+          <p className={cn('text-xs mt-2', isDark ? 'text-white/30' : 'text-slate-400')}>
             Haz clic en cualquier sección para ver precios y agregar productos
           </p>
         </div>
 
         <Carousel
-          className="-mt-4 md:-mt-8"
           index={currentPage}
           onIndexChange={(i) => {
             setCurrentPage(i);
@@ -215,8 +214,10 @@ export default function CatalogoViewer({ isDark = true, onProductsChange }: Cata
                 <div
                   className={cn(
                     'relative w-full overflow-hidden rounded-2xl shadow-2xl',
+                    isDark ? 'bg-zinc-900/50' : 'bg-slate-100',
                     pageInfo.type !== 'static' && 'cursor-pointer group'
                   )}
+                  style={{ aspectRatio: '1400/1000' }}
                   onClick={() => pageInfo.type !== 'static' && handlePageClick(pageInfo)}
                   onTouchStart={handleTouchStart}
                   onTouchEnd={handleTouchEnd}
@@ -255,8 +256,8 @@ export default function CatalogoViewer({ isDark = true, onProductsChange }: Cata
           />
         </Carousel>
 
-        {/* Controles inferiores */}
-        <div className="flex items-center justify-center gap-3 mt-4">
+        {/* Controles inferiores - Reducido espacio mt-4 -> mt-2 */}
+        <div className="flex items-center justify-center gap-3 mt-2">
           <span className={cn('text-xs', isDark ? 'text-white/30' : 'text-slate-400')}>Página</span>
           <input
             type="number"
