@@ -182,19 +182,20 @@ export default function CatalogoViewer({ isDark = true, onProductsChange }: Cata
       'w-full transition-colors duration-300',
       isDark ? 'bg-black' : 'bg-white'
     )}>
-      {/* Título */}
-      <div className="text-center pt-6 pb-2 px-4">
-        <p className="text-[#0066B3] text-xs tracking-[0.3em] uppercase mb-2">Royal Prestige®</p>
-        <h2 className={cn('text-3xl font-black tracking-tight uppercase', isDark ? 'text-white' : 'text-slate-900')}>
-          Catálogo de <span className="text-[#0066B3]">Productos</span>
-        </h2>
-        <p className={cn('text-xs', isDark ? 'text-white/30' : 'text-slate-400')}>
-          Haz clic en cualquier sección para ver precios y agregar productos
-        </p>
-      </div>
+      {/* Título - Consolidado con el contenedor del catálogo para reducir espacio */}
+      <div className="max-w-[1100px] mx-auto px-4 pt-2">
+        <div className="text-center pb-0">
+          <p className="text-[#0066B3] text-xs tracking-[0.3em] uppercase mb-1">Royal Prestige®</p>
+          <h2 className={cn('text-2xl md:text-3xl font-black tracking-tight uppercase', isDark ? 'text-white' : 'text-slate-900')}>
+            Catálogo de <span className="text-[#0066B3]">Productos</span>
+          </h2>
+          <p className={cn('text-[10px] md:text-xs', isDark ? 'text-white/30' : 'text-slate-400')}>
+            Haz clic en cualquier sección para ver precios y agregar productos
+          </p>
+        </div>
 
-      <div className="max-w-[1100px] mx-auto px-4 pb-4">
         <Carousel
+          className="-mt-4 md:-mt-8"
           index={currentPage}
           onIndexChange={(i) => {
             setCurrentPage(i);
