@@ -157,7 +157,7 @@ export default function CatalogoViewer({ isDark = true, onProductsChange }: Cata
       </div>
 
       {/* Visor tipo revista 1 página */}
-      <div className="max-w-[900px] mx-auto px-4 pb-4">
+      <div className="max-w-[1100px] mx-auto px-4 pb-4">
         
         {/* Página actual */}
         <div

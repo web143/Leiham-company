@@ -72,24 +72,24 @@ html {
 
 /* Animación página siguiente — entra desde la derecha */
 @keyframes flipInNext {
-  0%   { transform: perspective(1200px) rotateY(-25deg); opacity: 0.3; }
-  100% { transform: perspective(1200px) rotateY(0deg);   opacity: 1; }
+  0%   { transform: perspective(2000px) rotateY(-8deg) translateX(30px); opacity: 0; }
+  100% { transform: perspective(2000px) rotateY(0deg)  translateX(0px);  opacity: 1; }
 }
 
 /* Animación página anterior — entra desde la izquierda */
 @keyframes flipInPrev {
-  0%   { transform: perspective(1200px) rotateY(25deg);  opacity: 0.3; }
-  100% { transform: perspective(1200px) rotateY(0deg);   opacity: 1; }
+  0%   { transform: perspective(2000px) rotateY(8deg)  translateX(-30px); opacity: 0; }
+  100% { transform: perspective(2000px) rotateY(0deg)  translateX(0px);   opacity: 1; }
 }
 
 .flip-in-next {
-  animation: flipInNext 0.4s cubic-bezier(0.23, 1, 0.32, 1) forwards;
-  transform-origin: left center;
+  animation: flipInNext 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transform-origin: center center;
 }
 
 .flip-in-prev {
-  animation: flipInPrev 0.4s cubic-bezier(0.23, 1, 0.32, 1) forwards;
-  transform-origin: right center;
+  animation: flipInPrev 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transform-origin: center center;
 }
 
 /* Respect user's reduced motion preference */
