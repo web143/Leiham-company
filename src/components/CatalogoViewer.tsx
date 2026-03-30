@@ -1,55 +1,31 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { X, ShoppingCart, Plus, Check } from 'lucide-react';
 import { products } from '@/lib/products';
 import { cn } from '@/lib/utils';
 
-// Mapa de páginas del catálogo
-const CATALOG_PAGES = [
-  { page: '01', type: 'static', title: 'Portada' },
-  { page: '02', type: 'static', title: 'Índice' },
-  { page: '03', type: 'static', title: 'Características' },
-  // Combos — click en título selecciona el producto
-  { page: '04', type: 'combo', title: 'Sistema 10 Piezas Familiar', spread: '05',
-    clickZone: { top: '5%', left: '0%', width: '45%', height: '20%' },
-    productKeywords: ['familiar', '10 pz', '10pz', '10 piezas'] },
-  { page: '06', type: 'combo', title: 'Sistema 8 Piezas Especial', spread: '07',
-    clickZone: { top: '5%', left: '0%', width: '45%', height: '20%' },
-    productKeywords: ['especial', '8 pz', '8pz', '8 piezas'] },
-  { page: '08', type: 'combo', title: 'Sistema 7 Piezas Clásico', spread: '09',
-    clickZone: { top: '5%', left: '0%', width: '45%', height: '20%' },
-    productKeywords: ['clásico', 'clasico', '7 pz', '7pz', '7 piezas'] },
-  { page: '10', type: 'combo', title: 'Sistema 5 Piezas Complementario', spread: '11',
-    clickZone: { top: '5%', left: '0%', width: '45%', height: '20%' },
-    productKeywords: ['complementario', '5 pz', '5pz', '5 piezas'] },
-  // Productos individuales
-  { page: '12', type: 'products', title: 'Las Grandes', spread: '13',
-    categoryKeywords: ['ollas de sancocho', 'grandes'] },
-  { page: '14', type: 'products', title: 'Las Paelleras', spread: '15',
-    categoryKeywords: ['paellera'] },
-  { page: '16', type: 'products', title: 'Los Gourmets', spread: '17',
-    categoryKeywords: ['gourmet', 'easy release / acero'] },
-  { page: '18', type: 'products', title: 'Ollas de Presión', spread: '19',
-    categoryKeywords: ['ollas de presión', 'presion'] },
-  { page: '20', type: 'products', title: 'Las Planchas', spread: '21',
-    categoryKeywords: ['plancha', 'parrilla'] },
-  { page: '22', type: 'products', title: 'El Wok y Coladores', spread: '23',
-    categoryKeywords: ['wok', 'colador'] },
-  { page: '24', type: 'products', title: 'Pavera y Accesorios', spread: '25',
-    categoryKeywords: ['pavera', 'accesorios'] },
-  { page: '26', type: 'products', title: 'Easy Release', spread: '27',
-    categoryKeywords: ['easy release'] },
-  { page: '28', type: 'products', title: 'Casserole y Perfect Pop', spread: '29',
-    categoryKeywords: ['casserole', 'perfect pop', 'cacerola'] },
-  { page: '30', type: 'products', title: 'Salad Machine y Precision Cook', spread: '31',
-    categoryKeywords: ['salad', 'precision', 'inducción'] },
-  { page: '32', type: 'products', title: 'Power Blender', spread: '33',
-    categoryKeywords: ['power blender', 'blender', 'licuadora', 'chocolatera'] },
-  { page: '34', type: 'products', title: 'ExperTea y Café', spread: '35',
-    categoryKeywords: ['expertea', 'café', 'espresso', 'barista', 'café / té'] },
-  { page: '36', type: 'products', title: 'Accesorios y Filtración', spread: null,
-    categoryKeywords: ['accesorios', 'cuchillería', 'cubertería', 'filtro', 'aire'] },
+// Mapa de páginas del catálogo (Spreads)
+const SPREADS = [
+  { left: '01', right: null, type: 'static', title: 'Portada' },
+  { left: '02', right: '03', type: 'static', title: 'Índice' },
+  { left: '04', right: '05', type: 'combo', title: 'Sistema 10 Piezas Familiar', productKeywords: ['familiar', '10 pz', '10pz', '10 piezas'] },
+  { left: '06', right: '07', type: 'combo', title: 'Sistema 8 Piezas Especial', productKeywords: ['especial', '8 pz', '8 piezas'] },
+  { left: '08', right: '09', type: 'combo', title: 'Sistema 7 Piezas Clásico', productKeywords: ['clásico', 'clasico', '7 pz', '7 piezas'] },
+  { left: '10', right: '11', type: 'combo', title: 'Sistema 5 Piezas Complementario', productKeywords: ['complementario', '5 pz', '5 piezas'] },
+  { left: '12', right: '13', type: 'products', title: 'Las Grandes', categoryKeywords: ['sancocho', 'grandes'] },
+  { left: '14', right: '15', type: 'products', title: 'Las Paelleras', categoryKeywords: ['paellera'] },
+  { left: '16', right: '17', type: 'products', title: 'Los Gourmets', categoryKeywords: ['gourmet', 'easy release / acero'] },
+  { left: '18', right: '19', type: 'products', title: 'Ollas de Presión', categoryKeywords: ['presión', 'presion'] },
+  { left: '20', right: '21', type: 'products', title: 'Las Planchas', categoryKeywords: ['plancha', 'parrilla'] },
+  { left: '22', right: '23', type: 'products', title: 'El Wok y Coladores', categoryKeywords: ['wok', 'colador'] },
+  { left: '24', right: '25', type: 'products', title: 'Pavera y Accesorios', categoryKeywords: ['pavera', 'accesorios'] },
+  { left: '26', right: '27', type: 'products', title: 'Easy Release', categoryKeywords: ['easy release'] },
+  { left: '28', right: '29', type: 'products', title: 'Casserole y Perfect Pop', categoryKeywords: ['casserole', 'perfect pop', 'cacerola'] },
+  { left: '30', right: '31', type: 'products', title: 'Salad Machine y Precision Cook', categoryKeywords: ['salad', 'precision', 'inducción'] },
+  { left: '32', right: '33', type: 'products', title: 'Power Blender', categoryKeywords: ['power blender', 'blender', 'licuadora', 'chocolatera'] },
+  { left: '34', right: '35', type: 'products', title: 'ExperTea y Café', categoryKeywords: ['expertea', 'café', 'espresso', 'barista', 'café / té'] },
+  { left: '36', right: null, type: 'products', title: 'Accesorios y Filtración', categoryKeywords: ['accesorios', 'cuchillería', 'cubertería', 'filtro'] },
 ];
 
 interface CatalogoViewerProps {
@@ -60,13 +36,17 @@ interface CatalogoViewerProps {
 export default function CatalogoViewer({ isDark = true, onProductsChange }: CatalogoViewerProps) {
   const [selectedItems, setSelectedItems] = useState<typeof products>([]);
   const [activePanel, setActivePanel] = useState<{
-    pageInfo: typeof CATALOG_PAGES[0];
+    pageInfo: typeof SPREADS[0];
     matchedProducts: typeof products;
   } | null>(null);
 
+  const [currentSpread, setCurrentSpread] = useState(0); // índice del spread actual
+  const [pageInput, setPageInput] = useState('1');
+  const [isAnimating, setIsAnimating] = useState(false);
+
   const fmt = (n: number) => `RD$ ${n.toLocaleString('es-DO', { minimumFractionDigits: 2 })}`;
 
-  const getProductsForPage = (pageInfo: typeof CATALOG_PAGES[0]) => {
+  const getProductsForPage = (pageInfo: typeof SPREADS[0]) => {
     if (!pageInfo.productKeywords && !pageInfo.categoryKeywords) return [];
     const keywords = pageInfo.productKeywords || pageInfo.categoryKeywords || [];
     return products.filter(p =>
@@ -88,7 +68,7 @@ export default function CatalogoViewer({ isDark = true, onProductsChange }: Cata
     onProductsChange?.(newItems);
   };
 
-  const handlePageClick = (pageInfo: typeof CATALOG_PAGES[0]) => {
+  const handlePageClick = (pageInfo: typeof SPREADS[0]) => {
     if (pageInfo.type === 'static') return;
     const matched = getProductsForPage(pageInfo);
     if (matched.length === 0) return;
@@ -96,6 +76,35 @@ export default function CatalogoViewer({ isDark = true, onProductsChange }: Cata
   };
 
   const totalSeleccionado = selectedItems.reduce((s, p) => s + p.total, 0);
+
+  const goToSpread = (index: number) => {
+    if (index < 0 || index >= SPREADS.length || isAnimating) return;
+    setIsAnimating(true);
+    setTimeout(() => {
+      setCurrentSpread(index);
+      setPageInput(String(index * 2 + 1));
+      setIsAnimating(false);
+    }, 150);
+  };
+
+  const handlePageInput = (value: string) => {
+    setPageInput(value);
+    const pageNum = parseInt(value);
+    if (!isNaN(pageNum) && pageNum >= 1 && pageNum <= 36) {
+      const spreadIndex = Math.floor((pageNum - 1) / 2);
+      goToSpread(spreadIndex);
+    }
+  };
+
+  // Navegación con teclado
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowRight') goToSpread(currentSpread + 1);
+      if (e.key === 'ArrowLeft') goToSpread(currentSpread - 1);
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [currentSpread, isAnimating]);
 
   return (
     <section className={cn(
@@ -113,63 +122,136 @@ export default function CatalogoViewer({ isDark = true, onProductsChange }: Cata
         </p>
       </div>
 
-      {/* Visor de páginas */}
-      <div className="max-w-[1200px] mx-auto px-4 pb-8 space-y-2">
-        {CATALOG_PAGES.map((pageInfo) => (
-          <div key={pageInfo.page} className="relative w-full">
-            {/* Layout de dos páginas (spread) */}
-            <div className="flex gap-1">
-              {/* Página izquierda */}
-              <div
-                className={cn(
-                  'relative flex-1 overflow-hidden rounded-xl',
-                  pageInfo.type !== 'static' && 'cursor-pointer group'
-                )}
-                onClick={() => handlePageClick(pageInfo)}
-              >
-                <Image
-                  src={`/catalogo_pages/webp/page-${pageInfo.page}.webp`}
-                  alt={pageInfo.title}
-                  width={700}
-                  height={500}
-                  className="w-full h-auto"
-                  loading="lazy"
-                />
-                {/* Overlay hover para páginas clickeables */}
-                {pageInfo.type !== 'static' && (
-                  <div className="absolute inset-0 bg-[#0066B3]/0 group-hover:bg-[#0066B3]/10 transition-all duration-300 flex items-center justify-center">
-                    <div className="opacity-0 group-hover:opacity-100 transition-all duration-300 bg-[#0066B3] text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg">
-                      {pageInfo.type === 'combo' ? '👆 Seleccionar combo' : '👆 Ver productos y precios'}
-                    </div>
+      {/* Visor tipo revista */}
+      <div className="max-w-[1200px] mx-auto px-4 pb-4">
+        
+        {/* Contenedor del spread con animación */}
+        <div className={cn(
+          'relative w-full transition-all duration-300',
+          isAnimating ? 'opacity-0 scale-[0.98]' : 'opacity-100 scale-100'
+        )}>
+          <div className="flex gap-1 w-full">
+            
+            {/* Página izquierda */}
+            <div
+              className={cn(
+                'relative flex-1 overflow-hidden rounded-xl shadow-2xl',
+                SPREADS[currentSpread].type !== 'static' && 'cursor-pointer group'
+              )}
+              onClick={() => SPREADS[currentSpread].type !== 'static' && handlePageClick(SPREADS[currentSpread])}
+            >
+              <Image
+                src={`/catalogo_pages/webp/page-${SPREADS[currentSpread].left}.webp`}
+                alt={SPREADS[currentSpread].title}
+                width={700}
+                height={500}
+                className="w-full h-auto"
+                priority={currentSpread === 0}
+              />
+              {SPREADS[currentSpread].type !== 'static' && (
+                <div className="absolute inset-0 bg-[#0066B3]/0 group-hover:bg-[#0066B3]/10 transition-all duration-300 flex items-center justify-center">
+                  <div className="opacity-0 group-hover:opacity-100 transition-all duration-300 bg-[#0066B3] text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg">
+                    {SPREADS[currentSpread].type === 'combo' ? '👆 Seleccionar combo' : '👆 Ver precios'}
                   </div>
-                )}
-              </div>
-
-              {/* Página derecha (spread) si existe */}
-              {pageInfo.spread && (
-                <div
-                  className={cn(
-                    'relative flex-1 overflow-hidden rounded-xl',
-                    pageInfo.type !== 'static' && 'cursor-pointer group'
-                  )}
-                  onClick={() => handlePageClick(pageInfo)}
-                >
-                  <Image
-                    src={`/catalogo_pages/webp/page-${pageInfo.spread}.webp`}
-                    alt={`${pageInfo.title} (cont.)`}
-                    width={700}
-                    height={500}
-                    className="w-full h-auto"
-                    loading="lazy"
-                  />
-                  {pageInfo.type !== 'static' && (
-                    <div className="absolute inset-0 bg-[#0066B3]/0 group-hover:bg-[#0066B3]/10 transition-all duration-300" />
-                  )}
                 </div>
               )}
             </div>
+
+            {/* Página derecha */}
+            {SPREADS[currentSpread].right && (
+              <div
+                className={cn(
+                  'relative flex-1 overflow-hidden rounded-xl shadow-2xl',
+                  SPREADS[currentSpread].type !== 'static' && 'cursor-pointer group'
+                )}
+                onClick={() => SPREADS[currentSpread].type !== 'static' && handlePageClick(SPREADS[currentSpread])}
+              >
+                <Image
+                  src={`/catalogo_pages/webp/page-${SPREADS[currentSpread].right}.webp`}
+                  alt={`${SPREADS[currentSpread].title} (cont.)`}
+                  width={700}
+                  height={500}
+                  className="w-full h-auto"
+                  priority={currentSpread === 0}
+                />
+                {SPREADS[currentSpread].type !== 'static' && (
+                  <div className="absolute inset-0 bg-[#0066B3]/0 group-hover:bg-[#0066B3]/10 transition-all duration-300" />
+                )}
+              </div>
+            )}
           </div>
-        ))}
+        </div>
+
+        {/* Controles de navegación */}
+        <div className="flex items-center justify-between mt-4 gap-4">
+          
+          {/* Botón anterior */}
+          <button
+            onClick={() => goToSpread(currentSpread - 1)}
+            disabled={currentSpread === 0}
+            className={cn(
+              'flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition-all',
+              currentSpread === 0
+                ? 'opacity-30 cursor-not-allowed'
+                : isDark ? 'bg-slate-800 text-white hover:bg-slate-700' : 'bg-slate-100 text-slate-900 hover:bg-slate-200'
+            )}
+          >
+            ← Anterior
+          </button>
+
+          {/* Input de página + indicador */}
+          <div className="flex items-center gap-2">
+            <span className={cn('text-xs', isDark ? 'text-white/30' : 'text-slate-400')}>Página</span>
+            <input
+              type="number"
+              min={1}
+              max={36}
+              value={pageInput}
+              onChange={e => handlePageInput(e.target.value)}
+              className={cn(
+                'w-14 text-center px-2 py-1.5 rounded-lg border outline-none text-sm font-bold transition-all',
+                isDark
+                  ? 'bg-slate-800 border-slate-700 text-white focus:border-[#0066B3]'
+                  : 'bg-white border-slate-300 text-slate-900 focus:border-[#0066B3]'
+              )}
+            />
+            <span className={cn('text-xs', isDark ? 'text-white/30' : 'text-slate-400')}>de 36</span>
+            <span className={cn('text-xs ml-2 hidden md:block', isDark ? 'text-white/20' : 'text-slate-300')}>
+              · Usa ← → para navegar
+            </span>
+          </div>
+
+          {/* Botón siguiente */}
+          <button
+            onClick={() => goToSpread(currentSpread + 1)}
+            disabled={currentSpread === SPREADS.length - 1}
+            className={cn(
+              'flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition-all',
+              currentSpread === SPREADS.length - 1
+                ? 'opacity-30 cursor-not-allowed'
+                : 'bg-[#0066B3] text-white hover:bg-[#0055a0]'
+            )}
+          >
+            Siguiente →
+          </button>
+        </div>
+
+        {/* Miniaturas de navegación rápida */}
+        <div className="flex gap-1 mt-3 overflow-x-auto pb-1"
+          style={{ scrollbarWidth: 'none' }}>
+          {SPREADS.map((spread, i) => (
+            <button
+              key={i}
+              onClick={() => goToSpread(i)}
+              className={cn(
+                'flex-shrink-0 w-8 h-1.5 rounded-full transition-all',
+                i === currentSpread
+                  ? 'bg-[#0066B3] w-12'
+                  : isDark ? 'bg-white/20 hover:bg-white/40' : 'bg-slate-300 hover:bg-slate-400'
+              )}
+            />
+          ))}
+        </div>
       </div>
 
       {/* Panel de productos (modal) */}
