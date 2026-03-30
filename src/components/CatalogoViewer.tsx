@@ -200,8 +200,10 @@ export default function CatalogoViewer({ isDark = true, onProductsChange }: Cata
             setCurrentPage(i);
             setPageInput(String(i + 1));
           }}
+          className="bg-transparent"
         >
           <CarouselContent
+            className="bg-transparent"
             transition={{
               damping: 20,
               stiffness: 80,
@@ -210,7 +212,7 @@ export default function CatalogoViewer({ isDark = true, onProductsChange }: Cata
             }}
           >
             {PAGES.map((pageInfo, i) => (
-              <CarouselItem key={pageInfo.page}>
+              <CarouselItem key={pageInfo.page} className="bg-transparent">
                 <div
                   className={cn(
                     'relative w-full overflow-hidden rounded-2xl shadow-2xl',
