@@ -8,7 +8,6 @@ import { cn } from '@/lib/utils';
 import {
   Carousel,
   CarouselContent,
-  CarouselNavigation,
   CarouselItem,
 } from '@/components/ui/Carousel';
 
@@ -194,29 +193,13 @@ export default function CatalogoViewer({ isDark = true, onProductsChange }: Cata
           </p>
         </div>
 
-        <Carousel
-          index={currentPage}
-          onIndexChange={(i) => {
-            setCurrentPage(i);
-            setPageInput(String(i + 1));
-          }}
-          className="bg-transparent"
-        >
-          <CarouselContent
-            className="bg-transparent"
-            transition={{
-              damping: 20,
-              stiffness: 80,
-              type: 'spring',
-              duration: 0.3,
-            }}
-          >
+        <Carousel className="w-full" index={currentPage} onIndexChange={(i) => { setCurrentPage(i); setPageInput(String(i + 1)); }}>
+          <CarouselContent className="-ml-0">
             {PAGES.map((pageInfo, i) => (
-              <CarouselItem key={pageInfo.page} className="bg-transparent">
+              <CarouselItem key={pageInfo.page} className="pl-0">
                 <div
                   className={cn(
-                    'relative w-full rounded-2xl shadow-2xl overflow-hidden bg-transparent',
-                    'aspect-[1400/1000]',
+                    'relative w-full rounded-2xl shadow-2xl overflow-hidden',
                     pageInfo.type !== 'static' && 'cursor-pointer group'
                   )}
                   onClick={() => pageInfo.type !== 'static' && handlePageClick(pageInfo)}
@@ -226,10 +209,10 @@ export default function CatalogoViewer({ isDark = true, onProductsChange }: Cata
                   <Image
                     src={`/catalogo_pages/webp/page-${pageInfo.page}.webp`}
                     alt={pageInfo.title}
-                    fill
-                    className="object-cover"
+                    width={1400}
+                    height={1000}
+                    className="w-full h-auto block"
                     priority={i === 0}
-                    sizes="(max-width: 768px) 100vw, 1100px"
                   />
                   {pageInfo.type !== 'static' && (
                     <div className="absolute inset-0 bg-[#0066B3]/0 group-hover:bg-[#0066B3]/8 transition-all duration-300 flex items-center justify-center">
@@ -246,15 +229,6 @@ export default function CatalogoViewer({ isDark = true, onProductsChange }: Cata
               </CarouselItem>
             ))}
           </CarouselContent>
-
-          {/* Flechas de navegación estilo carousel */}
-          <CarouselNavigation
-            alwaysShow
-            className="absolute inset-x-4 top-1/2 -translate-y-1/2 w-auto left-0 right-0 px-0"
-            classNameButton={cn(
-              'w-12 h-12 bg-black/40 hover:bg-black/60 text-white border-0 shadow-2xl backdrop-blur-sm'
-            )}
-          />
         </Carousel>
 
         {/* Controles inferiores - Reducido espacio mt-4 -> mt-2 */}
