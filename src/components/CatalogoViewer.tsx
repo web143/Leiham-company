@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
-import { motion, useReducedMotion, AnimatePresence } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import Image from 'next/image';
 import { X, ShoppingCart, Plus, Check } from 'lucide-react';
 import { products } from '@/lib/products';
@@ -146,7 +146,7 @@ export default function CatalogoViewer({ isDark = true, onProductsChange }: Cata
       setCurrentPage(index);
       setPageInput(String(index + 1));
       setIsFlipping(false);
-    }, shouldReduceMotion ? 0 : 300);
+    }, shouldReduceMotion ? 0 : 400);
   };
 
   const handlePageInput = (value: string) => {
@@ -199,73 +199,64 @@ export default function CatalogoViewer({ isDark = true, onProductsChange }: Cata
       {/* Visor tipo revista 1 página */}
       <div className="max-w-[1100px] mx-auto px-4 pb-4">
         
-           <div
+        {/* Página actual */}
+        <div
           className={cn(
-            'relative w-full overflow-hidden rounded-2xl shadow-2xl bg-black/5 aspect-[14/10]',
-            PAGES[currentPage].type !== 'static' && 'cursor-pointer'
+            'relative w-full overflow-hidden rounded-2xl shadow-2xl transition-transform duration-200',
+            PAGES[currentPage].type !== 'static' && 'cursor-pointer group'
           )}
           onClick={() => PAGES[currentPage].type !== 'static' && handlePageClick(PAGES[currentPage])}
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
         >
-          <AnimatePresence initial={false} custom={direction} mode="popLayout">
-            <motion.div
-              key={currentPage}
-              custom={direction}
-              variants={{
-                enter: (direction: string) => ({
-                  x: direction === 'next' ? 100 : -100,
-                  opacity: 0,
-                  scale: 0.98,
-                  filter: 'blur(10px)',
-                }),
-                center: {
-                  x: 0,
-                  opacity: 1,
-                  scale: 1,
-                  filter: 'blur(0px)',
-                },
-                exit: (direction: string) => ({
-                  x: direction === 'next' ? -100 : 100,
-                  opacity: 0,
-                  scale: 0.98,
-                  filter: 'blur(10px)',
-                }),
-              }}
-              initial="enter"
-              animate="center"
-              exit="exit"
-              transition={{
-                x: { type: 'spring', stiffness: 300, damping: 30 },
-                opacity: { duration: 0.3 },
-                scale: { duration: 0.3 },
-                filter: { duration: 0.3 },
-              }}
-              className="w-full h-full relative group"
-            >
-              <Image
-                src={`/catalogo_pages/webp/page-${PAGES[currentPage].page}.webp`}
-                alt={PAGES[currentPage].title}
-                width={1400}
-                height={1000}
-                className="w-full h-auto"
-                priority
-              />
+          <motion.div
+            key={currentPage}
+            className={cn(
+              'w-full h-full',
+              !shouldReduceMotion && !isFlipping && direction === 'next' && 'flip-in-next',
+              !shouldReduceMotion && !isFlipping && direction === 'prev' && 'flip-in-prev'
+            )}
+          >
+            <Image
+              src={`/catalogo_pages/webp/page-${PAGES[currentPage].page}.webp`}
+              alt={PAGES[currentPage].title}
+              width={1400}
+              height={1000}
+              className="w-full h-auto"
+              priority
+            />
 
-              {/* Overlay hover */}
-              {PAGES[currentPage].type !== 'static' && (
-                <div className="absolute inset-0 bg-[#0066B3]/0 group-hover:bg-[#0066B3]/8 transition-all duration-300 flex items-center justify-center">
-                  <div className="opacity-0 group-hover:opacity-100 transition-all duration-300 bg-[#0066B3] text-white px-5 py-2.5 rounded-full text-sm font-bold shadow-xl flex items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
-                      <circle cx="12" cy="12" r="3"/>
-                    </svg>
-                    Ver productos
-                  </div>
+            {/* Overlay hover */}
+            {PAGES[currentPage].type !== 'static' && (
+              <div className="absolute inset-0 bg-[#0066B3]/0 group-hover:bg-[#0066B3]/8 transition-all duration-300 flex items-center justify-center">
+                <div className="opacity-0 group-hover:opacity-100 transition-all duration-300 bg-[#0066B3] text-white px-5 py-2.5 rounded-full text-sm font-bold shadow-xl flex items-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
+                    <circle cx="12" cy="12" r="3"/>
+                  </svg>
+                  Ver productos
                 </div>
-              )}
-            </motion.div>
-          </AnimatePresence>
+              </div>
+            )}
+          </motion.div>
+
+          {/* Flechas de navegación encima de la imagen */}
+          <motion.button
+            whileTap={shouldReduceMotion ? {} : { scale: 0.9, transition: { type: 'spring', stiffness: 400, damping: 30 } }}
+            onClick={e => { e.stopPropagation(); goToPage(currentPage - 1); }}
+            disabled={currentPage === 0}
+            className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/40 hover:bg-black/60 text-white flex items-center justify-center transition-all disabled:opacity-0 disabled:pointer-events-none"
+          >
+            ‹
+          </motion.button>
+          <motion.button
+            whileTap={shouldReduceMotion ? {} : { scale: 0.9, transition: { type: 'spring', stiffness: 400, damping: 30 } }}
+            onClick={e => { e.stopPropagation(); goToPage(currentPage + 1); }}
+            disabled={currentPage === PAGES.length - 1}
+            className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/40 hover:bg-black/60 text-white flex items-center justify-center transition-all disabled:opacity-0 disabled:pointer-events-none"
+          >
+            ›
+          </motion.button>
         </div>
 
         {/* Controles inferiores */}
