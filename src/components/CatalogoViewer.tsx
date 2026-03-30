@@ -5,11 +5,6 @@ import Image from 'next/image';
 import { X } from 'lucide-react';
 import { products } from '@/lib/products';
 import { cn } from '@/lib/utils';
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-} from '@/components/ui/Carousel';
 
 // Mapa de páginas individuales
 const PAGES = [
@@ -193,43 +188,62 @@ export default function CatalogoViewer({ isDark = true, onProductsChange }: Cata
           </p>
         </div>
 
-        <Carousel className="w-full overflow-hidden" index={currentPage} onIndexChange={(i) => { setCurrentPage(i); setPageInput(String(i + 1)); }}>
-          <CarouselContent className="ml-0">
+        {/* Visor simple sin biblioteca */}
+        <div className="relative w-full overflow-hidden rounded-2xl shadow-2xl">
+          <div
+            className="flex transition-transform duration-300 ease-in-out"
+            style={{ transform: `translateX(-${currentPage * 100}%)` }}
+          >
             {PAGES.map((pageInfo, i) => (
-              <CarouselItem key={pageInfo.page} className="pl-0 min-w-0">
-                <div
-                  className={cn(
-                    'relative w-full rounded-2xl shadow-2xl overflow-hidden',
-                    pageInfo.type !== 'static' && 'cursor-pointer group'
-                  )}
-                  onClick={() => pageInfo.type !== 'static' && handlePageClick(pageInfo)}
-                  onTouchStart={handleTouchStart}
-                  onTouchEnd={handleTouchEnd}
-                >
-                  <Image
-                    src={`/catalogo_pages/webp/page-${pageInfo.page}.webp`}
-                    alt={pageInfo.title}
-                    width={1400}
-                    height={1000}
-                    className="w-full h-auto block"
-                    priority={i === 0}
-                  />
-                  {pageInfo.type !== 'static' && (
-                    <div className="absolute inset-0 bg-[#0066B3]/0 group-hover:bg-[#0066B3]/8 transition-all duration-300 flex items-center justify-center">
-                      <div className="opacity-0 group-hover:opacity-100 transition-all duration-300 bg-[#0066B3] text-white px-5 py-2.5 rounded-full text-sm font-bold shadow-xl flex items-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
-                          <circle cx="12" cy="12" r="3"/>
-                        </svg>
-                        Ver productos
-                      </div>
+              <div
+                key={pageInfo.page}
+                className={cn(
+                  'relative w-full flex-shrink-0',
+                  pageInfo.type !== 'static' && 'cursor-pointer group'
+                )}
+                onClick={() => pageInfo.type !== 'static' && handlePageClick(pageInfo)}
+                onTouchStart={handleTouchStart}
+                onTouchEnd={handleTouchEnd}
+              >
+                <Image
+                  src={`/catalogo_pages/webp/page-${pageInfo.page}.webp`}
+                  alt={pageInfo.title}
+                  width={1400}
+                  height={1000}
+                  className="w-full h-auto block"
+                  priority={i === 0}
+                />
+                {pageInfo.type !== 'static' && (
+                  <div className="absolute inset-0 bg-[#0066B3]/0 group-hover:bg-[#0066B3]/10 transition-all duration-300 flex items-center justify-center">
+                    <div className="opacity-0 group-hover:opacity-100 transition-all bg-[#0066B3] text-white px-5 py-2.5 rounded-full text-sm font-bold shadow-xl flex items-center gap-2">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
+                        <circle cx="12" cy="12" r="3"/>
+                      </svg>
+                      Ver productos
                     </div>
-                  )}
-                </div>
-              </CarouselItem>
+                  </div>
+                )}
+              </div>
             ))}
-          </CarouselContent>
-        </Carousel>
+          </div>
+
+          {/* Flechas */}
+          <button
+            onClick={() => setCurrentPage(p => Math.max(0, p - 1))}
+            disabled={currentPage === 0}
+            className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/50 hover:bg-black/70 text-white flex items-center justify-center disabled:opacity-0 transition-all text-xl"
+          >
+            ‹
+          </button>
+          <button
+            onClick={() => setCurrentPage(p => Math.min(PAGES.length - 1, p + 1))}
+            disabled={currentPage === PAGES.length - 1}
+            className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/50 hover:bg-black/70 text-white flex items-center justify-center disabled:opacity-0 transition-all text-xl"
+          >
+            ›
+          </button>
+        </div>
 
         {/* Controles inferiores - Reducido espacio mt-4 -> mt-2 */}
         <div className="flex items-center justify-center gap-3 mt-2">
