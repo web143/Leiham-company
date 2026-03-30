@@ -183,12 +183,12 @@ export default function CatalogoViewer({ isDark = true, onProductsChange }: Cata
       isDark ? 'bg-black' : 'bg-white'
     )}>
       {/* Título */}
-      <div className="text-center py-8 px-4">
+      <div className="text-center pt-6 pb-2 px-4">
         <p className="text-[#0066B3] text-xs tracking-[0.3em] uppercase mb-2">Royal Prestige®</p>
         <h2 className={cn('text-3xl font-black tracking-tight uppercase', isDark ? 'text-white' : 'text-slate-900')}>
           Catálogo de <span className="text-[#0066B3]">Productos</span>
         </h2>
-        <p className={cn('text-xs mt-2', isDark ? 'text-white/30' : 'text-slate-400')}>
+        <p className={cn('text-xs', isDark ? 'text-white/30' : 'text-slate-400')}>
           Haz clic en cualquier sección para ver precios y agregar productos
         </p>
       </div>
