@@ -5,7 +5,6 @@ import Image from 'next/image';
 import { X, ShoppingCart, Plus, Check } from 'lucide-react';
 import { products } from '@/lib/products';
 import { cn } from '@/lib/utils';
-import { AnimatedButton, AnimatedButtonBlue } from '@/components/ui/AnimatedButton';
 
 // Mapa de páginas individuales
 const PAGES = [
@@ -225,8 +224,12 @@ export default function CatalogoViewer({ isDark = true, onProductsChange }: Cata
           {/* Overlay hover */}
           {PAGES[currentPage].type !== 'static' && (
             <div className="absolute inset-0 bg-[#0066B3]/0 group-hover:bg-[#0066B3]/8 transition-all duration-300 flex items-center justify-center">
-              <div className="opacity-0 group-hover:opacity-100 transition-all duration-300 bg-[#0066B3] text-white px-5 py-2.5 rounded-full text-sm font-bold shadow-xl">
-                {PAGES[currentPage].type === 'combo' ? '👆 Seleccionar este combo' : '👆 Ver precios'}
+              <div className="opacity-0 group-hover:opacity-100 transition-all duration-300 bg-[#0066B3] text-white px-5 py-2.5 rounded-full text-sm font-bold shadow-xl flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
+                  <circle cx="12" cy="12" r="3"/>
+                </svg>
+                Ver productos
               </div>
             </div>
           )}
@@ -251,39 +254,25 @@ export default function CatalogoViewer({ isDark = true, onProductsChange }: Cata
         </div>
 
         {/* Controles inferiores */}
-        <div className="flex items-center justify-between mt-4 gap-4">
-          
-          <AnimatedButton
-            onClick={() => goToPage(currentPage - 1)}
-            disabled={currentPage === 0}
-          >
-            ← Anterior
-          </AnimatedButton>
-
-          <div className="flex items-center gap-2">
-            <span className={cn('text-xs', isDark ? 'text-white/30' : 'text-slate-400')}>Página</span>
-            <input
-              type="number"
-              min={1}
-              max={36}
-              value={pageInput}
-              onChange={e => handlePageInput(e.target.value)}
-              className={cn(
-                'w-14 text-center px-2 py-1.5 rounded-lg border outline-none text-sm font-bold',
-                isDark
-                  ? 'bg-slate-800 border-slate-700 text-white focus:border-[#0066B3]'
-                  : 'bg-white border-slate-300 text-slate-900 focus:border-[#0066B3]'
-              )}
-            />
-            <span className={cn('text-xs', isDark ? 'text-white/30' : 'text-slate-400')}>de 36</span>
-          </div>
-
-          <AnimatedButtonBlue
-            onClick={() => goToPage(currentPage + 1)}
-            disabled={currentPage === PAGES.length - 1}
-          >
-            Siguiente →
-          </AnimatedButtonBlue>
+        <div className="flex items-center justify-center gap-3 mt-4">
+          <span className={cn('text-xs', isDark ? 'text-white/30' : 'text-slate-400')}>Página</span>
+          <input
+            type="number"
+            min={1}
+            max={36}
+            value={pageInput}
+            onChange={e => handlePageInput(e.target.value)}
+            className={cn(
+              'w-14 text-center px-2 py-1.5 rounded-lg border outline-none text-sm font-bold',
+              isDark
+                ? 'bg-slate-800 border-slate-700 text-white focus:border-[#0066B3]'
+                : 'bg-white border-slate-300 text-slate-900 focus:border-[#0066B3]'
+            )}
+          />
+          <span className={cn('text-xs', isDark ? 'text-white/30' : 'text-slate-400')}>de 36</span>
+          <span className={cn('text-xs hidden md:block', isDark ? 'text-white/20' : 'text-slate-300')}>
+            · Usa ← → o desliza para navegar
+          </span>
         </div>
 
         {/* Barra de progreso */}
