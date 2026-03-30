@@ -4,7 +4,6 @@ import { Search, Plus, Check, X, Gift, AlertTriangle, CheckCircle2, AlertCircle 
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { products } from "@/lib/products";
 import { cn } from "@/lib/utils";
-import { CalculadoraResultCard } from "@/components/ui/CalculadoraResultCard";
 
 const TABLA_PAGOS = [
   { cuotas: 2, pct: 51.95 }, { cuotas: 3, pct: 35.07 }, { cuotas: 4, pct: 26.64 },
@@ -31,10 +30,8 @@ interface Props {
 export default function CalculadoraFinanciamiento({ isDark = true, externalItems = [] }: Props) {
   const [selectedItems, setSelectedItems] = useState<(typeof products[0] & { cantidad?: number })[]>([]);
 
-  // Sincronizar cuando cambien los items externos
   useEffect(() => {
     if (externalItems.length > 0) {
-      // Convertir el array expandido a items con cantidad
       const itemsConCantidad = new Map<string, { item: any; cantidad: number }>();
       externalItems.forEach(p => {
         const key = `${p.code}_${p.name}`;
@@ -52,10 +49,10 @@ export default function CalculadoraFinanciamiento({ isDark = true, externalItems
       
       setSelectedItems(newItems);
     } else if (externalItems.length === 0 && selectedItems.length > 0) {
-      // Si limpiaron el catálogo, limpiar la calculadora también
       setSelectedItems([]);
     }
   }, [externalItems]);
+
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [inicialDado, setInicialDado] = useState("");
@@ -65,10 +62,8 @@ export default function CalculadoraFinanciamiento({ isDark = true, externalItems
   const [cuotaInput, setCuotaInput] = useState("");
   const [mesSeleccionado, setMesSeleccionado] = useState<number | null>(null);
   const [isClearing, setIsClearing] = useState(false);
-  const mobileChipsRef = useRef<HTMLDivElement>(null);
-  // Emil: respect iOS "Reduce Motion" system preference
+  
   const shouldReduceMotion = useReducedMotion();
-  // Emil: disable stagger + complex animations on small screens for perf
   const [isMobile, setIsMobile] = useState(false);
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 768);
@@ -91,21 +86,12 @@ export default function CalculadoraFinanciamiento({ isDark = true, externalItems
   const categoryRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
 
   const handleCategoryClick = (cat: string) => {
-    // Si ya está activa, desactivar
     if (activeCategory === cat) {
       setActiveCategory(null);
       return;
     }
-    
     setActiveCategory(cat);
-    
-    // Scroll al header de esa categoría en la lista
-    setTimeout(() => {
-      categoryRefs.current[cat]?.scrollIntoView({
-        behavior: 'smooth',
-        block: 'start',
-      });
-    }, 50);
+    setTimeout(() => categoryRefs.current[cat]?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
   };
 
   const getCantidad = (p: typeof products[0]) => {
@@ -138,25 +124,11 @@ export default function CalculadoraFinanciamiento({ isDark = true, externalItems
 
   const isSelected = (p: typeof products[0]) => getCantidad(p) > 0;
 
-  // toggle kept for compatibility (not used in product list anymore)
-  const toggle = (p: typeof products[0]) => {
-    if (isSelected(p)) {
-      setSelectedItems(prev => prev.filter(i => !(i.code === p.code && i.name === p.name)));
-    } else {
-      setSelectedItems(prev => [...prev, { ...p, cantidad: 1 }]);
-    }
-  };
-
   const fmt = (n: number) => `RD$ ${n.toLocaleString("es-DO", { minimumFractionDigits: 2 })}`;
 
   const filtered = useMemo(() => {
     const searchLower = search.toLowerCase().trim();
-    
-    if (!searchLower) {
-      return activeCategory 
-        ? products.filter(p => p.category === activeCategory)
-        : products;
-    }
+    if (!searchLower) return activeCategory ? products.filter(p => p.category === activeCategory) : products;
     
     return products.filter(p => {
       const matchName = p.name.toLowerCase().includes(searchLower);
@@ -164,7 +136,6 @@ export default function CalculadoraFinanciamiento({ isDark = true, externalItems
       const matchTotal = p.total.toString().includes(searchLower);
       const matchPrice = p.price.toString().includes(searchLower);
       const matchCategory = activeCategory ? p.category === activeCategory : true;
-      
       return (matchName || matchCode || matchTotal || matchPrice) && matchCategory;
     });
   }, [search, activeCategory]);
@@ -175,16 +146,12 @@ export default function CalculadoraFinanciamiento({ isDark = true, externalItems
   const totalProductos = selectedItems.reduce((s, p) => s + (p.total * (p.cantidad || 1)), 0);
   const precioSinItbis = selectedItems.reduce((s, p) => s + (p.price * (p.cantidad || 1)), 0);
   const itbisTotal = selectedItems.reduce((s, p) => s + (p.itbis * (p.cantidad || 1)), 0);
-  const totalUnidades = selectedItems.reduce((s, p) => s + (p.cantidad || 1), 0);
-
+  
   const inicialDadoNum = parseFloat(inicialDado.replace(/[^0-9.]/g, '')) || 0;
   const pagoInicial = Math.min(inicialDadoNum, totalProductos);
   const montoFinanciar = Math.max(0, totalProductos - pagoInicial);
-
-  // Tasa de interés anual fija
   const TASA_INTERES_ANUAL = 26;
 
-  // Si el usuario escribe en el input de inicial, actualiza el slider también
   const handleInicialChange = (value: string) => {
     setInicialDado(value);
     const num = parseFloat(value.replace(/[^0-9.]/g, '')) || 0;
@@ -196,26 +163,19 @@ export default function CalculadoraFinanciamiento({ isDark = true, externalItems
   };
 
   const handlePorcentajeInput = (value: string) => {
-    // Permite borrar y escribir libremente
     setPorcentajeInput(value);
     const num = parseFloat(value);
     if (!isNaN(num) && num >= 4 && num <= 100) {
       setPorcentaje(num);
-      if (totalProductos > 0) {
-        setInicialDado((totalProductos * (num / 100)).toFixed(2));
-      }
+      if (totalProductos > 0) setInicialDado((totalProductos * (num / 100)).toFixed(2));
     }
   };
 
-  // Si el usuario mueve el slider, actualiza el inicial también
   const handlePorcentajeChange = (value: number) => {
     const pct = Math.min(100, Math.max(4, value));
     setPorcentaje(pct);
     setPorcentajeInput(pct.toFixed(2));
-    if (totalProductos > 0) {
-      const inicial = totalProductos * (pct / 100);
-      setInicialDado(inicial.toFixed(2));
-    }
+    if (totalProductos > 0) setInicialDado((totalProductos * (pct / 100)).toFixed(2));
   };
 
   useEffect(() => {
@@ -230,28 +190,12 @@ export default function CalculadoraFinanciamiento({ isDark = true, externalItems
   }, [selectedItems]);
 
   const cuotaInputNum = parseFloat(cuotaInput.replace(/[^0-9.]/g, '')) || 0;
-
-  const pctEscrito = montoFinanciar > 0 && cuotaInputNum > 0
-    ? (cuotaInputNum / montoFinanciar) * 100
-    : 0;
-
-  const filaActiva = mesSeleccionado
-    ? TABLA_PAGOS.find(f => f.cuotas === mesSeleccionado) ?? null
-    : pctEscrito > 0
-    ? TABLA_PAGOS.reduce((prev, curr) =>
-        Math.abs(curr.pct - pctEscrito) < Math.abs(prev.pct - pctEscrito) ? curr : prev)
-    : null;
-
-  const filaAnterior = pctEscrito > 0 && !mesSeleccionado
-    ? TABLA_PAGOS.filter(f => f.pct >= pctEscrito).slice(-1)[0] ?? null
-    : null;
-  const filaSiguiente = pctEscrito > 0 && !mesSeleccionado
-    ? TABLA_PAGOS.find(f => f.pct < pctEscrito) ?? null
-    : null;
-
+  const pctEscrito = montoFinanciar > 0 && cuotaInputNum > 0 ? (cuotaInputNum / montoFinanciar) * 100 : 0;
+  const filaActiva = mesSeleccionado ? TABLA_PAGOS.find(f => f.cuotas === mesSeleccionado) ?? null : pctEscrito > 0 ? TABLA_PAGOS.reduce((prev, curr) => Math.abs(curr.pct - pctEscrito) < Math.abs(prev.pct - pctEscrito) ? curr : prev) : null;
+  const filaAnterior = pctEscrito > 0 && !mesSeleccionado ? TABLA_PAGOS.filter(f => f.pct >= pctEscrito).slice(-1)[0] ?? null : null;
+  const filaSiguiente = pctEscrito > 0 && !mesSeleccionado ? TABLA_PAGOS.find(f => f.pct < pctEscrito) ?? null : null;
   const bajoDeMinimoMsg = pctEscrito > 0 && pctEscrito < 4.00 && !mesSeleccionado;
   const cuotaMinimaRD = montoFinanciar * 0.04;
-
   const cuotaDelDropdown = filaActiva ? montoFinanciar * (filaActiva.pct / 100) : 0;
 
   const handleMesChange = (cuotas: number) => {
@@ -269,183 +213,141 @@ export default function CalculadoraFinanciamiento({ isDark = true, externalItems
     setMesSeleccionado(null);
   }, [selectedItems]);
 
+  // Estilos UI Globales
+  const cardContainer = cn(
+    "rounded-[2rem] p-6 flex flex-col h-full border overflow-hidden shadow-2xl transition-all duration-300",
+    isDark 
+      ? "bg-white/[0.03] backdrop-blur-[12px] border-white/10 shadow-black/40" 
+      : "bg-white/90 backdrop-blur-[12px] border-slate-200/60 shadow-slate-200/70"
+  );
+  
+  const textPrimary = isDark ? "text-white" : "text-slate-900";
+  const textSecondary = isDark ? "text-white/50" : "text-slate-500";
+  const bgGlass = isDark ? "bg-white/[0.04] border-white/10" : "bg-white/80 border-slate-200";
+
   return (
-    <section id="calculadora" className={cn("w-full min-h-screen transition-colors duration-200 ease-out", isDark ? "bg-black" : "bg-white")}>
+    <section id="calculadora" className={cn("w-full min-h-screen transition-colors duration-500 ease-out", isDark ? "bg-[#050505]" : "bg-slate-50")}>
       
-      <div className="text-center py-4 px-4">
-        <p className="text-[#0066B3] text-[11px] tracking-[0.25em] uppercase mb-2 font-medium">Leiham Company</p>
-        <h2 className={cn("text-2xl font-semibold tracking-tight transition-colors duration-200 ease-out", isDark ? "text-white" : "text-slate-900")}>
+      <div className="text-center py-6 px-4">
+        <p className="text-[#0066B3] text-xs font-black tracking-[0.3em] uppercase mb-2">Leiham Company</p>
+        <h2 className={cn("text-3xl font-black tracking-tight", textPrimary)}>
           Calculadora de <span className="text-[#0066B3]">Financiamiento</span>
         </h2>
       </div>
 
-      {/* Layout cuatro columnas */}
-      <div className="max-w-[1400px] mx-auto px-4 pb-8 grid grid-cols-1 md:grid-cols-[220px_1fr_300px_300px] gap-4 h-auto md:h-[680px]">
+      <div className="max-w-[1400px] mx-auto px-4 pb-8 grid grid-cols-1 md:grid-cols-[240px_1fr_320px_320px] gap-5 h-auto md:h-[720px]">
 
-        {/* Chips móvil — solo visible en móvil */}
-        <div className="md:hidden flex gap-2 overflow-x-auto pb-2 custom-scrollbar"
-             style={{ scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' }}>
+        {/* Móvil chips */}
+        <div className="md:hidden flex gap-3 overflow-x-auto pb-4 custom-scrollbar" style={{ scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' }}>
           <motion.button onClick={() => setActiveCategory(null)}
-            whileTap={shouldReduceMotion ? {} : { scale: 0.97, transition: { type: 'spring', stiffness: 400, damping: 30 } }}
-            className={cn("flex-shrink-0 px-4 py-2 rounded-full text-[11px] font-semibold transition duration-200 ease-out", 
-              !activeCategory ? 'bg-[#0066B3] text-white shadow-sm shadow-[#0066B3]/30' : (isDark ? 'bg-white/8 text-white/60 hover:text-white/90' : 'bg-slate-100 text-slate-500 hover:text-slate-800')
-            )}>
-            Todos
-          </motion.button>
+            whileTap={shouldReduceMotion ? {} : { scale: 0.95, transition: { type: 'spring' } }}
+            className={cn("flex-shrink-0 px-5 py-2.5 rounded-2xl text-[13px] font-bold transition duration-200", 
+              !activeCategory ? 'bg-[#0066B3] text-white shadow-lg shadow-[#0066B3]/30' : cn(bgGlass, "border", textSecondary)
+            )}>TODOS</motion.button>
           {allCategories.map(cat => (
             <motion.button key={cat} onClick={() => handleCategoryClick(cat)}
-              whileTap={shouldReduceMotion ? {} : { scale: 0.97, transition: { type: 'spring', stiffness: 400, damping: 30 } }}
-              className={cn("flex-shrink-0 px-4 py-2 rounded-full text-[11px] font-semibold whitespace-nowrap transition duration-200 ease-out", 
-                activeCategory === cat ? 'bg-[#0066B3] text-white shadow-sm shadow-[#0066B3]/30' : (isDark ? 'bg-white/8 text-white/60 hover:text-white/90' : 'bg-slate-100 text-slate-500 hover:text-slate-800')
+              whileTap={shouldReduceMotion ? {} : { scale: 0.95, transition: { type: 'spring' } }}
+              className={cn("flex-shrink-0 px-5 py-2.5 rounded-2xl text-[13px] font-bold whitespace-nowrap uppercase tracking-wider transition duration-200", 
+                activeCategory === cat ? 'bg-[#0066B3] text-white shadow-lg shadow-[#0066B3]/30' : cn(bgGlass, "border", textSecondary)
               )}>
               {cat}
-              {selectedItems.filter(i => i.category === cat).length > 0 &&
-                <span className="ml-1 opacity-80">·{selectedItems.filter(i => i.category === cat).length}</span>}
             </motion.button>
           ))}
         </div>
 
-        {/* COLUMNA 1 — Navegación / categorías (Solo Desktop) */}
-        <div className={cn("hidden md:flex rounded-2xl p-4 flex-col h-full overflow-hidden transition duration-200 ease-out", isDark ? "bg-white/[0.03] border border-white/8" : "bg-slate-50 border border-slate-200/80")}>
-          <h3 className={cn("font-semibold text-base mb-4 tracking-tight transition-colors duration-200 ease-out", isDark ? "text-white" : "text-slate-900")}>Categorías</h3>
-          <div className="space-y-0.5 flex-1 overflow-y-auto pr-1 custom-scrollbar" data-lenis-prevent>
+        {/* COLUMNA 1 — Categorías */}
+        <div className={cn("hidden md:flex flex-col", cardContainer)}>
+          <h3 className={cn("font-black text-xs uppercase tracking-[0.2em] mb-5", textPrimary)}>Categorías</h3>
+          <div className="space-y-2 flex-1 overflow-y-auto pr-2 custom-scrollbar" data-lenis-prevent>
             {allCategories.map(cat => {
               const count = selectedItems.filter(i => i.category === cat).length;
               return (
-                <button
-                  key={cat}
-                  onClick={() => handleCategoryClick(cat)}
-                  className={cn("w-full text-left px-3 py-2 rounded-xl text-[11px] flex justify-between items-center transition duration-200 ease-out cursor-pointer", 
+                <button key={cat} onClick={() => handleCategoryClick(cat)}
+                  className={cn("w-full text-left px-4 py-3 rounded-2xl text-[11px] font-bold uppercase tracking-wider transition duration-200 border", 
                     activeCategory === cat 
-                      ? (isDark ? 'bg-white/10 text-white font-medium' : 'bg-[#0066B3]/8 text-[#0066B3] font-medium') 
-                      : (isDark ? 'text-white/40 hover:text-white/80 hover:bg-white/5' : 'text-slate-500 hover:text-slate-800 hover:bg-slate-100')
-                  )}
-                >
+                      ? (isDark ? 'bg-white/10 text-white border-white/20' : 'bg-[#0066B3]/10 text-[#0066B3] border-[#0066B3]/20') 
+                      : cn(bgGlass, "hover:scale-[1.02]", textSecondary)
+                  )}>
                   <span className="truncate pr-2">{cat}</span>
-                  {count > 0 && (
-                    <span className="bg-[#0066B3] text-white text-[10px] font-semibold px-2 py-0.5 rounded-full flex-shrink-0">
-                      {count}
-                    </span>
-                  )}
+                  {count > 0 && <span className="bg-[#0066B3] text-white text-[10px] font-black px-2 py-0.5 rounded-full ml-auto">{count}</span>}
                 </button>
               );
             })}
           </div>
         </div>
 
-        {/* COLUMNA 2 — Lista de productos con buscador */}
-        <div className={cn("rounded-2xl p-4 flex flex-col h-auto md:h-full overflow-hidden transition duration-200 ease-out", isDark ? "bg-white/[0.03] border border-white/8" : "bg-slate-50 border border-slate-200/80")}>
-
-          {/* Header */}
+        {/* COLUMNA 2 — Productos */}
+        <div className={cardContainer}>
           <div className="flex justify-between items-center mb-5">
-            <h3 className={cn("font-semibold text-base tracking-tight transition-colors duration-200 ease-out", isDark ? "text-white" : "text-slate-900")}>Productos</h3>
+            <h3 className={cn("font-black text-xs uppercase tracking-[0.2em]", textPrimary)}>Catálogo Master</h3>
             {selectedItems.length > 0 && (
               <button
                 onClick={() => { setIsClearing(true); setSelectedItems([]); setTimeout(() => setIsClearing(false), 350); }}
-                className={cn("text-[11px] font-medium transition-colors", isDark ? "text-white/30 hover:text-red-400" : "text-slate-400 hover:text-red-500")}
-              >
-                Limpiar
-              </button>
+                className="text-[11px] font-bold text-red-500 hover:text-red-400 bg-red-500/10 px-3 py-1.5 rounded-full transition"
+              >LIMPIAR</button>
             )}
           </div>
 
-          {/* Buscador */}
           <div className="relative mb-5">
-            <Search className={cn("absolute left-3.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5", isDark ? "text-white/25" : "text-slate-400")} />
+            <Search className={cn("absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4", textSecondary)} />
             <input
-              value={search}
-              onChange={e => setSearch(e.target.value)}
+              value={search} onChange={e => setSearch(e.target.value)}
               placeholder="Buscar producto o código..."
-              className={cn("w-full pl-10 pr-9 py-3 rounded-xl border outline-none text-[13px] transition duration-200 ease-out", 
-                isDark 
-                  ? "bg-white/5 border-white/8 text-white placeholder:text-white/20 focus:border-[#0066B3]/60 focus:bg-white/8 focus:shadow-[0_0_0_3px_rgba(0,102,179,0.12)]" 
-                  : "bg-slate-50 border-slate-200 text-slate-900 placeholder:text-slate-400 focus:border-[#0066B3]/50 focus:bg-white focus:shadow-[0_0_0_3px_rgba(0,102,179,0.08)]")}
+              className={cn("w-full pl-11 pr-10 py-3.5 rounded-2xl font-bold text-sm border outline-none transition", 
+                bgGlass, textPrimary, "focus:border-[#0066B3]/60 focus:bg-white/10 focus:shadow-[0_0_0_4px_rgba(0,102,179,0.15)]")}
             />
             {search && (
-              <button onClick={() => setSearch("")} className={cn("absolute right-3.5 top-1/2 -translate-y-1/2 transition-colors cursor-pointer", isDark ? "text-white/20 hover:text-white/60" : "text-slate-300 hover:text-slate-600")}>
-                <X className="w-3.5 h-3.5" />
+              <button onClick={() => setSearch("")} className={cn("absolute right-4 top-1/2 -translate-y-1/2", textSecondary)}>
+                <X className="w-4 h-4 font-bold" />
               </button>
             )}
           </div>
 
-          {/* Lista */}
-          <div className="flex-1 overflow-y-auto space-y-1 pr-1 max-h-[300px] md:max-h-[420px] custom-scrollbar" data-lenis-prevent
-            style={{ 
-              scrollbarWidth: 'thin', 
-              scrollbarColor: isDark ? 'rgba(255,255,255,0.06) transparent' : 'rgba(0,0,0,0.08) transparent' 
-            }}>
-            {visibleCategories.length === 0 ? (
-                <div className="text-center py-20">
-                    <p className={cn("text-sm transition-colors", isDark ? "text-white/20" : "text-slate-400")}>No se encontraron productos.</p>
-                </div>
-            ) : visibleCategories.map(cat => (
-              <div 
-                key={cat} 
-                ref={el => { categoryRefs.current[cat] = el; }}
-                className="mb-4 last:mb-0"
-              >
-                <p className={cn("text-[10px] font-semibold uppercase tracking-[0.15em] py-2 px-2 sticky top-0 backdrop-blur-md rounded-lg z-10 mb-1 border-b transition duration-200 ease-out", 
-                  isDark ? "text-white/25 bg-black/60 border-white/6" : "text-slate-400 bg-white/95 border-slate-100")}>
+          <div className="flex-1 overflow-y-auto space-y-2 pr-2 max-h-[300px] md:max-h-full custom-scrollbar" data-lenis-prevent>
+            {visibleCategories.map(cat => (
+              <div key={cat} ref={el => { categoryRefs.current[cat] = el; }} className="mb-6 last:mb-0">
+                <p className={cn("text-[10px] font-black uppercase tracking-[0.2em] py-2 px-3 sticky top-0 backdrop-blur-xl rounded-xl z-10 mb-2 border", 
+                  isDark ? "text-[#0066B3] bg-black/80 border-white/5" : "text-[#0066B3] bg-white/95 border-slate-100")}>
                   {cat}
                 </p>
-                <div className="space-y-0.5">
+                <div className="space-y-2">
                     {filtered.filter(p => p.category === cat).map((product, productIdx) => (
                         <motion.div
                             key={product.code + product.name}
-                            initial={shouldReduceMotion ? {} : { opacity: 0, y: 8 }}
+                            initial={shouldReduceMotion ? {} : { opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
-                            transition={{
-                              duration: shouldReduceMotion ? 0 : 0.2,
-                              delay: (isMobile || shouldReduceMotion) ? 0 : Math.min(productIdx * 0.03, 0.25),
-                              ease: [0.23, 1, 0.32, 1]
-                            }}
-                            className={cn("flex items-center gap-3 px-3 py-2.5 rounded-xl transition duration-200 ease-out", 
+                            transition={{ duration: 0.2, delay: (isMobile || shouldReduceMotion) ? 0 : Math.min(productIdx * 0.03, 0.2) }}
+                            className={cn("flex flex-col sm:flex-row sm:items-center gap-3 px-4 py-3.5 rounded-2xl transition duration-200 border", 
                                 getCantidad(product) > 0
-                                    ? (isDark ? 'bg-[#0066B3]/12 ring-1 ring-[#0066B3]/25' : 'bg-white ring-1 ring-[#0066B3]/30 shadow-sm') 
-                                    : (isDark ? 'hover:bg-white/5' : 'bg-white border border-slate-100 shadow-sm hover:border-[#0066B3]/20 hover:shadow-md')
+                                    ? (isDark ? 'bg-[#0066B3]/15 border-[#0066B3]/40' : 'bg-[#0066B3]/5 border-[#0066B3]/30') 
+                                    : cn(bgGlass, "hover:border-[#0066B3]/30 hover:shadow-lg")
                             )}
                         >
                             <div className="flex-1 min-w-0">
-                                <p className={cn("text-[13px] truncate transition-colors", isDark ? "text-white/90" : "text-slate-800")}>{product.name}</p>
-                                <div className="flex gap-3 mt-0.5">
-                                    {product.code !== '-' && (
-                                        <p className={cn("text-[11px] transition-colors", isDark ? "text-white/25" : "text-slate-400")}>{product.code}</p>
-                                    )}
-                                    <p className={cn("text-[11px] transition-colors", isDark ? "text-white/25" : "text-slate-400")}>ITBIS: {fmt(product.itbis)}</p>
+                                <p className={cn("text-sm font-bold truncate", textPrimary)}>{product.name}</p>
+                                <div className="flex gap-3 mt-1">
+                                    {product.code !== '-' && <p className={cn("text-xs font-bold", textSecondary)}>{product.code}</p>}
+                                    <p className={cn("text-xs font-bold", textSecondary)}>ITBIS: {fmt(product.itbis)}</p>
                                 </div>
                             </div>
-                            <div className="text-right flex-shrink-0 mr-2">
-                                <p className={cn("text-[13px] font-semibold", getCantidad(product) > 0 ? 'text-[#0066B3]' : (isDark ? 'text-white/70' : 'text-slate-700'))}>{fmt(product.total)}</p>
-                                <p className={cn("text-[11px] transition-colors", isDark ? "text-white/20" : "text-slate-400")}>sin ITBIS: {fmt(product.price)}</p>
-                            </div>
-                            {/* Controles de cantidad */}
-                            <div className="flex items-center gap-1 flex-shrink-0" onClick={e => e.stopPropagation()}>
-                              {getCantidad(product) > 0 && (
-                                <>
-                                  <motion.button
-                                    onClick={() => removeOne(product)}
-                                    whileTap={shouldReduceMotion ? {} : { scale: 0.88, transition: { type: 'spring', stiffness: 500, damping: 30 } }}
-                                    className={cn("w-6 h-6 rounded-lg flex items-center justify-center transition text-sm font-bold",
-                                      isDark ? "bg-white/8 text-white/60 hover:bg-red-500/40 hover:text-red-300" : "bg-slate-100 text-slate-500 hover:bg-red-100 hover:text-red-500")}
-                                  >
-                                    −
+                            <div className="flex justify-between sm:justify-end items-center sm:items-end sm:flex-col gap-2 w-full sm:w-auto mt-2 sm:mt-0 pt-2 sm:pt-0 border-t sm:border-0 border-white/10">
+                                <div className="text-left sm:text-right">
+                                    <p className={cn("text-sm font-black tracking-tight", getCantidad(product) > 0 ? 'text-[#0066B3]' : textPrimary)}>{fmt(product.total)}</p>
+                                    <p className={cn("text-[10px] uppercase font-bold tracking-wider", textSecondary)}>sin ITBIS: {fmt(product.price)}</p>
+                                </div>
+                                <div className="flex items-center gap-1.5" onClick={e => e.stopPropagation()}>
+                                  {getCantidad(product) > 0 && (
+                                    <>
+                                      <motion.button onClick={() => removeOne(product)} whileTap={{ scale: 0.9 }} className="w-8 h-8 rounded-xl flex items-center justify-center bg-red-500/10 text-red-500 font-bold border border-red-500/20">
+                                        −
+                                      </motion.button>
+                                      <span className="text-[#0066B3] font-black text-sm w-5 text-center">{getCantidad(product)}</span>
+                                    </>
+                                  )}
+                                  <motion.button onClick={() => addOne(product)} whileTap={{ scale: 0.9 }} className={cn("w-8 h-8 rounded-xl flex items-center justify-center font-bold border", getCantidad(product) > 0 ? 'bg-[#0066B3] text-white border-[#0066B3]' : 'bg-transparent text-[#0066B3] border-[#0066B3]/30 hover:bg-[#0066B3]/10')}>
+                                    +
                                   </motion.button>
-                                  <span className="text-[#0066B3] font-bold text-sm w-5 text-center">
-                                    {getCantidad(product)}
-                                  </span>
-                                </>
-                              )}
-                              <motion.button
-                                onClick={() => addOne(product)}
-                                whileTap={shouldReduceMotion ? {} : { scale: 0.88, transition: { type: 'spring', stiffness: 500, damping: 30 } }}
-                                className={cn("w-6 h-6 rounded-lg flex items-center justify-center transition text-sm font-bold",
-                                  getCantidad(product) > 0
-                                    ? 'bg-[#0066B3] text-white hover:bg-[#0066B3]/80'
-                                    : (isDark ? 'bg-white/8 text-white/40 hover:bg-[#0066B3]/40 hover:text-white' : 'bg-slate-100 text-slate-400 hover:bg-[#0066B3]/15 hover:text-[#0066B3]')
-                                )}
-                              >
-                                +
-                              </motion.button>
+                                </div>
                             </div>
                         </motion.div>
                     ))}
@@ -453,298 +355,156 @@ export default function CalculadoraFinanciamiento({ isDark = true, externalItems
               </div>
             ))}
           </div>
-
-          {/* Footer total */}
-          <div className={cn("border-t pt-3 mt-3 flex justify-between items-center transition duration-200 ease-out", isDark ? "border-white/6" : "border-slate-100")}>
+          
+          <div className={cn("pt-4 mt-4 flex justify-between items-center border-t", isDark ? "border-white/10" : "border-slate-200")}>
             <div>
-              <p className={cn("text-[11px] font-medium mb-0.5 transition-colors", isDark ? "text-white/30" : "text-slate-400")}>Seleccionados</p>
-              <p className={cn("text-base font-semibold transition-colors", isDark ? "text-white" : "text-slate-900")}>{selectedItems.length} <span className={cn("text-[11px] font-normal", isDark ? "text-white/30" : "text-slate-400")}>productos</span></p>
+              <p className={cn("text-xs font-bold uppercase tracking-wider mb-1", textSecondary)}>Seleccionados</p>
+              <p className={cn("text-lg font-black tracking-tighter", textPrimary)}>{selectedItems.length} <span className="text-xs font-bold tracking-normal opacity-50">ítems</span></p>
             </div>
             <div className="text-right">
-              <p className={cn("text-[11px] font-medium mb-0.5 transition-colors", isDark ? "text-white/30" : "text-slate-400")}>Total</p>
-              <p className="text-[#0066B3] text-base font-semibold tracking-tight">{fmt(totalProductos)}</p>
+              <p className={cn("text-xs font-bold uppercase tracking-wider mb-1", textSecondary)}>Total Catálogo</p>
+              <p className="text-[#0066B3] text-xl font-black tracking-tighter">{fmt(totalProductos)}</p>
             </div>
           </div>
         </div>
 
-        {/* COLUMNA 3 — Calculadora (Unificada para todos los tamaños) */}
-        <div className={cn("rounded-2xl p-5 flex flex-col gap-4 border transition duration-200 ease-out h-full overflow-y-auto custom-scrollbar", 
-          isDark ? "bg-white/[0.03] border-white/8 shadow-2xl shadow-black/30" : "bg-white border-slate-200/80 shadow-xl shadow-slate-100")} data-lenis-prevent>
-
-          {/* Card Total Rediseñada con Aspecto Bancario */}
-          <CalculadoraResultCard
-            isDark={isDark}
-            title="Total de Productos"
-            mainValue={
-              <motion.span
-                animate={{ filter: isClearing ? "blur(4px)" : "blur(0px)", opacity: isClearing ? 0.3 : 1 }}
-                transition={{ duration: 0.18, ease: [0.23, 1, 0.32, 1] }}
-                className={cn({ "text-slate-900": !isDark })}
-              >
-                {fmt(totalProductos)}
-              </motion.span>
-            }
-            leftLabel="INICIAL"
-            leftValue={fmt(inicialDadoNum)}
-            leftSub={`${porcentaje.toFixed(2)}% aportado`}
-            rightLabel="A FINANCIAR"
-            rightValue={fmt(montoFinanciar)}
-            rightSub="Base de cuotas"
-            accentColor="#ffffff"
-            secondaryColor="#ffffff"
-            className="mb-1"
-          />
-
-          {/* Inputs - Bloque 1: Inicial */}
-          <div className="space-y-5">
-              <div>
-                <label className={cn("text-[11px] font-medium block mb-2 transition-colors", isDark ? "text-white/40" : "text-slate-500")}>
-                  Inicial entregado <span className={isDark ? "text-white/20" : "text-slate-300"}>RD$</span>
-                </label>
-                <div className="relative">
-                    <span className={cn("absolute left-4 top-1/2 -translate-y-1/2 text-sm transition-colors", isDark ? "text-white/20" : "text-slate-300")}>$</span>
-                    <input
-                    value={inicialDado}
-                    onChange={e => handleInicialChange(e.target.value)}
-                    placeholder="0.00"
-                    className={cn("w-full pl-8 pr-4 py-3.5 rounded-xl border outline-none transition font-mono text-[15px] md:text-sm", 
-                      isDark 
-                        ? "bg-white/5 border-white/8 text-white placeholder:text-white/15 focus:border-[#0066B3]/60 focus:shadow-[0_0_0_3px_rgba(0,102,179,0.12)]" 
-                        : "bg-slate-50 border-slate-200 text-slate-900 placeholder:text-slate-300 focus:border-[#0066B3]/50 focus:bg-white focus:shadow-[0_0_0_3px_rgba(0,102,179,0.08)]")}
-                    />
+        {/* COLUMNA 3 — Calculadora Financiera */}
+        <div className={cardContainer} data-lenis-prevent>
+          
+          {/* Card Principal: Total */}
+          <div className={cn("relative overflow-hidden rounded-3xl p-6 border transition duration-300 shadow-xl mb-6", isDark ? "bg-white/[0.05] border-white/20 shadow-black/50" : "bg-white border-slate-200 shadow-[#0066B3]/10")}>
+            <div className="absolute inset-0 bg-gradient-to-br from-transparent to-black/5 pointer-events-none" />
+            <div className="relative z-10 text-center mb-6">
+               <span className={cn("text-[10px] font-black uppercase tracking-[0.2em] opacity-80", textPrimary)}>Total De Los Productos</span>
+               <motion.div animate={{ filter: isClearing ? "blur(4px)" : "blur(0px)", opacity: isClearing ? 0.3 : 1 }} className={cn("text-4xl md:text-5xl font-black tracking-tighter drop-shadow-md mt-1", textPrimary)}>
+                 {fmt(totalProductos)}
+               </motion.div>
+            </div>
+            <div className="relative z-10 flex justify-between items-end">
+              <div className="flex flex-col">
+                <div className="flex items-center gap-1.5 mb-1">
+                  <div className="w-1 h-3 rounded-full bg-white/40" />
+                  <span className={cn("text-[10px] font-bold uppercase tracking-widest", textSecondary)}>Inicial</span>
                 </div>
+                <span className={cn("text-lg font-black tracking-tighter", textPrimary)}>{fmt(inicialDadoNum)}</span>
+                <span className={cn("text-[9px] font-bold uppercase tracking-widest", textSecondary)}>{porcentaje.toFixed(2)}% valor</span>
+              </div>
+              <div className="flex flex-col text-right items-end">
+                <div className="flex items-center gap-1.5 mb-1">
+                  <span className={cn("text-[10px] font-bold uppercase tracking-widest", textSecondary)}>A Financiar</span>
+                  <div className="w-1 h-3 rounded-full bg-[#0066B3]" />
+                </div>
+                <span className={cn("text-lg font-black tracking-tighter text-[#0066B3]")}>{fmt(montoFinanciar)}</span>
+                <span className={cn("text-[9px] font-bold uppercase tracking-widest", textSecondary)}>Base de cuotas</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-6 flex-1 overflow-y-auto custom-scrollbar pr-2">
+              <div>
+                <label className={cn("text-xs font-bold uppercase tracking-widest block mb-2", textSecondary)}>Inicial Entregado (RD$)</label>
+                <input value={inicialDado} onChange={e => handleInicialChange(e.target.value)} placeholder="0.00"
+                  className={cn("w-full px-5 py-4 rounded-2xl font-black text-lg border outline-none transition", bgGlass, textPrimary, "focus:border-[#0066B3] focus:shadow-[0_0_0_4px_rgba(0,102,179,0.15)]")}
+                />
               </div>
 
               <div>
                 <div className="flex justify-between items-center mb-3">
-                  <label className={cn("text-[11px] font-medium transition-colors", isDark ? "text-white/40" : "text-slate-500")}>
-                    Porcentaje inicial
-                  </label>
+                  <label className={cn("text-xs font-bold uppercase tracking-widest", textSecondary)}>Porcentaje</label>
                   <div className="flex items-center gap-1.5">
-                    <input
-                      type="number"
-                      value={porcentajeInput}
-                      onChange={e => handlePorcentajeInput(e.target.value)}
-                      onBlur={() => {
-                        const num = parseFloat(porcentajeInput);
-                        if (isNaN(num) || num < 4) {
-                          setPorcentajeInput("4");
-                          setPorcentaje(4);
-                        }
-                      }}
-                      className={cn("w-16 text-center px-2 py-1 rounded-lg border outline-none text-sm font-semibold transition", 
-                        isDark ? "bg-white/8 border-white/10 text-white" : "bg-white border-slate-200 text-slate-800")}
+                    <input type="number" value={porcentajeInput} onChange={e => handlePorcentajeInput(e.target.value)} onBlur={() => { const num = parseFloat(porcentajeInput); if (isNaN(num) || num < 4) { setPorcentajeInput("4"); setPorcentaje(4); } }}
+                      className={cn("w-20 text-center px-3 py-2 rounded-xl font-black border text-sm transition outline-none", bgGlass, textPrimary, "focus:border-[#0066B3]")}
                     />
-                    <span className={cn("text-sm font-medium", isDark ? "text-white/40" : "text-slate-500")}>%</span>
+                    <span className={cn("text-sm font-black", textSecondary)}>%</span>
                   </div>
                 </div>
-                <input
-                  type="range" min={4} max={100}
-                  step={0.01}
-                  value={porcentaje}
-                  onChange={e => handlePorcentajeChange(Number(e.target.value))}
-                  className={cn("w-full h-1.5 rounded-full appearance-none cursor-pointer accent-[#0066B3] transition", 
-                    isDark ? "bg-white/10" : "bg-slate-200")}
+                <input type="range" min={4} max={100} step={0.01} value={porcentaje} onChange={e => handlePorcentajeChange(Number(e.target.value))}
+                  className={cn("w-full h-2 rounded-full appearance-none cursor-pointer accent-[#0066B3] transition", isDark ? "bg-white/10" : "bg-slate-200")}
                 />
-                <div className={cn("flex justify-between text-[10px] font-medium mt-2 transition-colors", 
-                  isDark ? "text-white/15" : "text-slate-300")}>
-                  <span>4%</span><span>25%</span><span>50%</span><span>75%</span><span>100%</span>
-                </div>
               </div>
-          </div>
 
-          {/* Desglose */}
-          <div className={cn("space-y-2 border-t pt-3 transition duration-200 ease-out", isDark ? "border-white/10" : "border-slate-200")}>
-            {[
-              { label: 'Precio de compra', value: fmt(precioSinItbis) },
-              { label: 'ITBIS', value: fmt(itbisTotal) },
-              { label: 'Tasa de interés anual', value: `${TASA_INTERES_ANUAL}%` },
-              { label: 'Valor productos', value: fmt(totalProductos) },
-              { label: 'Inicial aplicado', value: fmt(inicialDadoNum) },
-              { label: 'Equivalencia %', value: `${porcentaje.toFixed(2)}%` },
-              { label: 'Monto a financiar', value: fmt(montoFinanciar) },
-              ...(filaActiva && montoFinanciar > 0 && !bajoDeMinimoMsg ? [
-                { label: 'Plan de pagos', value: `${filaActiva.cuotas} meses — ${filaActiva.pct.toFixed(2)}%`, highlight: true },
-              ] : []),
-            ].map((row) => (
-              <div key={row.label}
-                className="flex justify-between items-center py-1 transition duration-200 ease-out">
-                <span className={cn(isDark ? 'text-white/30 text-[9px] font-bold uppercase tracking-widest' : 'text-slate-400 text-[9px] font-bold uppercase tracking-widest')}>
-                  {row.label}
-                </span>
-                <span className={cn(
-                  'text-xs font-mono font-bold',
-                  (row as { highlight?: boolean }).highlight
-                    ? 'text-[#0066B3]'
-                    : isDark ? 'text-white' : 'text-slate-900'
-                )}>
-                  {row.value}
-                </span>
+              <div className={cn("space-y-3 pt-4 border-t", isDark ? "border-white/10" : "border-slate-200")}>
+                {[
+                  { label: 'Precio de compra', value: fmt(precioSinItbis) },
+                  { label: 'ITBIS', value: fmt(itbisTotal) },
+                  { label: 'Tasa anual fija', value: `${TASA_INTERES_ANUAL}%` },
+                  ...(filaActiva && montoFinanciar > 0 && !bajoDeMinimoMsg ? [{ label: 'Plan cuotas', value: `${filaActiva.cuotas}m / ${filaActiva.pct.toFixed(2)}%`, highlight: true }] : []),
+                ].map((row) => (
+                  <div key={row.label} className="flex justify-between items-center">
+                    <span className={cn("text-[10px] font-black uppercase tracking-widest", textSecondary)}>{row.label}</span>
+                    <span className={cn('text-sm font-black tracking-tight', (row as { highlight?: boolean }).highlight ? 'text-[#0066B3]' : textPrimary)}>{row.value}</span>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
 
-          {/* Separador */}
-          <div className={cn("border-t pt-1", isDark ? "border-white/5" : "border-slate-200")} />
-
-          {/* Inputs - Bloque 2: Plan de cuotas */}
-          <div className="space-y-4">
-              {/* Dropdown meses */}
-              <div>
-                <label className={cn("text-[11px] font-medium block mb-2",
-                  isDark ? "text-white/40" : "text-slate-500")}>
-                  Plan de pagos
-                </label>
+              <div className={cn("border-t pt-5", isDark ? "border-white/10" : "border-slate-200")}>
+                <label className={cn("text-xs font-bold uppercase tracking-widest block mb-2", textSecondary)}>Plan de Pagos</label>
                 <div className="relative">
-                  <select
-                    value={mesSeleccionado ?? ""}
-                    onChange={e => handleMesChange(Number(e.target.value))}
-                    className={cn("w-full pl-4 pr-9 py-3 rounded-xl border outline-none text-[13px] font-medium transition cursor-pointer appearance-none",
-                      isDark
-                        ? "bg-white/5 border-white/8 text-white focus:border-[#0066B3]/60 focus:shadow-[0_0_0_3px_rgba(0,102,179,0.12)]"
-                        : "bg-slate-50 border-slate-200 text-slate-800 focus:border-[#0066B3]/50 focus:bg-white focus:shadow-[0_0_0_3px_rgba(0,102,179,0.08)]")}
+                  <select value={mesSeleccionado ?? ""} onChange={e => handleMesChange(Number(e.target.value))}
+                    className={cn("w-full pl-5 pr-10 py-4 rounded-2xl border outline-none font-black text-sm cursor-pointer appearance-none transition", bgGlass, textPrimary, "focus:border-[#0066B3] focus:shadow-[0_0_0_4px_rgba(0,102,179,0.15)]")}
                   >
-                    <option value="">— Seleccionar meses —</option>
-                    {TABLA_PAGOS.map(f => (
-                      <option key={f.cuotas} value={f.cuotas}>
-                        {f.cuotas} meses — {f.pct.toFixed(2)}%
-                      </option>
-                    ))}
+                    <option value="">— SELECCIONAR MESES —</option>
+                    {TABLA_PAGOS.map(f => <option key={f.cuotas} value={f.cuotas}>{f.cuotas} MESES — {f.pct.toFixed(2)}%</option>)}
                   </select>
-                  {/* Flecha personalizada */}
-                  <svg className={cn("absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none", isDark ? "text-white/30" : "text-slate-400")} viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-                  </svg>
                 </div>
               </div>
 
-              {/* Input cuota mensual */}
               <div>
-                <label className={cn("text-[11px] font-medium block mb-2",
-                  isDark ? "text-white/40" : "text-slate-500")}>
-                  O escribe la cuota mensual <span className={isDark ? "text-white/20" : "text-slate-300"}>RD$</span>
-                </label>
-                <div className="relative">
-                  <span className={cn("absolute left-4 top-1/2 -translate-y-1/2 text-sm",
-                    isDark ? "text-white/20" : "text-slate-300")}>$</span>
-                  <input
-                    value={cuotaInput}
-                    onChange={e => handleCuotaChange(e.target.value)}
-                    placeholder="0.00"
-                    className={cn("w-full pl-8 pr-4 py-3 rounded-xl border outline-none font-mono text-[13px] transition",
-                      isDark
-                        ? "bg-white/5 border-white/8 text-white placeholder:text-white/15 focus:border-[#0066B3]/60 focus:shadow-[0_0_0_3px_rgba(0,102,179,0.12)]"
-                        : "bg-slate-50 border-slate-200 text-slate-900 placeholder:text-slate-300 focus:border-[#0066B3]/50 focus:bg-white focus:shadow-[0_0_0_3px_rgba(0,102,179,0.08)]")}
-                  />
-                </div>
+                <label className={cn("text-xs font-bold uppercase tracking-widest block mb-2", textSecondary)}>O Escribe Cuota Mensual Máxima</label>
+                <input value={cuotaInput} onChange={e => handleCuotaChange(e.target.value)} placeholder="0.00"
+                  className={cn("w-full px-5 py-4 rounded-2xl font-black text-lg border outline-none transition", bgGlass, textPrimary, "focus:border-[#0066B3] focus:shadow-[0_0_0_4px_rgba(0,102,179,0.15)]")}
+                />
               </div>
 
-              {/* Mensaje cuando escribe cuota — bajo mínimo */}
-              {bajoDeMinimoMsg && montoFinanciar > 0 && (
-                <div className="px-3 py-2.5 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs space-y-1">
-                  <p>⛔ Porcentaje escrito: <strong>{pctEscrito.toFixed(2)}%</strong></p>
-                  <p>El mínimo permitido es <strong>4.00% (41 meses)</strong></p>
-                  <p>Cuota mínima: <strong>{fmt(cuotaMinimaRD)}</strong></p>
-                </div>
-              )}
-
-              {/* Mensaje cuando escribe cuota — válida */}
               {pctEscrito > 0 && !bajoDeMinimoMsg && !mesSeleccionado && montoFinanciar > 0 && (
-                <div className={cn("px-3 py-2.5 rounded-xl border text-xs space-y-1.5",
-                  isDark ? "bg-[#0066B3]/10 border-[#0066B3]/20" : "bg-[#0066B3]/5 border-[#0066B3]/20")}>
-                  
-                  <p className={isDark ? "text-white/60" : "text-slate-600"}>
-                    Tu cuota representa el{" "}
-                    <span className="text-[#0066B3] font-bold">{pctEscrito.toFixed(2)}%</span>
-                    {" "}del monto a financiar
-                  </p>
-
+                <div className={cn("p-4 rounded-2xl border space-y-3 font-bold text-xs", isDark ? "bg-[#0066B3]/10 border-[#0066B3]/20" : "bg-[#0066B3]/5 border-[#0066B3]/20")}>
+                  <p className={textPrimary}>Tu cuota es el <span className="text-[#0066B3] text-sm font-black">{pctEscrito.toFixed(2)}%</span> del monto.</p>
                   {filaAnterior && filaSiguiente && (
-                    <div className={cn("space-y-1 pt-1 border-t", isDark ? "border-white/10" : "border-slate-200")}>
-                      <p className={isDark ? "text-white/40" : "text-slate-400"}>Cae entre:</p>
-                      <div className="flex justify-between items-center">
-                        <span className={isDark ? "text-white/60" : "text-slate-600"}>
-                          {filaAnterior.cuotas} meses — {filaAnterior.pct.toFixed(2)}%
-                        </span>
-                        <span className="text-[#0066B3] font-bold">
-                          {fmt(montoFinanciar * (filaAnterior.pct / 100))}/mes
-                        </span>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className={isDark ? "text-white/60" : "text-slate-600"}>
-                          {filaSiguiente.cuotas} meses — {filaSiguiente.pct.toFixed(2)}%
-                        </span>
-                        <span className="text-[#0066B3] font-bold">
-                          {fmt(montoFinanciar * (filaSiguiente.pct / 100))}/mes
-                        </span>
-                      </div>
+                    <div className="space-y-2 pt-2 border-t border-[#0066B3]/20">
+                      <div className="flex justify-between"><span>{filaAnterior.cuotas} meses</span><span className="text-[#0066B3] font-black">{fmt(montoFinanciar * (filaAnterior.pct / 100))}</span></div>
+                      <div className="flex justify-between"><span>{filaSiguiente.cuotas} meses</span><span className="text-[#0066B3] font-black">{fmt(montoFinanciar * (filaSiguiente.pct / 100))}</span></div>
                     </div>
                   )}
-
-                  {filaActiva && (
-                    <div className={cn("flex justify-between items-center pt-1 border-t font-bold",
-                      isDark ? "border-white/10 text-white" : "border-slate-200 text-slate-900")}>
-                      <span>Opción más cercana: {filaActiva.cuotas} meses — {filaActiva.pct.toFixed(2)}%</span>
-                      <span className="text-[#0066B3]">{fmt(montoFinanciar * (filaActiva.pct / 100))}/mes</span>
-                    </div>
-                  )}
+                  {filaActiva && <div className="flex justify-between pt-2 border-t border-[#0066B3]/20"><span>Sugerido ({filaActiva.cuotas}m)</span><span className="text-[#0066B3] font-black text-sm">{fmt(montoFinanciar * (filaActiva.pct / 100))}</span></div>}
                 </div>
               )}
 
-              {/* Resultado del dropdown Rediseñado Premium */}
               {mesSeleccionado && filaActiva && montoFinanciar > 0 && (
-                <div className="mt-4 relative group">
-                  <CalculadoraResultCard
-                    isDark={isDark}
-                    title="CUOTA MENSUAL"
-                    mainValue={fmt(cuotaDelDropdown)}
-                    leftLabel="PLAZO"
-                    leftValue={`${filaActiva.cuotas} MESES`}
-                    rightLabel="FACTOR TASA"
-                    rightValue={`${filaActiva.pct.toFixed(2)}%`}
-                    accentColor="#0066B3"
-                    secondaryColor="#0066B3"
-                  />
-                  {/* Resplandor sutil alrededor como destaque final */}
-                  <div className={cn("absolute -inset-1 rounded-2xl opacity-20 group-hover:opacity-40 blur-lg transition duration-500 pointer-events-none -z-10",
-                    isDark ? "bg-[#0066B3]" : "bg-transparent")} />
+                <div className="relative group mt-4">
+                  <div className={cn("relative overflow-hidden rounded-3xl p-6 border transition duration-300 shadow-xl", isDark ? "bg-[#0066B3]/20 border-[#0066B3]/50 shadow-[#0066B3]/20" : "bg-[#0066B3]/5 border-[#0066B3]/40 shadow-[#0066B3]/10")}>
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#0066B3]/20 to-transparent pointer-events-none" />
+                    <div className="relative z-10 flex flex-col items-center justify-center space-y-1 mb-6">
+                       <span className={cn("text-[10px] font-black uppercase tracking-[0.2em] opacity-90", isDark ? "text-white" : "text-[#0066B3]")}>CUOTA MENSUAL</span>
+                       <span className={cn("text-4xl md:text-5xl font-black tracking-tighter drop-shadow-md", isDark ? "text-white" : "text-[#0066B3]")}>{fmt(cuotaDelDropdown)}</span>
+                    </div>
+                    <div className="relative z-10 flex justify-between items-end">
+                      <div className="flex flex-col">
+                        <span className={cn("text-[10px] font-bold uppercase tracking-widest mb-1", isDark ? "text-white/60" : "text-[#0066B3]/70")}>PLAZO</span>
+                        <span className={cn("text-lg font-black tracking-tighter", isDark ? "text-white" : "text-[#0066B3]")}>{filaActiva.cuotas} MESES</span>
+                      </div>
+                      <div className="flex flex-col text-right items-end">
+                        <span className={cn("text-[10px] font-bold uppercase tracking-widest mb-1", isDark ? "text-white/60" : "text-[#0066B3]/70")}>FACTOR TASA</span>
+                        <span className={cn("text-lg font-black tracking-tighter", isDark ? "text-white" : "text-[#0066B3]")}>{filaActiva.pct.toFixed(2)}%</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="absolute -inset-1 rounded-3xl opacity-30 group-hover:opacity-60 blur-xl transition duration-500 pointer-events-none -z-10 bg-[#0066B3]" />
                 </div>
               )}
           </div>
-
-
         </div>
 
         {/* COLUMNA 4 — Regalos */}
-        <div className={cn("rounded-2xl p-4 flex flex-col border transition duration-200 ease-out h-full overflow-hidden",
-          isDark ? "bg-white/[0.03] border-white/8" : "bg-slate-50 border-slate-200/80")}>
-          
-          {/* Header */}
-          <div className="flex flex-wrap items-center gap-2 mb-3">
-            <div className={cn("w-6 h-6 rounded-lg flex items-center justify-center flex-shrink-0",
-              isDark ? "bg-white/8" : "bg-white shadow-sm border border-slate-100")}>
-              <Gift className={cn("w-3.5 h-3.5", isDark ? "text-white/60" : "text-slate-500")} />
-            </div>
-            <h3 className={cn("text-[13px] font-semibold tracking-tight", isDark ? "text-white" : "text-slate-900")}>
-              Regalos
-            </h3>
-            {totalProductos > 0 && (
-              <span className={cn("text-[11px] font-medium px-2 py-0.5 rounded-full",
-                isDark ? "text-white/50 bg-white/6 border border-white/8" : "text-slate-500 bg-white border border-slate-200 shadow-sm")}>
-                Hasta {fmt(totalProductos * 0.10)}
-              </span>
-            )}
+        <div className={cardContainer}>
+          <div className="flex justify-between items-center mb-5">
+            <h3 className={cn("font-black text-xs uppercase tracking-[0.2em]", textPrimary)}>Incentivos</h3>
+            {totalProductos > 0 && <span className="bg-amber-500/20 text-amber-500 text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full">MAX {fmt(totalProductos * 0.10)}</span>}
           </div>
 
           {totalProductos === 0 ? (
-            <div className="flex-1 flex flex-col items-center justify-center gap-2">
-              <div className={cn("w-10 h-10 rounded-2xl flex items-center justify-center",
-                isDark ? "bg-white/5" : "bg-slate-100")}>
-                <Gift className={cn("w-5 h-5", isDark ? "text-white/20" : "text-slate-300")} />
-              </div>
-              <p className={cn("text-[11px] text-center leading-relaxed", isDark ? "text-white/25" : "text-slate-400")}>
-                Selecciona productos para<br/>ver los regalos disponibles
-              </p>
+            <div className="flex-1 flex flex-col items-center justify-center gap-4 py-10 opacity-60">
+              <Gift className="w-10 h-10" />
+              <p className="text-xs font-bold text-center uppercase tracking-widest">Calcula orden<br/>para desbloquear</p>
             </div>
           ) : (() => {
             const EXCLUIR = ['aro', 'reparac', 'reemplaz', 'tapa'];
@@ -753,139 +513,42 @@ export default function CalculadoraFinanciamiento({ isDark = true, externalItems
             const porcentajeUsado = totalProductos > 0 ? (totalRegalos / totalProductos) * 100 : 0;
             const cerca = totalRegalos > 0 && porcentajeUsado >= 7 && totalRegalos <= maxR;
             const excedido = totalRegalos > maxR;
-
-            const REGALOS_VOLUMEN = [
-              'PR1044', 'PR0196', 'PR1675', 'PR1685',
-              'PR2120', 'PR2129', 'PR0008', 'PR0021',
-              'CO2124', 'CU0825'
-            ];
-
-            const elegiblesNormales = products.filter(p =>
-              !EXCLUIR.some(ex =>
-                p.category.toLowerCase().includes(ex) ||
-                p.name.toLowerCase().includes(ex)
-              ) && p.total <= maxR && !REGALOS_VOLUMEN.includes(p.code)
-            );
-
-            // Volumen siempre se muestran, sin importar maxR o EXCLUIR
-            const elegiblesVolumen = products.filter(p =>
-              REGALOS_VOLUMEN.includes(p.code)
-            );
-
-            // Combinar — volumen siempre primero
+            const REGALOS_VOLUMEN = ['PR1044', 'PR0196', 'PR1675', 'PR1685', 'PR2120', 'PR2129', 'PR0008', 'PR0021', 'CO2124', 'CU0825'];
+            const elegiblesNormales = products.filter(p => !EXCLUIR.some(ex => p.category.toLowerCase().includes(ex) || p.name.toLowerCase().includes(ex)) && p.total <= maxR && !REGALOS_VOLUMEN.includes(p.code));
+            const elegiblesVolumen = products.filter(p => REGALOS_VOLUMEN.includes(p.code));
             const elegibles = [...elegiblesVolumen, ...elegiblesNormales];
 
             return (
-              <div className="flex flex-col flex-1 overflow-hidden gap-3">
-
-                {/* Alerta */}
+              <div className="flex flex-col flex-1 overflow-hidden">
                 {selectedRegalos.length > 0 && (
-                  <div className={cn("flex items-center justify-between px-3 py-2 rounded-xl text-[11px] font-medium flex-shrink-0 gap-2",
-                    excedido
-                      ? (isDark ? 'bg-red-500/10 border border-red-500/20 text-red-400' : 'bg-red-50 border border-red-200 text-red-600')
-                      : cerca
-                      ? (isDark ? 'bg-amber-500/10 border border-amber-500/20 text-amber-400' : 'bg-amber-50 border border-amber-200 text-amber-700')
-                      : (isDark ? 'bg-white/5 border border-white/8 text-white/60' : 'bg-white border border-slate-100 text-slate-600 shadow-sm')
-                  )}>
-                    <div className="flex items-center gap-1.5">
-                      {excedido
-                        ? <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" />
-                        : cerca
-                        ? <AlertTriangle className="w-3.5 h-3.5 flex-shrink-0" />
-                        : <CheckCircle2 className="w-3.5 h-3.5 flex-shrink-0" />}
-                      <span>
-                        {excedido
-                          ? `Excede ${fmt(totalRegalos - maxR)}`
-                          : cerca
-                          ? `Quedan ${fmt(maxR - totalRegalos)}`
-                          : `${selectedRegalos.length} seleccionado${selectedRegalos.length > 1 ? 's' : ''}`}
-                      </span>
-                    </div>
-                    <span className="font-semibold">{fmt(totalRegalos)}</span>
+                  <div className={cn("px-4 py-3 rounded-2xl mb-4 font-bold text-xs flex justify-between items-center border", excedido ? "bg-red-500/10 border-red-500/20 text-red-500" : cerca ? "bg-amber-500/10 border-amber-500/20 text-amber-500" : "bg-[#0066B3]/10 border-[#0066B3]/20 text-[#0066B3]")}>
+                    <span>{excedido ? '¡Excedido!' : cerca ? 'Aproximándose' : 'En rango'}</span>
+                    <span className="text-lg font-black">{fmt(totalRegalos)}</span>
                   </div>
                 )}
-
-                {/* Nota política */}
-                <p className={cn("text-[10px] flex-shrink-0 leading-relaxed", isDark ? "text-white/20" : "text-slate-400")}>
-                  Máx. 10% · Solo descuento O regalo · 6-12 meses: no aplica
-                </p>
-
-                {/* Lista vertical scrolleable */}
-                <div className="flex-1 overflow-y-auto space-y-1 pr-1" data-lenis-prevent
-                  style={{ scrollbarWidth: 'thin', scrollbarColor: isDark ? 'rgba(255,255,255,0.06) transparent' : 'rgba(0,0,0,0.08) transparent' }}>
-                  {elegibles.length > 0 ? (
-                    <AnimatePresence mode="popLayout">
-                    {elegibles.map((p, giftIdx) => {
+                <div className="flex-1 overflow-y-auto space-y-2 pr-2 custom-scrollbar" data-lenis-prevent>
+                  {elegibles.map((p, i) => {
                     const sel = isRegaloSelected(p);
-                    const totalRegalosActual = selectedRegalos.reduce((s, r) => s + r.total, 0);
                     const fueraDeRango = REGALOS_VOLUMEN.includes(p.code) && p.total > maxR;
-                    const excederiaSiAgrego = !sel && (totalRegalosActual + p.total) > maxR;
+                    const excederiaSiAgrego = !sel && (totalRegalos + p.total) > maxR;
                     return (
-                      <motion.div
-                        key={p.code + p.name}
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.95 }}
-                        transition={{ duration: 0.15, delay: Math.min(giftIdx * 0.03, 0.2), ease: [0.23, 1, 0.32, 1] }}
-                        onClick={() => !fueraDeRango && (!excederiaSiAgrego || sel) ? toggleRegalo(p) : null}
-                        className={cn(
-                          "px-3 py-2 rounded-xl border transition cursor-pointer relative active:scale-[0.99]",
-                          fueraDeRango
-                            ? (isDark ? 'bg-yellow-500/5 border-yellow-500/10 opacity-50 cursor-not-allowed' : 'bg-yellow-50 border-yellow-100 opacity-50 cursor-not-allowed')
-                            : sel
-                            ? 'bg-[#0066B3]/20 border-[#0066B3]/40'
-                            : excederiaSiAgrego
-                            ? (isDark ? 'opacity-30 border-transparent cursor-not-allowed' : 'opacity-30 border-transparent cursor-not-allowed')
-                            : REGALOS_VOLUMEN.includes(p.code)
-                            ? (isDark ? 'bg-yellow-500/5 border-yellow-500/20 hover:border-yellow-500/40' : 'bg-yellow-50 border-yellow-200 hover:border-yellow-400')
-                            : (isDark ? 'bg-white/[0.04] border border-white/6 hover:bg-white/[0.07] hover:border-white/10' : 'bg-white border border-slate-100 shadow-sm hover:shadow-md hover:border-slate-200')
-                        )}>
-                        
-                        {/* Badge de volumen */}
-                        {REGALOS_VOLUMEN.includes(p.code) && (
-                          <span className={cn("absolute -top-1.5 -right-1.5 text-[9px] font-black text-black px-1.5 py-0.5 rounded-full leading-none",
-                            fueraDeRango ? 'bg-yellow-500/50' : 'bg-yellow-500'
-                          )}>
-                            ⭐ VOL
-                          </span>
-                        )}
-
-                        <div className="flex justify-between items-start">
-                          <p className={cn("text-xs font-semibold leading-tight flex-1 mr-2",
-                            sel ? 'text-[#0066B3]' : 
-                            REGALOS_VOLUMEN.includes(p.code) 
-                              ? (isDark ? 'text-yellow-400/90' : 'text-yellow-700')
-                              : (isDark ? "text-white/80" : "text-slate-700"))}>
-                            {p.name}
-                          </p>
-                          {sel && <Check className="w-3 h-3 text-[#0066B3] flex-shrink-0 mt-0.5" />}
-                        </div>
-                        <div className="flex justify-between items-center mt-0.5">
-                          <p className={cn("text-[10px]", isDark ? "text-white/20" : "text-slate-400")}>{p.category}</p>
-                          <p className={cn("text-xs font-bold", sel ? 'text-[#0066B3]' : 'text-[#0066B3]')}>{fmt(p.total)}</p>
+                      <motion.div key={p.code} initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: Math.min(i * 0.05, 0.2) }} onClick={() => !fueraDeRango && (!excederiaSiAgrego || sel) ? toggleRegalo(p) : null}
+                        className={cn("px-4 py-3 rounded-2xl border transition duration-200 relative", fueraDeRango ? "opacity-30 cursor-not-allowed bg-transparent" : sel ? "bg-[#0066B3]/20 border-[#0066B3]/50 cursor-pointer shadow-lg" : excederiaSiAgrego ? "opacity-30 cursor-not-allowed bg-transparent" : cn(bgGlass, "cursor-pointer hover:border-[#0066B3]/30 hover:scale-[1.02]"))}>
+                        {REGALOS_VOLUMEN.includes(p.code) && <span className="absolute -top-2 -right-2 text-[8px] font-black bg-amber-500 text-black px-2 py-0.5 rounded-full uppercase">Vol</span>}
+                        <p className={cn("text-xs font-bold truncate pr-3", sel ? "text-[#0066B3]" : textPrimary)}>{p.name}</p>
+                        <div className="flex justify-between items-end mt-2">
+                          <p className={cn("text-[9px] font-bold uppercase tracking-widest", textSecondary)}>{p.category}</p>
+                          <p className={cn("text-sm font-black tracking-tight", sel ? "text-[#0066B3]" : textPrimary)}>{fmt(p.total)}</p>
                         </div>
                       </motion.div>
                     );
                   })}
-                    </AnimatePresence>
-                  ) : (
-                    <p className={cn("text-xs text-center py-4", isDark ? "text-white/20" : "text-slate-400")}>
-                      Ningún producto califica
-                    </p>
-                  )}
-                  </div>
-
-                <div className={cn("flex items-start gap-1.5 flex-shrink-0 pt-1",
-                  isDark ? "text-white/20" : "text-slate-400")}>
-                  <AlertTriangle className="w-3 h-3 flex-shrink-0 mt-0.5" />
-                  <p className="text-[10px] leading-relaxed">
-                    Extractor, Power Blender, Easy Release y Purificador: máx. 5%
-                  </p>
                 </div>
               </div>
             );
           })()}
         </div>
+
       </div>
     </section>
   );
