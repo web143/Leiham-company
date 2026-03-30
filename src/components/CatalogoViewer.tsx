@@ -183,7 +183,7 @@ export default function CatalogoViewer({ isDark = true, onProductsChange }: Cata
       isDark ? 'bg-black' : 'bg-white'
     )}>
       {/* Título - Consolidado con el contenedor del catálogo para reducir espacio */}
-      <div className="max-w-[1100px] mx-auto px-4 pb-4">
+      <div className="max-w-[1100px] mx-auto px-4 pb-4 [&_.carousel-content]:!h-auto">
         <div className="text-center mb-8">
           <p className="text-[#0066B3] text-xs tracking-[0.3em] uppercase mb-2">Royal Prestige®</p>
           <h2 className={cn('text-3xl md:text-4xl font-black tracking-tight uppercase', isDark ? 'text-white' : 'text-slate-900')}>
