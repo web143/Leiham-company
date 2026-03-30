@@ -415,9 +415,16 @@ export default function CalculadoraFinanciamiento({ isDark = true, externalItems
 
               <div className={cn("space-y-1.5 pt-3 border-t", isDark ? "border-white/10" : "border-slate-200")}>
                 {[
-                  { label: 'Precio compra', value: fmt(precioSinItbis) },
+                  { label: 'Precio de compra', value: fmt(precioSinItbis) },
                   { label: 'ITBIS', value: fmt(itbisTotal) },
-                  { label: 'Plan cuotas', value: filaActiva && montoFinanciar > 0 ? `${filaActiva.cuotas}m / ${filaActiva.pct.toFixed(2)}%` : '-', highlight: !!filaActiva },
+                  { label: 'Tasa anual fija', value: `${TASA_INTERES_ANUAL}%` },
+                  { label: 'Valor productos', value: fmt(totalProductos) },
+                  { label: 'Inicial aplicado', value: fmt(inicialDadoNum) },
+                  { label: 'Equivalencia %', value: `${porcentaje.toFixed(2)}%` },
+                  { label: 'Monto a financiar', value: fmt(montoFinanciar) },
+                  ...(filaActiva && montoFinanciar > 0 && !bajoDeMinimoMsg ? [
+                    { label: 'Plan de pagos', value: `${filaActiva.cuotas} meses — ${filaActiva.pct.toFixed(2)}%`, highlight: true },
+                  ] : []),
                 ].map((row) => (
                   <div key={row.label} className="flex justify-between items-center">
                     <span className={cn("text-[9px] font-bold uppercase tracking-widest", textSecondary)}>{row.label}</span>
