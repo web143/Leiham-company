@@ -179,11 +179,11 @@ export default function CatalogoViewer({ isDark = true, onProductsChange }: Cata
 
   return (
     <section className={cn(
-      'w-full pt-16 pb-12 transition-colors duration-300',
+      'w-full transition-colors duration-300',
       isDark ? 'bg-black' : 'bg-white'
     )}>
       {/* Título - Consolidado con el contenedor del catálogo para reducir espacio */}
-      <div className="max-w-[1100px] mx-auto px-4 pb-4 [&_.carousel-content]:!h-auto">
+      <div className="max-w-[1100px] mx-auto px-4 pb-0 [&_.carousel-content]:!h-auto">
         <div className="text-center mb-8">
           <p className="text-[#0066B3] text-xs tracking-[0.3em] uppercase mb-2">Royal Prestige®</p>
           <h2 className={cn('text-3xl md:text-4xl font-black tracking-tight uppercase', isDark ? 'text-white' : 'text-slate-900')}>
