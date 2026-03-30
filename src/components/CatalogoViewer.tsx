@@ -81,12 +81,37 @@ export default function CatalogoViewer({ isDark = true, onProductsChange }: Cata
   const isSelected = (p: typeof products[0]) =>
     selectedItems.some(i => i.code === p.code && i.name === p.name);
 
-  const toggleProduct = (p: typeof products[0]) => {
-    const newItems = isSelected(p)
-      ? selectedItems.filter(i => !(i.code === p.code && i.name === p.name))
-      : [...selectedItems, p];
-    setSelectedItems(newItems);
-    onProductsChange?.(newItems);
+  const [cantidades, setCantidades] = useState<{ [key: string]: number }>({});
+
+  const getKey = (p: typeof products[0]) => `${p.code}_${p.name}`;
+
+  const getCantidad = (p: typeof products[0]) => cantidades[getKey(p)] || 0;
+
+  const addOne = (p: typeof products[0]) => {
+    const key = getKey(p);
+    const nuevaCantidad = (cantidades[key] || 0) + 1;
+    setCantidades(prev => ({ ...prev, [key]: nuevaCantidad }));
+    // Si no está en selectedItems, agregarlo
+    if (!isSelected(p)) {
+      const newItems = [...selectedItems, p];
+      setSelectedItems(newItems);
+      onProductsChange?.(newItems);
+    } else {
+      onProductsChange?.(selectedItems);
+    }
+  };
+
+  const removeOne = (p: typeof products[0]) => {
+    const key = getKey(p);
+    const nuevaCantidad = Math.max(0, (cantidades[key] || 0) - 1);
+    setCantidades(prev => ({ ...prev, [key]: nuevaCantidad }));
+    if (nuevaCantidad === 0) {
+      const newItems = selectedItems.filter(i => !(i.code === p.code && i.name === p.name));
+      setSelectedItems(newItems);
+      onProductsChange?.(newItems);
+    } else {
+      onProductsChange?.(selectedItems);
+    }
   };
 
   const handlePageClick = (pageInfo: typeof PAGES[0]) => {
@@ -306,19 +331,38 @@ export default function CatalogoViewer({ isDark = true, onProductsChange }: Cata
               {activePanel.matchedProducts.map(p => (
                 <div
                   key={p.code + p.name}
-                  onClick={() => toggleProduct(p)}
                   className={cn(
-                    'flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer border transition-all',
+                    'flex items-center gap-3 px-4 py-3 rounded-xl border transition-all',
                     isSelected(p)
                       ? 'bg-[#0066B3]/15 border-[#0066B3]/40'
                       : isDark ? 'bg-slate-800/50 border-transparent hover:border-[#0066B3]/30' : 'bg-slate-50 border-transparent hover:border-[#0066B3]/30'
                   )}
                 >
-                  <div className={cn(
-                    'w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 transition-all',
-                    isSelected(p) ? 'bg-[#0066B3] text-white' : isDark ? 'bg-white/5 text-white/20' : 'bg-slate-200 text-slate-400'
-                  )}>
-                    {isSelected(p) ? <Check className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
+                  <div className="flex items-center gap-1 flex-shrink-0">
+                    {getCantidad(p) > 0 && (
+                      <>
+                        <button
+                          onClick={() => removeOne(p)}
+                          className="w-7 h-7 rounded-lg flex items-center justify-center bg-slate-700 text-white hover:bg-red-500/50 transition-all font-bold text-lg leading-none"
+                        >
+                          −
+                        </button>
+                        <span className="text-[#0066B3] font-black text-sm w-6 text-center">
+                          {getCantidad(p)}
+                        </span>
+                      </>
+                    )}
+                    <button
+                      onClick={() => addOne(p)}
+                      className={cn(
+                        'w-7 h-7 rounded-lg flex items-center justify-center transition-all font-bold text-lg leading-none',
+                        getCantidad(p) > 0
+                          ? 'bg-[#0066B3] text-white hover:bg-[#0055a0]'
+                          : isDark ? 'bg-white/10 text-white/40 hover:bg-[#0066B3]/30 hover:text-white' : 'bg-slate-200 text-slate-400 hover:bg-[#0066B3]/20'
+                      )}
+                    >
+                      +
+                    </button>
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className={cn('text-sm font-semibold truncate', isDark ? 'text-white' : 'text-slate-900')}>
@@ -351,21 +395,6 @@ export default function CatalogoViewer({ isDark = true, onProductsChange }: Cata
         </div>
       )}
 
-      {/* Botón flotante ir a calculadora */}
-      {selectedItems.length > 0 && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[100]">
-          <button
-            onClick={() => {
-              document.getElementById('calculadora')?.scrollIntoView({ behavior: 'smooth' });
-            }}
-            className="flex items-center gap-3 bg-[#0066B3] text-white px-6 py-3 rounded-full font-bold shadow-2xl shadow-[#0066B3]/40 hover:bg-[#0055a0] transition-all"
-          >
-            <ShoppingCart className="w-5 h-5" />
-            <span>{selectedItems.length} producto{selectedItems.length !== 1 ? 's' : ''} · {fmt(totalSeleccionado)}</span>
-            <span className="text-white/70 text-sm">→ Calcular</span>
-          </button>
-        </div>
-      )}
     </section>
   );
 }

@@ -22,8 +22,20 @@ const TABLA_PAGOS = [
   { cuotas: 41, pct: 4.00 },
 ];
 
-export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: boolean }) {
-  const [selectedItems, setSelectedItems] = useState<typeof products>([]);
+interface Props {
+  isDark?: boolean;
+  initialItems?: typeof products;
+}
+
+export default function CalculadoraFinanciamiento({ isDark = true, initialItems = [] }: Props) {
+  const [selectedItems, setSelectedItems] = useState<typeof products & { cantidad?: number }[]>([]);
+
+  // Cuando initialItems cambie desde el catálogo, actualizar selectedItems
+  useEffect(() => {
+    if (initialItems.length > 0) {
+      setSelectedItems(initialItems.map(p => ({ ...p, cantidad: 1 })));
+    }
+  }, [initialItems]);
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [inicialDado, setInicialDado] = useState("");
