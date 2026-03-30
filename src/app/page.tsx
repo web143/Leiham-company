@@ -14,6 +14,8 @@ const CalculadoraFinanciamiento = dynamic(() => import('../components/Calculador
   loading: () => <div className="w-full h-screen bg-black" />
 });
 
+const CatalogoViewer = dynamic(() => import('../components/CatalogoViewer'), { ssr: false });
+
 export default function Home() {
   const [isDark, setIsDark] = useState(true);
   const [mounted, setMounted] = useState(false);
@@ -44,6 +46,7 @@ export default function Home() {
         <span className={`text-sm flex-1 flex justify-center ${isDark ? 'opacity-100' : 'opacity-30'}`}>🌙</span>
       </button>
       <HeroLeiham isDark={mounted ? isDark : true} />
+      <CatalogoViewer isDark={mounted ? isDark : true} />
       <CalculadoraFinanciamiento isDark={mounted ? isDark : true} />
     </main>
   );

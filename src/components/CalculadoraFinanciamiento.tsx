@@ -226,7 +226,7 @@ export default function CalculadoraFinanciamiento({ isDark = true }: { isDark?: 
   }, [selectedItems]);
 
   return (
-    <section className={cn("w-full min-h-screen transition-colors duration-200 ease-out", isDark ? "bg-black" : "bg-white")}>
+    <section id="calculadora" className={cn("w-full min-h-screen transition-colors duration-200 ease-out", isDark ? "bg-black" : "bg-white")}>
       
       <div className="text-center py-4 px-4">
         <p className="text-[#0066B3] text-[11px] tracking-[0.25em] uppercase mb-2 font-medium">Leiham Company</p>
