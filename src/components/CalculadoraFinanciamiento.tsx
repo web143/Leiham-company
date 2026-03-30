@@ -213,42 +213,42 @@ export default function CalculadoraFinanciamiento({ isDark = true, externalItems
     setMesSeleccionado(null);
   }, [selectedItems]);
 
-  // Estilos UI Globales
+  // Estilos UI Globales (Conservando las proporciones originales compactas)
   const cardContainer = cn(
-    "rounded-[2rem] p-6 flex flex-col h-full border overflow-hidden shadow-2xl transition-all duration-300",
+    "rounded-2xl p-4 flex flex-col h-full overflow-hidden transition-all duration-300",
     isDark 
-      ? "bg-white/[0.03] backdrop-blur-[12px] border-white/10 shadow-black/40" 
-      : "bg-white/90 backdrop-blur-[12px] border-slate-200/60 shadow-slate-200/70"
+      ? "bg-white/[0.03] backdrop-blur-[6px] border border-white/8 shadow-black/30" 
+      : "bg-slate-50 border border-slate-200/80 shadow-slate-200/50"
   );
   
   const textPrimary = isDark ? "text-white" : "text-slate-900";
   const textSecondary = isDark ? "text-white/50" : "text-slate-500";
-  const bgGlass = isDark ? "bg-white/[0.04] border-white/10" : "bg-white/80 border-slate-200";
+  const bgGlass = isDark ? "bg-white/[0.04] border-white/8" : "bg-white/80 border-slate-200/70";
 
   return (
-    <section id="calculadora" className={cn("w-full min-h-screen transition-colors duration-500 ease-out", isDark ? "bg-[#050505]" : "bg-slate-50")}>
+    <section id="calculadora" className={cn("w-full min-h-screen transition-colors duration-500 ease-out", isDark ? "bg-[#050505]" : "bg-white")}>
       
-      <div className="text-center py-6 px-4">
-        <p className="text-[#0066B3] text-xs font-black tracking-[0.3em] uppercase mb-2">Leiham Company</p>
-        <h2 className={cn("text-3xl font-black tracking-tight", textPrimary)}>
+      <div className="text-center py-4 px-4">
+        <p className="text-[#0066B3] text-[11px] font-black tracking-[0.25em] uppercase mb-2">Leiham Company</p>
+        <h2 className={cn("text-2xl font-black tracking-tight", textPrimary)}>
           Calculadora de <span className="text-[#0066B3]">Financiamiento</span>
         </h2>
       </div>
 
-      <div className="max-w-[1400px] mx-auto px-4 pb-8 grid grid-cols-1 md:grid-cols-[240px_1fr_320px_320px] gap-5 h-auto md:h-[720px]">
+      <div className="max-w-[1400px] mx-auto px-4 pb-8 grid grid-cols-1 md:grid-cols-[220px_1fr_300px_300px] gap-4 h-auto md:h-[680px]">
 
-        {/* Móvil chips */}
-        <div className="md:hidden flex gap-3 overflow-x-auto pb-4 custom-scrollbar" style={{ scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' }}>
+        {/* Móvil chips - Compacto original */}
+        <div className="md:hidden flex gap-2 overflow-x-auto pb-2 custom-scrollbar" style={{ scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' }}>
           <motion.button onClick={() => setActiveCategory(null)}
             whileTap={shouldReduceMotion ? {} : { scale: 0.95, transition: { type: 'spring' } }}
-            className={cn("flex-shrink-0 px-5 py-2.5 rounded-2xl text-[13px] font-bold transition duration-200", 
-              !activeCategory ? 'bg-[#0066B3] text-white shadow-lg shadow-[#0066B3]/30' : cn(bgGlass, "border", textSecondary)
-            )}>TODOS</motion.button>
+            className={cn("flex-shrink-0 px-4 py-2 rounded-full text-[11px] font-bold transition duration-200 ease-out", 
+              !activeCategory ? 'bg-[#0066B3] text-white shadow-sm shadow-[#0066B3]/30' : cn(bgGlass, "border", textSecondary)
+            )}>Todos</motion.button>
           {allCategories.map(cat => (
             <motion.button key={cat} onClick={() => handleCategoryClick(cat)}
               whileTap={shouldReduceMotion ? {} : { scale: 0.95, transition: { type: 'spring' } }}
-              className={cn("flex-shrink-0 px-5 py-2.5 rounded-2xl text-[13px] font-bold whitespace-nowrap uppercase tracking-wider transition duration-200", 
-                activeCategory === cat ? 'bg-[#0066B3] text-white shadow-lg shadow-[#0066B3]/30' : cn(bgGlass, "border", textSecondary)
+              className={cn("flex-shrink-0 px-4 py-2 rounded-full text-[11px] font-bold whitespace-nowrap transition duration-200", 
+                activeCategory === cat ? 'bg-[#0066B3] text-white shadow-sm shadow-[#0066B3]/30' : cn(bgGlass, "border", textSecondary)
               )}>
               {cat}
             </motion.button>
@@ -257,19 +257,19 @@ export default function CalculadoraFinanciamiento({ isDark = true, externalItems
 
         {/* COLUMNA 1 — Categorías */}
         <div className={cn("hidden md:flex flex-col", cardContainer)}>
-          <h3 className={cn("font-black text-xs uppercase tracking-[0.2em] mb-5", textPrimary)}>Categorías</h3>
-          <div className="space-y-2 flex-1 overflow-y-auto pr-2 custom-scrollbar" data-lenis-prevent>
+          <h3 className={cn("font-black text-base tracking-tight mb-4", textPrimary)}>Categorías</h3>
+          <div className="space-y-0.5 flex-1 overflow-y-auto pr-1 custom-scrollbar" data-lenis-prevent>
             {allCategories.map(cat => {
               const count = selectedItems.filter(i => i.category === cat).length;
               return (
                 <button key={cat} onClick={() => handleCategoryClick(cat)}
-                  className={cn("w-full text-left px-4 py-3 rounded-2xl text-[11px] font-bold uppercase tracking-wider transition duration-200 border", 
+                  className={cn("w-full text-left px-3 py-2 rounded-xl text-[11px] font-bold transition duration-200 flex justify-between items-center border border-transparent", 
                     activeCategory === cat 
-                      ? (isDark ? 'bg-white/10 text-white border-white/20' : 'bg-[#0066B3]/10 text-[#0066B3] border-[#0066B3]/20') 
-                      : cn(bgGlass, "hover:scale-[1.02]", textSecondary)
+                      ? (isDark ? 'bg-white/10 text-white' : 'bg-[#0066B3]/10 text-[#0066B3]') 
+                      : cn("hover:bg-white/5", textSecondary)
                   )}>
                   <span className="truncate pr-2">{cat}</span>
-                  {count > 0 && <span className="bg-[#0066B3] text-white text-[10px] font-black px-2 py-0.5 rounded-full ml-auto">{count}</span>}
+                  {count > 0 && <span className="bg-[#0066B3] text-white text-[10px] font-black px-2 py-0.5 rounded-full flex-shrink-0">{count}</span>}
                 </button>
               );
             })}
@@ -279,75 +279,73 @@ export default function CalculadoraFinanciamiento({ isDark = true, externalItems
         {/* COLUMNA 2 — Productos */}
         <div className={cardContainer}>
           <div className="flex justify-between items-center mb-5">
-            <h3 className={cn("font-black text-xs uppercase tracking-[0.2em]", textPrimary)}>Catálogo Master</h3>
+            <h3 className={cn("font-black text-base tracking-tight", textPrimary)}>Productos</h3>
             {selectedItems.length > 0 && (
               <button
                 onClick={() => { setIsClearing(true); setSelectedItems([]); setTimeout(() => setIsClearing(false), 350); }}
-                className="text-[11px] font-bold text-red-500 hover:text-red-400 bg-red-500/10 px-3 py-1.5 rounded-full transition"
-              >LIMPIAR</button>
+                className={cn("text-[11px] font-bold transition-colors", isDark ? "text-white/30 hover:text-red-400" : "text-slate-400 hover:text-red-500")}
+              >Limpiar</button>
             )}
           </div>
 
           <div className="relative mb-5">
-            <Search className={cn("absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4", textSecondary)} />
+            <Search className={cn("absolute left-3.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5", textSecondary)} />
             <input
               value={search} onChange={e => setSearch(e.target.value)}
               placeholder="Buscar producto o código..."
-              className={cn("w-full pl-11 pr-10 py-3.5 rounded-2xl font-bold text-sm border outline-none transition", 
-                bgGlass, textPrimary, "focus:border-[#0066B3]/60 focus:bg-white/10 focus:shadow-[0_0_0_4px_rgba(0,102,179,0.15)]")}
+              className={cn("w-full pl-10 pr-9 py-3 rounded-xl font-bold text-[13px] border outline-none transition", 
+                isDark ? "bg-white/5 border-white/8 text-white placeholder:text-white/20 focus:border-[#0066B3]/60 focus:bg-white/10" : "bg-white border-slate-200 placeholder:text-slate-400 focus:border-[#0066B3]/50 focus:bg-slate-50")}
             />
             {search && (
-              <button onClick={() => setSearch("")} className={cn("absolute right-4 top-1/2 -translate-y-1/2", textSecondary)}>
-                <X className="w-4 h-4 font-bold" />
+              <button onClick={() => setSearch("")} className={cn("absolute right-3.5 top-1/2 -translate-y-1/2", textSecondary)}>
+                <X className="w-3.5 h-3.5 font-bold" />
               </button>
             )}
           </div>
 
-          <div className="flex-1 overflow-y-auto space-y-2 pr-2 max-h-[300px] md:max-h-full custom-scrollbar" data-lenis-prevent>
+          <div className="flex-1 overflow-y-auto space-y-1 pr-1 max-h-[300px] md:max-h-full custom-scrollbar" data-lenis-prevent>
             {visibleCategories.map(cat => (
-              <div key={cat} ref={el => { categoryRefs.current[cat] = el; }} className="mb-6 last:mb-0">
-                <p className={cn("text-[10px] font-black uppercase tracking-[0.2em] py-2 px-3 sticky top-0 backdrop-blur-xl rounded-xl z-10 mb-2 border", 
-                  isDark ? "text-[#0066B3] bg-black/80 border-white/5" : "text-[#0066B3] bg-white/95 border-slate-100")}>
+              <div key={cat} ref={el => { categoryRefs.current[cat] = el; }} className="mb-4 last:mb-0">
+                <p className={cn("text-[10px] font-black uppercase tracking-[0.15em] py-2 px-2 sticky top-0 backdrop-blur-md rounded-lg z-10 mb-1 border-b transition duration-200", 
+                  isDark ? "text-white/25 bg-black/60 border-white/6" : "text-slate-400 bg-white/95 border-slate-100")}>
                   {cat}
                 </p>
-                <div className="space-y-2">
+                <div className="space-y-0.5">
                     {filtered.filter(p => p.category === cat).map((product, productIdx) => (
                         <motion.div
                             key={product.code + product.name}
-                            initial={shouldReduceMotion ? {} : { opacity: 0, y: 10 }}
+                            initial={shouldReduceMotion ? {} : { opacity: 0, y: 8 }}
                             animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.2, delay: (isMobile || shouldReduceMotion) ? 0 : Math.min(productIdx * 0.03, 0.2) }}
-                            className={cn("flex flex-col sm:flex-row sm:items-center gap-3 px-4 py-3.5 rounded-2xl transition duration-200 border", 
+                            transition={{ duration: 0.2, delay: (isMobile || shouldReduceMotion) ? 0 : Math.min(productIdx * 0.03, 0.25) }}
+                            className={cn("flex items-center gap-3 px-3 py-2.5 rounded-xl transition duration-200", 
                                 getCantidad(product) > 0
-                                    ? (isDark ? 'bg-[#0066B3]/15 border-[#0066B3]/40' : 'bg-[#0066B3]/5 border-[#0066B3]/30') 
-                                    : cn(bgGlass, "hover:border-[#0066B3]/30 hover:shadow-lg")
+                                    ? (isDark ? 'bg-[#0066B3]/12 border border-[#0066B3]/25' : 'bg-[#0066B3]/5 border border-[#0066B3]/15') 
+                                    : cn(isDark ? 'hover:bg-white/5 border border-transparent' : 'bg-white hover:bg-slate-50 border border-slate-100 hover:border-slate-200')
                             )}
                         >
                             <div className="flex-1 min-w-0">
-                                <p className={cn("text-sm font-bold truncate", textPrimary)}>{product.name}</p>
-                                <div className="flex gap-3 mt-1">
-                                    {product.code !== '-' && <p className={cn("text-xs font-bold", textSecondary)}>{product.code}</p>}
-                                    <p className={cn("text-xs font-bold", textSecondary)}>ITBIS: {fmt(product.itbis)}</p>
+                                <p className={cn("text-[13px] font-bold truncate", textPrimary)}>{product.name}</p>
+                                <div className="flex gap-3 mt-0.5">
+                                    {product.code !== '-' && <p className={cn("text-[11px] font-bold", textSecondary)}>{product.code}</p>}
+                                    <p className={cn("text-[11px] font-bold", textSecondary)}>ITBIS: {fmt(product.itbis)}</p>
                                 </div>
                             </div>
-                            <div className="flex justify-between sm:justify-end items-center sm:items-end sm:flex-col gap-2 w-full sm:w-auto mt-2 sm:mt-0 pt-2 sm:pt-0 border-t sm:border-0 border-white/10">
-                                <div className="text-left sm:text-right">
-                                    <p className={cn("text-sm font-black tracking-tight", getCantidad(product) > 0 ? 'text-[#0066B3]' : textPrimary)}>{fmt(product.total)}</p>
-                                    <p className={cn("text-[10px] uppercase font-bold tracking-wider", textSecondary)}>sin ITBIS: {fmt(product.price)}</p>
-                                </div>
-                                <div className="flex items-center gap-1.5" onClick={e => e.stopPropagation()}>
-                                  {getCantidad(product) > 0 && (
-                                    <>
-                                      <motion.button onClick={() => removeOne(product)} whileTap={{ scale: 0.9 }} className="w-8 h-8 rounded-xl flex items-center justify-center bg-red-500/10 text-red-500 font-bold border border-red-500/20">
-                                        −
-                                      </motion.button>
-                                      <span className="text-[#0066B3] font-black text-sm w-5 text-center">{getCantidad(product)}</span>
-                                    </>
-                                  )}
-                                  <motion.button onClick={() => addOne(product)} whileTap={{ scale: 0.9 }} className={cn("w-8 h-8 rounded-xl flex items-center justify-center font-bold border", getCantidad(product) > 0 ? 'bg-[#0066B3] text-white border-[#0066B3]' : 'bg-transparent text-[#0066B3] border-[#0066B3]/30 hover:bg-[#0066B3]/10')}>
-                                    +
+                            <div className="text-right flex-shrink-0 mr-2">
+                                <p className={cn("text-[13px] font-black tracking-tight", getCantidad(product) > 0 ? 'text-[#0066B3]' : textPrimary)}>{fmt(product.total)}</p>
+                                <p className={cn("text-[11px] font-bold", textSecondary)}>sin ITBIS: {fmt(product.price)}</p>
+                            </div>
+                            <div className="flex items-center gap-1 flex-shrink-0" onClick={e => e.stopPropagation()}>
+                              {getCantidad(product) > 0 && (
+                                <>
+                                  <motion.button onClick={() => removeOne(product)} whileTap={{ scale: 0.88 }} className={cn("w-6 h-6 rounded-lg flex items-center justify-center font-bold text-sm", isDark ? "bg-white/8 text-white/60 hover:text-red-400" : "bg-slate-100 text-slate-500 hover:text-red-500")}>
+                                    −
                                   </motion.button>
-                                </div>
+                                  <span className="text-[#0066B3] font-black text-sm w-5 text-center">{getCantidad(product)}</span>
+                                </>
+                              )}
+                              <motion.button onClick={() => addOne(product)} whileTap={{ scale: 0.88 }} className={cn("w-6 h-6 rounded-lg flex items-center justify-center font-bold text-sm", getCantidad(product) > 0 ? 'bg-[#0066B3] text-white' : (isDark ? 'bg-white/8 text-white/40' : 'bg-slate-100 text-slate-400'))}>
+                                +
+                              </motion.button>
                             </div>
                         </motion.div>
                     ))}
@@ -356,155 +354,141 @@ export default function CalculadoraFinanciamiento({ isDark = true, externalItems
             ))}
           </div>
           
-          <div className={cn("pt-4 mt-4 flex justify-between items-center border-t", isDark ? "border-white/10" : "border-slate-200")}>
+          <div className={cn("pt-3 mt-3 flex justify-between items-center border-t", isDark ? "border-white/6" : "border-slate-100")}>
             <div>
-              <p className={cn("text-xs font-bold uppercase tracking-wider mb-1", textSecondary)}>Seleccionados</p>
-              <p className={cn("text-lg font-black tracking-tighter", textPrimary)}>{selectedItems.length} <span className="text-xs font-bold tracking-normal opacity-50">ítems</span></p>
+              <p className={cn("text-[11px] font-bold mb-0.5", textSecondary)}>Seleccionados</p>
+              <p className={cn("text-base font-black tracking-tight", textPrimary)}>{selectedItems.length} <span className="text-[11px] font-bold opacity-50">productos</span></p>
             </div>
             <div className="text-right">
-              <p className={cn("text-xs font-bold uppercase tracking-wider mb-1", textSecondary)}>Total Catálogo</p>
-              <p className="text-[#0066B3] text-xl font-black tracking-tighter">{fmt(totalProductos)}</p>
+              <p className={cn("text-[11px] font-bold mb-0.5", textSecondary)}>Total</p>
+              <p className="text-[#0066B3] text-base font-black tracking-tight">{fmt(totalProductos)}</p>
             </div>
           </div>
         </div>
 
         {/* COLUMNA 3 — Calculadora Financiera */}
-        <div className={cardContainer} data-lenis-prevent>
+        <div className={cn("rounded-2xl p-5 flex flex-col gap-4 border transition duration-200 overflow-y-auto custom-scrollbar", isDark ? "bg-white/[0.03] border-white/8 shadow-2xl shadow-black/30" : "bg-slate-50 border-slate-200/80 shadow-slate-200/50")} data-lenis-prevent>
           
           {/* Card Principal: Total */}
-          <div className={cn("relative overflow-hidden rounded-3xl p-6 border transition duration-300 shadow-xl mb-6", isDark ? "bg-white/[0.05] border-white/20 shadow-black/50" : "bg-white border-slate-200 shadow-[#0066B3]/10")}>
-            <div className="absolute inset-0 bg-gradient-to-br from-transparent to-black/5 pointer-events-none" />
-            <div className="relative z-10 text-center mb-6">
-               <span className={cn("text-[10px] font-black uppercase tracking-[0.2em] opacity-80", textPrimary)}>Total De Los Productos</span>
-               <motion.div animate={{ filter: isClearing ? "blur(4px)" : "blur(0px)", opacity: isClearing ? 0.3 : 1 }} className={cn("text-4xl md:text-5xl font-black tracking-tighter drop-shadow-md mt-1", textPrimary)}>
+          <div className={cn("relative overflow-hidden rounded-2xl p-5 border transition duration-300", isDark ? "bg-white/[0.04] border-white/8" : "bg-white border-slate-100")}>
+            <div className="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent pointer-events-none" />
+            <div className="relative z-10 text-center mb-4">
+               <span className={cn("text-[11px] font-bold tracking-widest uppercase opacity-70", textPrimary)}>Total De Productos</span>
+               <motion.div animate={{ filter: isClearing ? "blur(4px)" : "blur(0px)", opacity: isClearing ? 0.3 : 1 }} className={cn("text-3xl font-black tracking-tighter mt-0.5", textPrimary)}>
                  {fmt(totalProductos)}
                </motion.div>
             </div>
-            <div className="relative z-10 flex justify-between items-end">
+            <div className="relative z-10 flex justify-between items-end border-t pt-2 border-white/5">
               <div className="flex flex-col">
-                <div className="flex items-center gap-1.5 mb-1">
-                  <div className="w-1 h-3 rounded-full bg-white/40" />
-                  <span className={cn("text-[10px] font-bold uppercase tracking-widest", textSecondary)}>Inicial</span>
-                </div>
-                <span className={cn("text-lg font-black tracking-tighter", textPrimary)}>{fmt(inicialDadoNum)}</span>
-                <span className={cn("text-[9px] font-bold uppercase tracking-widest", textSecondary)}>{porcentaje.toFixed(2)}% valor</span>
+                <span className={cn("text-[9px] font-bold uppercase tracking-widest", textSecondary)}>Inicial aportado</span>
+                <span className={cn("text-sm font-black tracking-tight", textPrimary)}>{fmt(inicialDadoNum)}</span>
               </div>
               <div className="flex flex-col text-right items-end">
-                <div className="flex items-center gap-1.5 mb-1">
-                  <span className={cn("text-[10px] font-bold uppercase tracking-widest", textSecondary)}>A Financiar</span>
-                  <div className="w-1 h-3 rounded-full bg-[#0066B3]" />
-                </div>
-                <span className={cn("text-lg font-black tracking-tighter text-[#0066B3]")}>{fmt(montoFinanciar)}</span>
-                <span className={cn("text-[9px] font-bold uppercase tracking-widest", textSecondary)}>Base de cuotas</span>
+                <span className={cn("text-[9px] font-bold uppercase tracking-widest", textSecondary)}>Base a financiar</span>
+                <span className={cn("text-sm font-black tracking-tight text-[#0066B3]")}>{fmt(montoFinanciar)}</span>
               </div>
             </div>
           </div>
 
-          <div className="space-y-6 flex-1 overflow-y-auto custom-scrollbar pr-2">
+          <div className="space-y-4 flex-1 overflow-y-auto custom-scrollbar pr-1">
               <div>
-                <label className={cn("text-xs font-bold uppercase tracking-widest block mb-2", textSecondary)}>Inicial Entregado (RD$)</label>
+                <label className={cn("text-[11px] font-bold block mb-1.5", textSecondary)}>Inicial entregado <span className="opacity-50">RD$</span></label>
                 <input value={inicialDado} onChange={e => handleInicialChange(e.target.value)} placeholder="0.00"
-                  className={cn("w-full px-5 py-4 rounded-2xl font-black text-lg border outline-none transition", bgGlass, textPrimary, "focus:border-[#0066B3] focus:shadow-[0_0_0_4px_rgba(0,102,179,0.15)]")}
+                  className={cn("w-full px-4 py-3 rounded-xl font-black text-sm border outline-none transition", isDark ? "bg-white/5 border-white/8 text-white focus:border-[#0066B3]/60" : "bg-white border-slate-200 text-slate-900 focus:border-[#0066B3]/60")}
                 />
               </div>
 
               <div>
-                <div className="flex justify-between items-center mb-3">
-                  <label className={cn("text-xs font-bold uppercase tracking-widest", textSecondary)}>Porcentaje</label>
+                <div className="flex justify-between items-center mb-2">
+                  <label className={cn("text-[11px] font-bold", textSecondary)}>Porcentaje</label>
                   <div className="flex items-center gap-1.5">
                     <input type="number" value={porcentajeInput} onChange={e => handlePorcentajeInput(e.target.value)} onBlur={() => { const num = parseFloat(porcentajeInput); if (isNaN(num) || num < 4) { setPorcentajeInput("4"); setPorcentaje(4); } }}
-                      className={cn("w-20 text-center px-3 py-2 rounded-xl font-black border text-sm transition outline-none", bgGlass, textPrimary, "focus:border-[#0066B3]")}
+                      className={cn("w-16 text-center px-2 py-1 rounded-lg font-black text-[13px] border outline-none", isDark ? "bg-white/5 border-white/8 text-white" : "bg-white border-slate-200 text-slate-800")}
                     />
-                    <span className={cn("text-sm font-black", textSecondary)}>%</span>
+                    <span className={cn("text-xs font-bold", textSecondary)}>%</span>
                   </div>
                 </div>
                 <input type="range" min={4} max={100} step={0.01} value={porcentaje} onChange={e => handlePorcentajeChange(Number(e.target.value))}
-                  className={cn("w-full h-2 rounded-full appearance-none cursor-pointer accent-[#0066B3] transition", isDark ? "bg-white/10" : "bg-slate-200")}
+                  className={cn("w-full h-1.5 rounded-full appearance-none cursor-pointer accent-[#0066B3] transition", isDark ? "bg-white/10" : "bg-slate-200")}
                 />
               </div>
 
-              <div className={cn("space-y-3 pt-4 border-t", isDark ? "border-white/10" : "border-slate-200")}>
+              <div className={cn("space-y-1.5 pt-3 border-t", isDark ? "border-white/10" : "border-slate-200")}>
                 {[
-                  { label: 'Precio de compra', value: fmt(precioSinItbis) },
+                  { label: 'Precio compra', value: fmt(precioSinItbis) },
                   { label: 'ITBIS', value: fmt(itbisTotal) },
-                  { label: 'Tasa anual fija', value: `${TASA_INTERES_ANUAL}%` },
-                  ...(filaActiva && montoFinanciar > 0 && !bajoDeMinimoMsg ? [{ label: 'Plan cuotas', value: `${filaActiva.cuotas}m / ${filaActiva.pct.toFixed(2)}%`, highlight: true }] : []),
+                  { label: 'Plan cuotas', value: filaActiva && montoFinanciar > 0 ? `${filaActiva.cuotas}m / ${filaActiva.pct.toFixed(2)}%` : '-', highlight: !!filaActiva },
                 ].map((row) => (
                   <div key={row.label} className="flex justify-between items-center">
-                    <span className={cn("text-[10px] font-black uppercase tracking-widest", textSecondary)}>{row.label}</span>
-                    <span className={cn('text-sm font-black tracking-tight', (row as { highlight?: boolean }).highlight ? 'text-[#0066B3]' : textPrimary)}>{row.value}</span>
+                    <span className={cn("text-[9px] font-bold uppercase tracking-widest", textSecondary)}>{row.label}</span>
+                    <span className={cn('text-xs font-black tracking-tight', row.highlight ? 'text-[#0066B3]' : textPrimary)}>{row.value}</span>
                   </div>
                 ))}
               </div>
 
-              <div className={cn("border-t pt-5", isDark ? "border-white/10" : "border-slate-200")}>
-                <label className={cn("text-xs font-bold uppercase tracking-widest block mb-2", textSecondary)}>Plan de Pagos</label>
+              <div className={cn("border-t pt-3", isDark ? "border-white/10" : "border-slate-200")}>
+                <label className={cn("text-[11px] font-bold block mb-1.5", textSecondary)}>Plan de Pagos</label>
                 <div className="relative">
                   <select value={mesSeleccionado ?? ""} onChange={e => handleMesChange(Number(e.target.value))}
-                    className={cn("w-full pl-5 pr-10 py-4 rounded-2xl border outline-none font-black text-sm cursor-pointer appearance-none transition", bgGlass, textPrimary, "focus:border-[#0066B3] focus:shadow-[0_0_0_4px_rgba(0,102,179,0.15)]")}
+                    className={cn("w-full px-4 py-3 rounded-xl border outline-none font-black text-xs cursor-pointer appearance-none transition", isDark ? "bg-white/5 border-white/8 text-white" : "bg-white border-slate-200 text-slate-900")}
                   >
-                    <option value="">— SELECCIONAR MESES —</option>
+                    <option value="">— Seleccionar meses —</option>
                     {TABLA_PAGOS.map(f => <option key={f.cuotas} value={f.cuotas}>{f.cuotas} MESES — {f.pct.toFixed(2)}%</option>)}
                   </select>
                 </div>
               </div>
 
               <div>
-                <label className={cn("text-xs font-bold uppercase tracking-widest block mb-2", textSecondary)}>O Escribe Cuota Mensual Máxima</label>
+                <label className={cn("text-[11px] font-bold block mb-1.5", textSecondary)}>Cuota Mensual Deseada <span className="opacity-50">RD$</span></label>
                 <input value={cuotaInput} onChange={e => handleCuotaChange(e.target.value)} placeholder="0.00"
-                  className={cn("w-full px-5 py-4 rounded-2xl font-black text-lg border outline-none transition", bgGlass, textPrimary, "focus:border-[#0066B3] focus:shadow-[0_0_0_4px_rgba(0,102,179,0.15)]")}
+                  className={cn("w-full px-4 py-3 rounded-xl font-black text-sm border outline-none transition", isDark ? "bg-white/5 border-white/8 text-white" : "bg-white border-slate-200 text-slate-900")}
                 />
               </div>
 
               {pctEscrito > 0 && !bajoDeMinimoMsg && !mesSeleccionado && montoFinanciar > 0 && (
-                <div className={cn("p-4 rounded-2xl border space-y-3 font-bold text-xs", isDark ? "bg-[#0066B3]/10 border-[#0066B3]/20" : "bg-[#0066B3]/5 border-[#0066B3]/20")}>
-                  <p className={textPrimary}>Tu cuota es el <span className="text-[#0066B3] text-sm font-black">{pctEscrito.toFixed(2)}%</span> del monto.</p>
+                <div className={cn("p-3 rounded-xl border space-y-1.5 font-bold text-[11px]", isDark ? "bg-[#0066B3]/10 border-[#0066B3]/20" : "bg-[#0066B3]/5 border-[#0066B3]/10")}>
+                  <p className={textSecondary}>Cuota equivale a <span className="text-[#0066B3]">{pctEscrito.toFixed(2)}%</span></p>
                   {filaAnterior && filaSiguiente && (
-                    <div className="space-y-2 pt-2 border-t border-[#0066B3]/20">
-                      <div className="flex justify-between"><span>{filaAnterior.cuotas} meses</span><span className="text-[#0066B3] font-black">{fmt(montoFinanciar * (filaAnterior.pct / 100))}</span></div>
-                      <div className="flex justify-between"><span>{filaSiguiente.cuotas} meses</span><span className="text-[#0066B3] font-black">{fmt(montoFinanciar * (filaSiguiente.pct / 100))}</span></div>
+                    <div className="space-y-1 pt-1">
+                      <div className="flex justify-between"><span>{filaAnterior.cuotas} meses</span><span className="text-[#0066B3]">{fmt(montoFinanciar * (filaAnterior.pct / 100))}</span></div>
+                      <div className="flex justify-between"><span>{filaSiguiente.cuotas} meses</span><span className="text-[#0066B3]">{fmt(montoFinanciar * (filaSiguiente.pct / 100))}</span></div>
                     </div>
                   )}
-                  {filaActiva && <div className="flex justify-between pt-2 border-t border-[#0066B3]/20"><span>Sugerido ({filaActiva.cuotas}m)</span><span className="text-[#0066B3] font-black text-sm">{fmt(montoFinanciar * (filaActiva.pct / 100))}</span></div>}
                 </div>
               )}
 
               {mesSeleccionado && filaActiva && montoFinanciar > 0 && (
-                <div className="relative group mt-4">
-                  <div className={cn("relative overflow-hidden rounded-3xl p-6 border transition duration-300 shadow-xl", isDark ? "bg-[#0066B3]/20 border-[#0066B3]/50 shadow-[#0066B3]/20" : "bg-[#0066B3]/5 border-[#0066B3]/40 shadow-[#0066B3]/10")}>
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#0066B3]/20 to-transparent pointer-events-none" />
-                    <div className="relative z-10 flex flex-col items-center justify-center space-y-1 mb-6">
-                       <span className={cn("text-[10px] font-black uppercase tracking-[0.2em] opacity-90", isDark ? "text-white" : "text-[#0066B3]")}>CUOTA MENSUAL</span>
-                       <span className={cn("text-4xl md:text-5xl font-black tracking-tighter drop-shadow-md", isDark ? "text-white" : "text-[#0066B3]")}>{fmt(cuotaDelDropdown)}</span>
+                <div className={cn("mt-4 relative overflow-hidden rounded-2xl p-4 border transition duration-300", isDark ? "bg-[#0066B3]/15 border-[#0066B3]/30" : "bg-[#0066B3]/5 border-[#0066B3]/20")}>
+                    <div className="relative z-10 flex flex-col items-center justify-center mb-2">
+                       <span className={cn("text-[10px] font-black uppercase tracking-[0.2em]", isDark ? "text-white/80" : "text-[#0066B3]/80")}>CUOTA MENSUAL</span>
+                       <span className={cn("text-3xl font-black tracking-tighter mt-0.5", isDark ? "text-white" : "text-[#0066B3]")}>{fmt(cuotaDelDropdown)}</span>
                     </div>
-                    <div className="relative z-10 flex justify-between items-end">
+                    <div className="relative z-10 flex justify-between items-end border-t border-[#0066B3]/10 pt-2">
                       <div className="flex flex-col">
-                        <span className={cn("text-[10px] font-bold uppercase tracking-widest mb-1", isDark ? "text-white/60" : "text-[#0066B3]/70")}>PLAZO</span>
-                        <span className={cn("text-lg font-black tracking-tighter", isDark ? "text-white" : "text-[#0066B3]")}>{filaActiva.cuotas} MESES</span>
+                        <span className={cn("text-[9px] font-bold uppercase tracking-widest", isDark ? "text-white/50" : "text-[#0066B3]/70")}>PLAZO</span>
+                        <span className={cn("text-xs font-black tracking-tight", isDark ? "text-white" : "text-[#0066B3]")}>{filaActiva.cuotas} MESES</span>
                       </div>
                       <div className="flex flex-col text-right items-end">
-                        <span className={cn("text-[10px] font-bold uppercase tracking-widest mb-1", isDark ? "text-white/60" : "text-[#0066B3]/70")}>FACTOR TASA</span>
-                        <span className={cn("text-lg font-black tracking-tighter", isDark ? "text-white" : "text-[#0066B3]")}>{filaActiva.pct.toFixed(2)}%</span>
+                        <span className={cn("text-[9px] font-bold uppercase tracking-widest", isDark ? "text-white/50" : "text-[#0066B3]/70")}>FACTOR TASA</span>
+                        <span className={cn("text-xs font-black tracking-tight", isDark ? "text-white" : "text-[#0066B3]")}>{filaActiva.pct.toFixed(2)}%</span>
                       </div>
                     </div>
-                  </div>
-                  <div className="absolute -inset-1 rounded-3xl opacity-30 group-hover:opacity-60 blur-xl transition duration-500 pointer-events-none -z-10 bg-[#0066B3]" />
-                </div>
+                 </div>
               )}
           </div>
         </div>
 
         {/* COLUMNA 4 — Regalos */}
         <div className={cardContainer}>
-          <div className="flex justify-between items-center mb-5">
-            <h3 className={cn("font-black text-xs uppercase tracking-[0.2em]", textPrimary)}>Incentivos</h3>
-            {totalProductos > 0 && <span className="bg-amber-500/20 text-amber-500 text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full">MAX {fmt(totalProductos * 0.10)}</span>}
+          <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+            <h3 className={cn("text-base font-black tracking-tight", textPrimary)}>Regalos</h3>
+            {totalProductos > 0 && <span className={cn("text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full", isDark ? "text-white/50 bg-white/10" : "text-slate-500 bg-slate-100")}>MAX {fmt(totalProductos * 0.10)}</span>}
           </div>
 
           {totalProductos === 0 ? (
-            <div className="flex-1 flex flex-col items-center justify-center gap-4 py-10 opacity-60">
-              <Gift className="w-10 h-10" />
-              <p className="text-xs font-bold text-center uppercase tracking-widest">Calcula orden<br/>para desbloquear</p>
+            <div className="flex-1 flex flex-col items-center justify-center gap-2 opacity-50">
+              <Gift className="w-6 h-6" />
+              <p className="text-[11px] font-bold text-center">Selecciona productos<br/>para ver regalos</p>
             </div>
           ) : (() => {
             const EXCLUIR = ['aro', 'reparac', 'reemplaz', 'tapa'];
@@ -519,26 +503,29 @@ export default function CalculadoraFinanciamiento({ isDark = true, externalItems
             const elegibles = [...elegiblesVolumen, ...elegiblesNormales];
 
             return (
-              <div className="flex flex-col flex-1 overflow-hidden">
+              <div className="flex flex-col flex-1 overflow-hidden gap-2">
                 {selectedRegalos.length > 0 && (
-                  <div className={cn("px-4 py-3 rounded-2xl mb-4 font-bold text-xs flex justify-between items-center border", excedido ? "bg-red-500/10 border-red-500/20 text-red-500" : cerca ? "bg-amber-500/10 border-amber-500/20 text-amber-500" : "bg-[#0066B3]/10 border-[#0066B3]/20 text-[#0066B3]")}>
-                    <span>{excedido ? '¡Excedido!' : cerca ? 'Aproximándose' : 'En rango'}</span>
-                    <span className="text-lg font-black">{fmt(totalRegalos)}</span>
+                  <div className={cn("px-3 py-2 rounded-xl text-[11px] font-bold flex justify-between items-center", excedido ? "bg-red-500/10 text-red-500" : cerca ? "bg-amber-500/10 text-amber-500" : "bg-[#0066B3]/10 text-[#0066B3]")}>
+                    <span>{excedido ? '¡Excede!' : cerca ? 'Aproximándose' : 'En rango'}</span>
+                    <span className="font-black">{fmt(totalRegalos)}</span>
                   </div>
                 )}
-                <div className="flex-1 overflow-y-auto space-y-2 pr-2 custom-scrollbar" data-lenis-prevent>
+                
+                <p className="text-[9px] font-bold uppercase tracking-widest opacity-40">Máx 10% · Sin combinaciones</p>
+                
+                <div className="flex-1 overflow-y-auto space-y-1.5 pr-1 custom-scrollbar" data-lenis-prevent>
                   {elegibles.map((p, i) => {
                     const sel = isRegaloSelected(p);
                     const fueraDeRango = REGALOS_VOLUMEN.includes(p.code) && p.total > maxR;
                     const excederiaSiAgrego = !sel && (totalRegalos + p.total) > maxR;
                     return (
                       <motion.div key={p.code} initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: Math.min(i * 0.05, 0.2) }} onClick={() => !fueraDeRango && (!excederiaSiAgrego || sel) ? toggleRegalo(p) : null}
-                        className={cn("px-4 py-3 rounded-2xl border transition duration-200 relative", fueraDeRango ? "opacity-30 cursor-not-allowed bg-transparent" : sel ? "bg-[#0066B3]/20 border-[#0066B3]/50 cursor-pointer shadow-lg" : excederiaSiAgrego ? "opacity-30 cursor-not-allowed bg-transparent" : cn(bgGlass, "cursor-pointer hover:border-[#0066B3]/30 hover:scale-[1.02]"))}>
-                        {REGALOS_VOLUMEN.includes(p.code) && <span className="absolute -top-2 -right-2 text-[8px] font-black bg-amber-500 text-black px-2 py-0.5 rounded-full uppercase">Vol</span>}
-                        <p className={cn("text-xs font-bold truncate pr-3", sel ? "text-[#0066B3]" : textPrimary)}>{p.name}</p>
-                        <div className="flex justify-between items-end mt-2">
-                          <p className={cn("text-[9px] font-bold uppercase tracking-widest", textSecondary)}>{p.category}</p>
-                          <p className={cn("text-sm font-black tracking-tight", sel ? "text-[#0066B3]" : textPrimary)}>{fmt(p.total)}</p>
+                        className={cn("px-3 py-2 rounded-xl transition duration-200 relative", fueraDeRango ? "opacity-30 cursor-not-allowed border border-transparent" : sel ? "bg-[#0066B3]/15 border border-[#0066B3]/30 cursor-pointer" : excederiaSiAgrego ? "opacity-30 cursor-not-allowed border border-transparent" : cn(isDark ? "hover:bg-white/5 border border-transparent" : "bg-white border border-slate-100", "cursor-pointer"))}>
+                        {REGALOS_VOLUMEN.includes(p.code) && <span className="absolute -top-1 -right-1 text-[8px] font-black bg-amber-500 text-black px-1.5 py-0.5 rounded-full">VOL</span>}
+                        <p className={cn("text-[11px] font-bold truncate pr-3", sel ? "text-[#0066B3]" : textPrimary)}>{p.name}</p>
+                        <div className="flex justify-between items-end mt-1">
+                          <p className={cn("text-[9px] font-bold", textSecondary)}>{p.category}</p>
+                          <p className={cn("text-[11px] font-black tracking-tight", sel ? "text-[#0066B3]" : textPrimary)}>{fmt(p.total)}</p>
                         </div>
                       </motion.div>
                     );
