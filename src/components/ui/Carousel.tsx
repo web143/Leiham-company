@@ -129,7 +129,7 @@ function CarouselNavigation({
   return (
     <div
       className={cn(
-        'pointer-events-none absolute left-[-12.5%] top-1/2 flex w-[125%] -translate-y-1/2 justify-between px-2',
+        'pointer-events-none absolute top-1/2 flex w-full -translate-y-1/2 justify-between px-2',
         className
       )}
     >
@@ -154,8 +154,8 @@ function CarouselNavigation({
         }}
       >
         <ChevronLeft
-          className='stroke-zinc-600 dark:stroke-zinc-50'
-          size={16}
+          className='stroke-white drop-shadow-md'
+          size={20}
         />
       </button>
       <button
@@ -179,8 +179,8 @@ function CarouselNavigation({
         }}
       >
         <ChevronRight
-          className='stroke-zinc-600 dark:stroke-zinc-50'
-          size={16}
+          className='stroke-white drop-shadow-md'
+          size={20}
         />
       </button>
     </div>

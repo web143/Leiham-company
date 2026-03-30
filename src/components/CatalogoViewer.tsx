@@ -247,11 +247,9 @@ export default function CatalogoViewer({ isDark = true, onProductsChange }: Cata
           {/* Flechas de navegación estilo carousel */}
           <CarouselNavigation
             alwaysShow
+            className="absolute inset-x-4 top-1/2 -translate-y-1/2 w-auto left-0 right-0 px-0"
             classNameButton={cn(
-              'shadow-lg',
-              isDark
-                ? 'bg-slate-800 hover:bg-slate-700 border border-white/10'
-                : 'bg-white hover:bg-slate-50 border border-slate-200'
+              'w-12 h-12 bg-black/40 hover:bg-black/60 text-white border-0 shadow-2xl backdrop-blur-sm'
             )}
           />
         </Carousel>
