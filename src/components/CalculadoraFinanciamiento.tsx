@@ -235,12 +235,30 @@ export default function CalculadoraFinanciamiento({ isDark = true, externalItems
         </h2>
       </div>
 
+        {/* Móvil chips - RE-AÑADIDO */}
+        <div className="md:hidden flex gap-2 overflow-x-auto pb-2 custom-scrollbar mb-2" style={{ scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' }}>
+          <motion.button onClick={() => setActiveCategory(null)}
+            whileTap={shouldReduceMotion ? {} : { scale: 0.95, transition: { type: 'spring' } }}
+            className={cn("flex-shrink-0 px-4 py-2 rounded-full text-[11px] font-bold transition duration-200 ease-out", 
+              !activeCategory ? 'bg-[#0066B3] text-white shadow-sm shadow-[#0066B3]/30' : cn(bgGlass, "border", textSecondary)
+            )}>Todos</motion.button>
+          {allCategories.map(cat => (
+            <motion.button key={cat} onClick={() => handleCategoryClick(cat)}
+              whileTap={shouldReduceMotion ? {} : { scale: 0.95, transition: { type: 'spring' } }}
+              className={cn("flex-shrink-0 px-4 py-2 rounded-full text-[11px] font-bold whitespace-nowrap transition duration-200", 
+                activeCategory === cat ? 'bg-[#0066B3] text-white shadow-sm shadow-[#0066B3]/30' : cn(bgGlass, "border", textSecondary)
+              )}>
+              {cat}
+            </motion.button>
+          ))}
+        </div>
+
       <div className="max-w-[1400px] mx-auto px-4 pb-8 grid grid-cols-1 md:grid-cols-[220px_1fr_300px_300px] gap-4 h-auto md:h-[680px]">
 
 
 
-        {/* COLUMNA 1 — Categorías */}
-        <div className={cn("hidden md:flex flex-col", cardContainer)}>
+        {/* COLUMNA 1 — Categorías (Oculta en celular, Visible en Desktop) */}
+        <div className={cn(cardContainer, "hidden md:flex flex-col")}>
           <h3 className={cn("font-black text-base tracking-tight mb-4", textPrimary)}>Categorías</h3>
           <div className="space-y-0.5 flex-1 overflow-y-auto pr-1 custom-scrollbar" data-lenis-prevent>
             {allCategories.map(cat => {
