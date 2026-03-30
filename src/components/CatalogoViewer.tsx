@@ -146,7 +146,7 @@ export default function CatalogoViewer({ isDark = true, onProductsChange }: Cata
       setCurrentPage(index);
       setPageInput(String(index + 1));
       setIsFlipping(false);
-    }, shouldReduceMotion ? 0 : 400);
+    }, shouldReduceMotion ? 0 : 500);
   };
 
   const handlePageInput = (value: string) => {
@@ -204,8 +204,8 @@ export default function CatalogoViewer({ isDark = true, onProductsChange }: Cata
           key={currentPage}
           className={cn(
             'relative w-full overflow-hidden rounded-2xl shadow-2xl transition-transform duration-200',
-            !shouldReduceMotion && !isFlipping && direction === 'next' && 'flip-in-next',
-            !shouldReduceMotion && !isFlipping && direction === 'prev' && 'flip-in-prev',
+            !shouldReduceMotion && direction === 'next' && 'flip-in-next',
+            !shouldReduceMotion && direction === 'prev' && 'flip-in-prev',
             PAGES[currentPage].type !== 'static' && 'cursor-pointer group'
           )}
           onClick={() => PAGES[currentPage].type !== 'static' && handlePageClick(PAGES[currentPage])}

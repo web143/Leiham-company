@@ -1,6 +1,6 @@
 // CACHE_NAME is auto-updated by scripts/update-sw-version.js on every `npm run build`.
 // Vercel runs prebuild before each deploy, so this value changes automatically.
-const CACHE_NAME = 'leiham-mnd8iyas';
+const CACHE_NAME = 'leiham-mnd9vhp3';
 
 // Assets pre-cacheados en la instalación del SW
 const PRE_CACHE = [
