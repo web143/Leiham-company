@@ -525,8 +525,15 @@ export default function CalculadoraFinanciamiento({ isDark = true, externalItems
                   <AnimatePresence mode="popLayout">
                     {elegibles.map((p, i) => {
                       return (
-                        <motion.div layout key={p.code} initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} transition={{ delay: Math.min(i * 0.05, 0.2) }} onClick={() => !p.fueraDeRango && (!p.excederiaSiAgrego || p.sel) ? toggleRegalo(p) : null}
-                          className={cn("px-3 py-2 rounded-xl transition duration-200 relative", p.fueraDeRango ? "opacity-30 cursor-not-allowed border border-transparent" : p.sel ? "bg-[#0066B3]/15 border border-[#0066B3]/30 cursor-pointer" : p.excederiaSiAgrego ? "opacity-30 cursor-not-allowed border border-transparent" : cn(isDark ? "hover:bg-white/5 border border-transparent" : "bg-white border border-slate-100", "cursor-pointer"))}>
+                        <motion.div 
+                          layout 
+                          key={p.code} 
+                          initial={{ opacity: 0, scale: 0.95 }} 
+                          animate={{ opacity: p.disabled ? 0.3 : 1, scale: 1 }} 
+                          exit={{ opacity: 0, scale: 0.95 }} 
+                          transition={{ duration: 0.2, delay: Math.min(i * 0.05, 0.2) }} 
+                          onClick={() => !p.fueraDeRango && (!p.excederiaSiAgrego || p.sel) ? toggleRegalo(p) : null}
+                          className={cn("px-3 py-2 rounded-xl transition duration-200 relative", p.fueraDeRango ? "cursor-not-allowed border border-transparent" : p.sel ? "bg-[#0066B3]/15 border border-[#0066B3]/30 cursor-pointer" : p.excederiaSiAgrego ? "cursor-not-allowed border border-transparent" : cn(isDark ? "hover:bg-white/5 border border-transparent" : "bg-white border border-slate-100", "cursor-pointer"))}>
                           {REGALOS_VOLUMEN.includes(p.code) && <span className="absolute -top-1 -right-1 text-[8px] font-black bg-amber-500 text-black px-1.5 py-0.5 rounded-full">VOL</span>}
                           <p className={cn("text-[11px] font-bold truncate pr-3", p.sel ? "text-[#0066B3]" : textPrimary)}>{p.name}</p>
                           <div className="flex justify-between items-end mt-1">
