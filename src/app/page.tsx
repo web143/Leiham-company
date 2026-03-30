@@ -3,6 +3,7 @@
 import dynamic from 'next/dynamic';
 import { useState, useEffect } from 'react';
 import { products } from '@/lib/products';
+import { ThemeToggle } from '@/components/ui/ThemeToggle';
 
 // Importación dinámica para deshabilitar SSR y prevenir errores en móvil
 const HeroLeiham = dynamic(() => import('../components/HeroLeiham'), { 
@@ -39,14 +40,7 @@ export default function Home() {
 
   return (
     <main className={`transition-colors duration-300 ${mounted ? (isDark ? 'bg-black' : 'bg-white') : 'bg-black'}`}>
-      <button
-        onClick={toggleTheme}
-        className="fixed top-3 right-3 z-[100] flex items-center gap-1 p-1 rounded-full border bg-slate-800 border-slate-700 transition duration-200 ease-out active:scale-[0.97]"
-        style={{ width: '56px', height: '28px' }}
-      >
-        <span className={`text-sm flex-1 flex justify-center ${!isDark ? 'opacity-100' : 'opacity-30'}`}>☀️</span>
-        <span className={`text-sm flex-1 flex justify-center ${isDark ? 'opacity-100' : 'opacity-30'}`}>🌙</span>
-      </button>
+      <ThemeToggle isDark={isDark} onToggle={toggleTheme} className="fixed top-3 right-3 z-[100] shadow-lg" />
       <HeroLeiham isDark={mounted ? isDark : true} />
       <CatalogoViewer isDark={mounted ? isDark : true} onProductsChange={(items) => setCatalogoItems([...items])} />
       <CalculadoraFinanciamiento isDark={mounted ? isDark : true} externalItems={catalogoItems} />

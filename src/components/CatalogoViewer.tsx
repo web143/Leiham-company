@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { X, ShoppingCart, Plus, Check } from 'lucide-react';
 import { products } from '@/lib/products';
 import { cn } from '@/lib/utils';
+import { AnimatedButton, AnimatedButtonBlue } from '@/components/ui/AnimatedButton';
 
 // Mapa de páginas individuales
 const PAGES = [
@@ -252,19 +253,12 @@ export default function CatalogoViewer({ isDark = true, onProductsChange }: Cata
         {/* Controles inferiores */}
         <div className="flex items-center justify-between mt-4 gap-4">
           
-          <motion.button
-            whileTap={shouldReduceMotion ? {} : { scale: 0.97, transition: { type: 'spring', stiffness: 400, damping: 30 } }}
+          <AnimatedButton
             onClick={() => goToPage(currentPage - 1)}
             disabled={currentPage === 0}
-            className={cn(
-              'px-5 py-2.5 rounded-xl font-bold text-sm transition-all',
-              currentPage === 0
-                ? 'opacity-30 cursor-not-allowed'
-                : isDark ? 'bg-slate-800 text-white hover:bg-slate-700' : 'bg-slate-100 text-slate-900 hover:bg-slate-200'
-            )}
           >
             ← Anterior
-          </motion.button>
+          </AnimatedButton>
 
           <div className="flex items-center gap-2">
             <span className={cn('text-xs', isDark ? 'text-white/30' : 'text-slate-400')}>Página</span>
@@ -284,19 +278,12 @@ export default function CatalogoViewer({ isDark = true, onProductsChange }: Cata
             <span className={cn('text-xs', isDark ? 'text-white/30' : 'text-slate-400')}>de 36</span>
           </div>
 
-          <motion.button
-            whileTap={shouldReduceMotion ? {} : { scale: 0.97, transition: { type: 'spring', stiffness: 400, damping: 30 } }}
+          <AnimatedButtonBlue
             onClick={() => goToPage(currentPage + 1)}
             disabled={currentPage === PAGES.length - 1}
-            className={cn(
-              'px-5 py-2.5 rounded-xl font-bold text-sm transition-all',
-              currentPage === PAGES.length - 1
-                ? 'opacity-30 cursor-not-allowed'
-                : 'bg-[#0066B3] text-white hover:bg-[#0055a0]'
-            )}
           >
             Siguiente →
-          </motion.button>
+          </AnimatedButtonBlue>
         </div>
 
         {/* Barra de progreso */}
