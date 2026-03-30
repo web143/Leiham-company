@@ -106,7 +106,7 @@ function Carousel({
       onIndexChange={handleIndexChange}
       disableDrag={disableDrag}
     >
-      <div className={cn('group/hover relative h-fit', className)}>
+      <div className={cn('group/hover relative h-fit overflow-hidden', className)}>
         <div className='overflow-hidden h-fit'>{children}</div>
       </div>
     </CarouselProvider>
