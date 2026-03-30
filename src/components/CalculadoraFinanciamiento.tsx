@@ -4,6 +4,7 @@ import { Search, Plus, Check, X, Gift, AlertTriangle, CheckCircle2, AlertCircle 
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { products } from "@/lib/products";
 import { cn } from "@/lib/utils";
+import { CalculadoraResultCard } from "@/components/ui/CalculadoraResultCard";
 
 const TABLA_PAGOS = [
   { cuotas: 2, pct: 51.95 }, { cuotas: 3, pct: 35.07 }, { cuotas: 4, pct: 26.64 },
@@ -470,15 +471,29 @@ export default function CalculadoraFinanciamiento({ isDark = true, externalItems
         <div className={cn("rounded-2xl p-5 flex flex-col gap-4 border transition duration-200 ease-out h-full overflow-y-auto custom-scrollbar", 
           isDark ? "bg-white/[0.03] border-white/8 shadow-2xl shadow-black/30" : "bg-white border-slate-200/80 shadow-xl shadow-slate-100")} data-lenis-prevent>
 
-          {/* Card Total — estilo Apple: número flotante, sin fondo saturado */}
-          <div className={cn("rounded-2xl px-5 py-4 border transition duration-200 ease-out", isDark ? "bg-white/[0.04] border-white/8" : "bg-slate-50 border-slate-100")}>
-            <p className={cn("text-[11px] font-medium mb-1 transition-colors", isDark ? "text-white/35" : "text-slate-400")}>Total a pagar</p>
-            <motion.p
-              animate={{ filter: isClearing ? "blur(4px)" : "blur(0px)", opacity: isClearing ? 0.3 : 1 }}
-              transition={{ duration: 0.18, ease: [0.23, 1, 0.32, 1] }}
-              className={cn("text-3xl font-light tracking-tight", isDark ? "text-white" : "text-slate-900")}
-            >{fmt(totalProductos)}</motion.p>
-          </div>
+          {/* Card Total Rediseñada con Aspecto Bancario */}
+          <CalculadoraResultCard
+            isDark={isDark}
+            title="Total de Productos"
+            mainValue={
+              <motion.span
+                animate={{ filter: isClearing ? "blur(4px)" : "blur(0px)", opacity: isClearing ? 0.3 : 1 }}
+                transition={{ duration: 0.18, ease: [0.23, 1, 0.32, 1] }}
+                className={cn({ "text-slate-900": !isDark })}
+              >
+                {fmt(totalProductos)}
+              </motion.span>
+            }
+            leftLabel="INICIAL"
+            leftValue={fmt(inicialDadoNum)}
+            leftSub={`${porcentaje.toFixed(2)}% aportado`}
+            rightLabel="A FINANCIAR"
+            rightValue={fmt(montoFinanciar)}
+            rightSub="Base de cuotas"
+            accentColor="#ffffff"
+            secondaryColor="#ffffff"
+            className="mb-1"
+          />
 
           {/* Inputs - Bloque 1: Inicial */}
           <div className="space-y-5">
@@ -676,19 +691,23 @@ export default function CalculadoraFinanciamiento({ isDark = true, externalItems
                 </div>
               )}
 
-              {/* Resultado del dropdown */}
+              {/* Resultado del dropdown Rediseñado Premium */}
               {mesSeleccionado && filaActiva && montoFinanciar > 0 && (
-                <div className={cn("px-4 py-3 rounded-xl border transition duration-200 ease-out",
-                  isDark ? "bg-[#0066B3]/10 border-[#0066B3]/20 shadow-lg shadow-[#0066B3]/5" : "bg-[#0066B3]/5 border-[#0066B3]/20 shadow-md shadow-slate-200")}>
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <p className={cn("text-[10px] font-bold uppercase tracking-widest mb-1 transition-colors", isDark ? "text-[#0066B3]" : "text-[#0066B3]")}>
-                        {filaActiva.cuotas} meses — {filaActiva.pct.toFixed(2)}%
-                      </p>
-                      <span className={isDark ? "text-white/50 text-xs" : "text-slate-500 text-xs"}>Cuota mensual</span>
-                    </div>
-                    <span className="text-[#0066B3] font-black text-xl">{fmt(cuotaDelDropdown)}</span>
-                  </div>
+                <div className="mt-4 relative group">
+                  <CalculadoraResultCard
+                    isDark={isDark}
+                    title="CUOTA MENSUAL"
+                    mainValue={fmt(cuotaDelDropdown)}
+                    leftLabel="PLAZO"
+                    leftValue={`${filaActiva.cuotas} MESES`}
+                    rightLabel="FACTOR TASA"
+                    rightValue={`${filaActiva.pct.toFixed(2)}%`}
+                    accentColor="#0066B3"
+                    secondaryColor="#0066B3"
+                  />
+                  {/* Resplandor sutil alrededor como destaque final */}
+                  <div className={cn("absolute -inset-1 rounded-2xl opacity-20 group-hover:opacity-40 blur-lg transition duration-500 pointer-events-none -z-10",
+                    isDark ? "bg-[#0066B3]" : "bg-transparent")} />
                 </div>
               )}
           </div>
