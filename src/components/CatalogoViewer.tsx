@@ -173,11 +173,11 @@ export default function CatalogoViewer({ isDark = true, onProductsChange }: Cata
 
   return (
     <section className={cn(
-      'w-full overflow-hidden transition-colors duration-300',
+      'w-full pb-8 transition-colors duration-300',
       isDark ? 'bg-black' : 'bg-white'
     )}>
       {/* Título - Consolidado con el contenedor del catálogo para reducir espacio */}
-      <div className="max-w-[1100px] mx-auto px-4 overflow-hidden">
+      <div className="max-w-[1100px] mx-auto px-4">
         <div className="text-center mb-8">
           <p className="text-[#0066B3] text-xs tracking-[0.3em] uppercase mb-2">Royal Prestige®</p>
           <h2 className={cn('text-3xl md:text-4xl font-black tracking-tight uppercase', isDark ? 'text-white' : 'text-slate-900')}>
@@ -246,7 +246,7 @@ export default function CatalogoViewer({ isDark = true, onProductsChange }: Cata
         </div>
 
         {/* Controles inferiores - Reducido espacio mt-4 -> mt-2 */}
-        <div className="flex items-center justify-center gap-3 mt-2">
+        <div className="flex items-center justify-center gap-3 mt-3">
           <span className={cn('text-xs', isDark ? 'text-white/30' : 'text-slate-400')}>Página</span>
           <input
             type="number"
