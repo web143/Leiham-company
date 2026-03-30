@@ -27,8 +27,8 @@ export const AnimatedButton: React.FC<{
       const { height, width, left, top } = button.getBoundingClientRect();
       const x = clientX - (left + width / 2);
       const y = clientY - (top + height / 2);
-      xTo(x * 0.2); // 20% magnetic pull
-      yTo(y * 0.2);
+      xTo(x * 0.55); // Aumentado a 55% para mayor magnetismo
+      yTo(y * 0.55);
     };
 
     const handleMouseLeave = () => {
@@ -92,8 +92,8 @@ export const AnimatedButtonBlue: React.FC<{
       const { height, width, left, top } = button.getBoundingClientRect();
       const x = clientX - (left + width / 2);
       const y = clientY - (top + height / 2);
-      xTo(x * 0.2);
-      yTo(y * 0.2);
+      xTo(x * 0.55);
+      yTo(y * 0.55);
     };
 
     const handleMouseLeave = () => {
