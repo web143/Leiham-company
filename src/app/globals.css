@@ -82,13 +82,3 @@ html {
     scroll-behavior: auto !important;
   }
 }
-
-/* Fix carousel height */
-[data-slot="carousel-content"] {
-  align-items: flex-start !important;
-  height: auto !important;
-}
-
-[data-slot="carousel-item"] {
-  height: auto !important;
-}
