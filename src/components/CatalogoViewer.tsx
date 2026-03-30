@@ -218,7 +218,6 @@ export default function CatalogoViewer({ isDark = true, onProductsChange }: Cata
                     'relative w-full overflow-hidden rounded-2xl shadow-2xl bg-transparent',
                     pageInfo.type !== 'static' && 'cursor-pointer group'
                   )}
-                  style={{ aspectRatio: '1400/1000' }}
                   onClick={() => pageInfo.type !== 'static' && handlePageClick(pageInfo)}
                   onTouchStart={handleTouchStart}
                   onTouchEnd={handleTouchEnd}
