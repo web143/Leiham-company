@@ -4,6 +4,11 @@ import Image from 'next/image';
 import { X } from 'lucide-react';
 import { products } from '@/lib/products';
 import { cn } from '@/lib/utils';
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 const PAGES = [
   { page: '01', type: 'static', title: 'Portada' },
@@ -56,6 +61,71 @@ export default function CatalogoViewer({ isDark = true, onProductsChange }: Prop
   const [selectedItems, setSelectedItems] = useState<typeof products>([]);
   const [cantidades, setCantidades] = useState<{ [key: string]: number }>({});
   const touchStartX = useRef(0);
+
+  // GSAP Refs
+  const sectionRef = useRef<HTMLElement>(null);
+  const titleWrapperRef = useRef<HTMLDivElement>(null);
+  const imageRef = useRef<HTMLImageElement>(null);
+  const modalBgRef = useRef<HTMLDivElement>(null);
+  const modalContentRef = useRef<HTMLDivElement>(null);
+  const modalItemsRef = useRef<(HTMLDivElement | null)[]>([]);
+
+  useGSAP(() => {
+    // 1. ScrollReveal for Title
+    if (titleWrapperRef.current && sectionRef.current) {
+      gsap.fromTo(titleWrapperRef.current.children, 
+        { y: 50, opacity: 0 }, 
+        { 
+          y: 0, 
+          opacity: 1, 
+          duration: 0.8, 
+          stagger: 0.1, 
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top 80%",
+          }
+        }
+      );
+    }
+  }, { scope: sectionRef });
+
+  useGSAP(() => {
+    // 2. Image Transition Swap
+    if (imageRef.current) {
+      gsap.fromTo(imageRef.current, 
+        { opacity: 0.4, scale: 0.98 }, 
+        { opacity: 1, scale: 1, duration: 0.4, ease: 'power2.out' }
+      );
+    }
+  }, [currentPage]);
+
+  useGSAP(() => {
+    // 3. Modal Entrance Stagger
+    if (activePanel && modalBgRef.current && modalContentRef.current) {
+      // Background blur fade in
+      gsap.fromTo(modalBgRef.current, { opacity: 0 }, { opacity: 1, duration: 0.3 });
+      
+      // Modal panel slide up
+      gsap.fromTo(modalContentRef.current, 
+        { y: 50, opacity: 0, scale: 0.95 }, 
+        { y: 0, opacity: 1, scale: 1, duration: 0.5, ease: 'expo.out' }
+      );
+
+      // Stagger items
+      const validItems = modalItemsRef.current.filter(Boolean);
+      if (validItems.length > 0) {
+        gsap.fromTo(validItems, 
+          { opacity: 0, y: 15 }, 
+          { opacity: 1, y: 0, duration: 0.4, stagger: 0.05, ease: 'power2.out', delay: 0.1 }
+        );
+      }
+    } else {
+      // reset refs when modal is closed
+      modalItemsRef.current = [];
+    }
+  }, [activePanel]);
+
 
   const fmt = (n: number) => `RD$ ${n.toLocaleString('es-DO', { minimumFractionDigits: 2 })}`;
 
@@ -122,10 +192,10 @@ export default function CatalogoViewer({ isDark = true, onProductsChange }: Prop
   };
 
   return (
-    <section className={cn('w-full transition-colors duration-300', isDark ? 'bg-black' : 'bg-white')}>
+    <section ref={sectionRef} className={cn('w-full transition-colors duration-300', isDark ? 'bg-black' : 'bg-white')}>
 
-      {/* Título */}
-      <div className="text-center pt-8 pb-4 px-4">
+      {/* Título animado con Mask Reveal simulado */}
+      <div ref={titleWrapperRef} className="text-center pt-8 pb-4 px-4 overflow-hidden">
         <p className="text-[#0066B3] text-xs tracking-[0.3em] uppercase mb-2">Royal Prestige®</p>
         <h2 className={cn('text-3xl md:text-4xl font-black tracking-tight uppercase', isDark ? 'text-white' : 'text-slate-900')}>
           Catálogo de <span className="text-[#0066B3]">Productos</span>
@@ -141,7 +211,7 @@ export default function CatalogoViewer({ isDark = true, onProductsChange }: Prop
         {/* Contenedor imagen — solo tan alto como la imagen */}
         <div
           className={cn(
-            'relative w-full overflow-hidden rounded-2xl shadow-2xl',
+            'relative w-full overflow-hidden rounded-2xl shadow-2xl bg-transparent',
             PAGES[currentPage].type !== 'static' && 'cursor-pointer group'
           )}
           onClick={() => handlePageClick(PAGES[currentPage])}
@@ -149,6 +219,7 @@ export default function CatalogoViewer({ isDark = true, onProductsChange }: Prop
           onTouchEnd={handleTouchEnd}
         >
           <Image
+            ref={imageRef}
             src={`/catalogo_pages/webp/page-${PAGES[currentPage].page}.webp`}
             alt={PAGES[currentPage].title}
             width={1400}
@@ -200,11 +271,12 @@ export default function CatalogoViewer({ isDark = true, onProductsChange }: Prop
         </div>
       </div>
 
-      {/* Panel modal */}
+      {/* Panel modal (BottomSheet) */}
       {activePanel && (
         <div className="fixed inset-0 z-[200] flex items-end md:items-center justify-center p-4" onClick={() => setActivePanel(null)}>
-          <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
+          <div ref={modalBgRef} className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
           <div
+            ref={modalContentRef}
             className={cn('relative w-full max-w-lg max-h-[85vh] rounded-2xl overflow-hidden flex flex-col shadow-2xl', isDark ? 'bg-slate-900 border border-white/10' : 'bg-white border border-slate-200')}
             onClick={e => e.stopPropagation()}
           >
@@ -217,10 +289,13 @@ export default function CatalogoViewer({ isDark = true, onProductsChange }: Prop
                 <X className="w-5 h-5" />
               </button>
             </div>
-            <div className="flex-1 overflow-y-auto p-4 space-y-2">
-              {activePanel.items.map(p => (
+            
+            {/* Contenedor de lista con data-lenis-prevent para permitir scroll natural nativo sin que Lenis lo bloquee accidentalmente */}
+            <div data-lenis-prevent className="flex-1 overflow-y-auto p-4 space-y-2">
+              {activePanel.items.map((p, index) => (
                 <div
                   key={p.code + p.name}
+                  ref={(el) => { modalItemsRef.current[index] = el; }}
                   className={cn('flex items-center gap-3 px-4 py-3 rounded-xl border transition-all',
                     isSelected(p)
                       ? 'bg-[#0066B3]/15 border-[#0066B3]/40'

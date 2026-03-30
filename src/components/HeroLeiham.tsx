@@ -5,6 +5,11 @@ import { motion, useScroll, useTransform, useSpring, useMotionValue, MotionValue
 import { ChevronDown } from "lucide-react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
+import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 
 export default function HeroLeiham({ isDark = true }: { isDark?: boolean }) {
@@ -96,6 +101,41 @@ export default function HeroLeiham({ isDark = true }: { isDark?: boolean }) {
     ];
 
     const sectionRef = useRef<HTMLElement>(null);
+    const bgDotsRef = useRef<HTMLDivElement>(null);
+    const bgGlowRef = useRef<HTMLDivElement>(null);
+
+    useGSAP(() => {
+        if (!sectionRef.current) return;
+        
+        // Parallax sutil en los puntos de fondo (se mueve más lento que el scroll)
+        if (bgDotsRef.current) {
+            gsap.to(bgDotsRef.current, {
+                y: 150,
+                ease: "none",
+                scrollTrigger: {
+                    trigger: sectionRef.current,
+                    start: "top top",
+                    end: "bottom top",
+                    scrub: true,
+                }
+            });
+        }
+        
+        // Parallax inverso en el glow de luz (se mueve hacia arriba)
+        if (bgGlowRef.current) {
+            gsap.to(bgGlowRef.current, {
+                y: -100,
+                ease: "none",
+                scrollTrigger: {
+                    trigger: sectionRef.current,
+                    start: "top top",
+                    end: "bottom top",
+                    scrub: true,
+                }
+            });
+        }
+    }, { scope: sectionRef });
+
     const [isMobileHero, setIsMobileHero] = useState(false);
     useEffect(() => {
         if (typeof window === 'undefined') return;
@@ -138,8 +178,8 @@ export default function HeroLeiham({ isDark = true }: { isDark?: boolean }) {
                         style={{ opacity: overlayOpacity }}
                         className={cn("absolute inset-0 z-50 pointer-events-none transition-colors duration-300", isDark ? "bg-black" : "bg-white")}
                     />
-                    {/* Lamp Effect */}
-                    <div style={{ position: 'absolute', top: '-10px', left: 0, right: 0, zIndex: 1, pointerEvents: 'none', height: '320px', overflow: 'visible' }}>
+                    {/* Lamp Effect - con ref para parallax */}
+                    <div ref={bgGlowRef} style={{ position: 'absolute', top: '-10px', left: 0, right: 0, zIndex: 1, pointerEvents: 'none', height: '320px', overflow: 'visible' }}>
                         {/* Glow principal */}
                         <div style={{ 
                             position: 'absolute', 
@@ -156,8 +196,9 @@ export default function HeroLeiham({ isDark = true }: { isDark?: boolean }) {
                     {/* Gradiente de fondo sutil azul — promoted to GPU layer so it doesn't repaint during scroll */}
                     <div className={cn("absolute inset-0 blur-3xl transition-opacity duration-300", isDark ? "bg-gradient-to-br from-[#0066B3]/[0.08] via-transparent to-[#0066B3]/[0.15]" : "bg-gradient-to-br from-[#0066B3]/[0.03] via-transparent to-[#0066B3]/[0.05]")} style={{ transform: 'translateZ(0)', backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' }} />
 
-                    {/* Patrón de puntos refinado — GPU layer to prevent repaint on scroll */}
+                    {/* Patrón de puntos refinado - con ref para parallax GSAP */}
                     <div
+                        ref={bgDotsRef}
                         className={cn("absolute inset-0 transition-opacity duration-300", isDark ? "opacity-[0.03]" : "opacity-[0.06]")}
                         style={{
                             backgroundImage: `radial-gradient(circle at 1px 1px, rgba(0, 102, 179, 0.4) 1px, transparent 0)`,
