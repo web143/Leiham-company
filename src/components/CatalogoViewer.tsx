@@ -48,7 +48,7 @@ const PAGES = [
 
 interface CatalogoViewerProps {
   isDark?: boolean;
-  onProductsChange?: (items: (typeof products[0] & { cantidad?: number })[]) => void;
+  onProductsChange?: (items: any[]) => void;
 }
 
 export default function CatalogoViewer({ isDark = true, onProductsChange }: CatalogoViewerProps) {
@@ -87,43 +87,46 @@ export default function CatalogoViewer({ isDark = true, onProductsChange }: Cata
 
   const getCantidad = (p: typeof products[0]) => cantidades[getKey(p)] || 0;
 
-  const notifyParent = (items: typeof products, currentCants: { [key: string]: number }) => {
-    const enriched = items.map(item => ({
-      ...item,
-      cantidad: currentCants[getKey(item)] || 1
-    }));
-    onProductsChange?.(enriched);
+  const buildItemsArray = (
+    items: typeof products,
+    cantidades: { [key: string]: number }
+  ) => {
+    const result: typeof products = [];
+    items.forEach(p => {
+      const cantidad = cantidades[`${p.code}_${p.name}`] || 1;
+      for (let i = 0; i < cantidad; i++) {
+        result.push(p);
+      }
+    });
+    return result;
   };
 
   const addOne = (p: typeof products[0]) => {
     const key = getKey(p);
     const nuevaCantidad = (cantidades[key] || 0) + 1;
-    const nuevasCants = { ...cantidades, [key]: nuevaCantidad };
-    setCantidades(nuevasCants);
+    const newCantidades = { ...cantidades, [key]: nuevaCantidad };
+    setCantidades(newCantidades);
     
+    let newItems = selectedItems;
     if (!isSelected(p)) {
-      const newItems = [...selectedItems, p];
+      newItems = [...selectedItems, p];
       setSelectedItems(newItems);
-      notifyParent(newItems, nuevasCants);
-    } else {
-      notifyParent(selectedItems, nuevasCants);
     }
+    onProductsChange?.(buildItemsArray(newItems, newCantidades));
   };
 
   const removeOne = (p: typeof products[0]) => {
     const key = getKey(p);
     const nuevaCantidad = Math.max(0, (cantidades[key] || 0) - 1);
-    const nuevasCants = { ...cantidades, [key]: nuevaCantidad };
+    const newCantidades = { ...cantidades, [key]: nuevaCantidad };
+    setCantidades(newCantidades);
     
-    setCantidades(nuevasCants);
-    
+    let newItems = selectedItems;
     if (nuevaCantidad === 0) {
-      const newItems = selectedItems.filter(i => !(i.code === p.code && i.name === p.name));
+      newItems = selectedItems.filter(i => !(i.code === p.code && i.name === p.name));
       setSelectedItems(newItems);
-      notifyParent(newItems, nuevasCants);
-    } else {
-      notifyParent(selectedItems, nuevasCants);
     }
+    onProductsChange?.(buildItemsArray(newItems, newCantidades));
   };
 
   const handlePageClick = (pageInfo: typeof PAGES[0]) => {

@@ -24,18 +24,42 @@ const TABLA_PAGOS = [
 
 interface Props {
   isDark?: boolean;
-  initialItems?: (typeof products[0] & { cantidad?: number })[];
+  externalItems?: any[];
 }
 
-export default function CalculadoraFinanciamiento({ isDark = true, initialItems = [] }: Props) {
-  const [selectedItems, setSelectedItems] = useState<typeof products & { cantidad?: number }[]>([]);
+export default function CalculadoraFinanciamiento({ isDark = true, externalItems = [] }: Props) {
+  const [selectedItems, setSelectedItems] = useState<(typeof products[0] & { cantidad?: number })[]>([]);
 
-  // Cuando initialItems cambie desde el catálogo, actualizar selectedItems
+  // Sincronizar cuando cambien los items externos
   useEffect(() => {
-    if (initialItems.length > 0) {
-      setSelectedItems(initialItems.map(p => ({ ...p, cantidad: p.cantidad || 1 })));
+    if (externalItems.length > 0) {
+      // Convertir el array expandido a items con cantidad
+      const itemsConCantidad = new Map<string, { item: any; cantidad: number }>();
+      externalItems.forEach(p => {
+        const key = `${p.code}_${p.name}`;
+        if (itemsConCantidad.has(key)) {
+          itemsConCantidad.get(key)!.cantidad++;
+        } else {
+          itemsConCantidad.set(key, { item: p, cantidad: 1 });
+        }
+      });
+      
+      const newItems = Array.from(itemsConCantidad.values()).map(({ item, cantidad }) => ({
+        ...item,
+        cantidad,
+      }));
+      
+      setSelectedItems(newItems);
+      
+      // Scroll suave a la calculadora
+      setTimeout(() => {
+        document.getElementById('calculadora')?.scrollIntoView({ behavior: 'smooth' });
+      }, 300);
+    } else if (externalItems.length === 0 && selectedItems.length > 0) {
+      // Si limpiaron el catálogo, limpiar la calculadora también
+      setSelectedItems([]);
     }
-  }, [initialItems]);
+  }, [externalItems]);
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [inicialDado, setInicialDado] = useState("");
@@ -88,18 +112,31 @@ export default function CalculadoraFinanciamiento({ isDark = true, initialItems 
     }, 50);
   };
 
-  const getCantidad = (p: typeof products[0]) =>
-    selectedItems.filter(i => i.code === p.code && i.name === p.name).length;
+  const getCantidad = (p: typeof products[0]) => {
+    const item = selectedItems.find(i => i.code === p.code && i.name === p.name);
+    return item ? (item.cantidad || 1) : 0;
+  };
 
   const addOne = (p: typeof products[0]) => {
-    setSelectedItems(prev => [...prev, p]);
+    setSelectedItems(prev => {
+      const exists = prev.find(i => i.code === p.code && i.name === p.name);
+      if (exists) {
+        return prev.map(i => i.code === p.code && i.name === p.name ? { ...i, cantidad: (i.cantidad || 1) + 1 } : i);
+      }
+      return [...prev, { ...p, cantidad: 1 }];
+    });
   };
 
   const removeOne = (p: typeof products[0]) => {
     setSelectedItems(prev => {
-      const idx = prev.findLastIndex(i => i.code === p.code && i.name === p.name);
-      if (idx === -1) return prev;
-      return [...prev.slice(0, idx), ...prev.slice(idx + 1)];
+      const exists = prev.find(i => i.code === p.code && i.name === p.name);
+      if (exists) {
+        if ((exists.cantidad || 1) > 1) {
+          return prev.map(i => i.code === p.code && i.name === p.name ? { ...i, cantidad: (i.cantidad || 1) - 1 } : i);
+        }
+        return prev.filter(i => !(i.code === p.code && i.name === p.name));
+      }
+      return prev;
     });
   };
 
@@ -110,7 +147,7 @@ export default function CalculadoraFinanciamiento({ isDark = true, initialItems 
     if (isSelected(p)) {
       setSelectedItems(prev => prev.filter(i => !(i.code === p.code && i.name === p.name)));
     } else {
-      setSelectedItems(prev => [...prev, p]);
+      setSelectedItems(prev => [...prev, { ...p, cantidad: 1 }]);
     }
   };
 
@@ -138,16 +175,15 @@ export default function CalculadoraFinanciamiento({ isDark = true, initialItems 
 
   const visibleCategories = useMemo(() => [...new Set(filtered.map(p => p.category))].sort(), [filtered]);
   const allCategories = useMemo(() => [...new Set(products.map(p => p.category))].sort(), []);
-  const totalProductos = selectedItems.reduce((s, p) => s + p.total, 0);
+  
+  const totalProductos = selectedItems.reduce((s, p) => s + (p.total * (p.cantidad || 1)), 0);
+  const precioSinItbis = selectedItems.reduce((s, p) => s + (p.price * (p.cantidad || 1)), 0);
+  const itbisTotal = selectedItems.reduce((s, p) => s + (p.itbis * (p.cantidad || 1)), 0);
+  const totalUnidades = selectedItems.reduce((s, p) => s + (p.cantidad || 1), 0);
+
   const inicialDadoNum = parseFloat(inicialDado.replace(/[^0-9.]/g, '')) || 0;
   const pagoInicial = Math.min(inicialDadoNum, totalProductos);
   const montoFinanciar = Math.max(0, totalProductos - pagoInicial);
-
-  // Precio sin ITBIS (suma de p.price de los items seleccionados)
-  const precioSinItbis = selectedItems.reduce((s, p) => s + p.price, 0);
-
-  // ITBIS total (suma de p.itbis de los items seleccionados)
-  const itbisTotal = selectedItems.reduce((s, p) => s + p.itbis, 0);
 
   // Tasa de interés anual fija
   const TASA_INTERES_ANUAL = 26;

@@ -20,7 +20,7 @@ const CatalogoViewer = dynamic(() => import('../components/CatalogoViewer'), { s
 export default function Home() {
   const [isDark, setIsDark] = useState(true);
   const [mounted, setMounted] = useState(false);
-  const [catalogoItems, setCatalogoItems] = useState<(typeof products[0] & { cantidad?: number })[]>([]);
+  const [catalogoItems, setCatalogoItems] = useState<any[]>([]);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -48,8 +48,8 @@ export default function Home() {
         <span className={`text-sm flex-1 flex justify-center ${isDark ? 'opacity-100' : 'opacity-30'}`}>🌙</span>
       </button>
       <HeroLeiham isDark={mounted ? isDark : true} />
-      <CatalogoViewer isDark={mounted ? isDark : true} onProductsChange={setCatalogoItems} />
-      <CalculadoraFinanciamiento isDark={mounted ? isDark : true} initialItems={catalogoItems} />
+      <CatalogoViewer isDark={mounted ? isDark : true} onProductsChange={(items) => setCatalogoItems([...items])} />
+      <CalculadoraFinanciamiento isDark={mounted ? isDark : true} externalItems={catalogoItems} />
     </main>
   );
 }
