@@ -312,14 +312,14 @@ export default function CalculadoraFinanciamiento({ isDark = true, externalItems
                   isDark ? "text-white/25 bg-black/60 border-white/6" : "text-slate-400 bg-white/95 border-slate-100")}>
                   {cat}
                 </p>
-                <div className="space-y-0.5">
+               <div className="space-y-4 md:space-y-0.5">
                     {filtered.filter(p => p.category === cat).map((product, productIdx) => (
                         <motion.div
                             key={product.code + product.name}
                             initial={shouldReduceMotion ? {} : { opacity: 0, y: 8 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.2, delay: (isMobile || shouldReduceMotion) ? 0 : Math.min(productIdx * 0.03, 0.25) }}
-                            className={cn("flex flex-col md:flex-row md:items-center gap-2 md:gap-3 px-3 py-3 md:py-2.5 rounded-xl transition duration-200", 
+                            className={cn("flex flex-col md:flex-row md:items-center gap-2 md:gap-3 px-3 py-4 md:py-2.5 rounded-xl transition duration-200 border-b md:border-b-0 border-white/10 last:border-b-0", 
                                 getCantidad(product) > 0
                                     ? (isDark ? 'bg-[#0066B3]/12 border border-[#0066B3]/25' : 'bg-[#0066B3]/5 border border-[#0066B3]/15') 
                                     : cn(isDark ? 'hover:bg-white/5 border border-transparent' : 'bg-white hover:bg-slate-50 border border-slate-100 hover:border-slate-200')
