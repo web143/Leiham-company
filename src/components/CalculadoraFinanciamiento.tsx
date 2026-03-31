@@ -319,35 +319,38 @@ export default function CalculadoraFinanciamiento({ isDark = true, externalItems
                             initial={shouldReduceMotion ? {} : { opacity: 0, y: 8 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.2, delay: (isMobile || shouldReduceMotion) ? 0 : Math.min(productIdx * 0.03, 0.25) }}
-                            className={cn("flex items-center gap-3 px-3 py-2.5 rounded-xl transition duration-200", 
+                            className={cn("flex flex-col md:flex-row md:items-center gap-2 md:gap-3 px-3 py-3 md:py-2.5 rounded-xl transition duration-200", 
                                 getCantidad(product) > 0
                                     ? (isDark ? 'bg-[#0066B3]/12 border border-[#0066B3]/25' : 'bg-[#0066B3]/5 border border-[#0066B3]/15') 
                                     : cn(isDark ? 'hover:bg-white/5 border border-transparent' : 'bg-white hover:bg-slate-50 border border-slate-100 hover:border-slate-200')
                             )}
                         >
-                            <div className="flex-1 min-w-0">
-                                <p className={cn("text-[13px] font-bold truncate", textPrimary)}>{product.name}</p>
-                                <div className="flex gap-3 mt-0.5">
-                                    {product.code !== '-' && <p className={cn("text-[11px] font-bold", textSecondary)}>{product.code}</p>}
-                                    <p className={cn("text-[11px] font-bold", textSecondary)}>ITBIS: {fmt(product.itbis)}</p>
+                            <div className="flex-1 min-w-0 w-full">
+                                <p className={cn("text-[13px] font-bold md:truncate whitespace-normal leading-snug", textPrimary)}>{product.name}</p>
+                                <div className="flex gap-3 mt-1 md:mt-0.5 opacity-80 md:opacity-100">
+                                    {product.code !== '-' && <p className={cn("text-[10px] md:text-[11px] font-bold", textSecondary)}>{product.code}</p>}
+                                    <p className={cn("text-[10px] md:text-[11px] font-bold", textSecondary)}>ITBIS: {fmt(product.itbis)}</p>
                                 </div>
                             </div>
-                            <div className="text-right flex-shrink-0 mr-2">
-                                <p className={cn("text-[13px] font-black tracking-tight", getCantidad(product) > 0 ? 'text-[#0066B3]' : textPrimary)}>{fmt(product.total)}</p>
-                                <p className={cn("text-[11px] font-bold", textSecondary)}>sin ITBIS: {fmt(product.price)}</p>
-                            </div>
-                            <div className="flex items-center gap-1 flex-shrink-0" onClick={e => e.stopPropagation()}>
-                              {getCantidad(product) > 0 && (
-                                <>
-                                  <motion.button onClick={() => removeOne(product)} whileTap={{ scale: 0.88 }} className={cn("w-6 h-6 rounded-lg flex items-center justify-center font-bold text-sm", isDark ? "bg-white/8 text-white/60 hover:text-red-400" : "bg-slate-100 text-slate-500 hover:text-red-500")}>
-                                    −
+                            
+                            <div className="flex justify-between items-center md:justify-end gap-3 w-full md:w-auto pt-2 md:pt-0 border-t md:border-t-0 border-white/5 md:border-transparent">
+                                <div className="text-left md:text-right flex-shrink-0">
+                                    <p className={cn("text-[13px] font-black tracking-tight", getCantidad(product) > 0 ? 'text-[#0066B3]' : textPrimary)}>{fmt(product.total)}</p>
+                                    <p className={cn("text-[10px] md:text-[11px] font-bold", textSecondary)}>sin ITBIS: {fmt(product.price)}</p>
+                                </div>
+                                <div className="flex items-center gap-1.5 flex-shrink-0" onClick={e => e.stopPropagation()}>
+                                  {getCantidad(product) > 0 && (
+                                    <>
+                                      <motion.button onClick={() => removeOne(product)} whileTap={{ scale: 0.88 }} className={cn("w-7 h-7 md:w-6 md:h-6 rounded-lg flex items-center justify-center font-bold text-sm", isDark ? "bg-white/8 text-white/60 hover:text-red-400" : "bg-slate-100 text-slate-500 hover:text-red-500")}>
+                                        −
+                                      </motion.button>
+                                      <span className="text-[#0066B3] font-black text-sm w-5 text-center">{getCantidad(product)}</span>
+                                    </>
+                                  )}
+                                  <motion.button onClick={() => addOne(product)} whileTap={{ scale: 0.88 }} className={cn("w-7 h-7 md:w-6 md:h-6 rounded-lg flex items-center justify-center font-bold text-sm", getCantidad(product) > 0 ? 'bg-[#0066B3] text-white' : (isDark ? 'bg-white/8 text-white/40' : 'bg-slate-100 text-slate-400'))}>
+                                    +
                                   </motion.button>
-                                  <span className="text-[#0066B3] font-black text-sm w-5 text-center">{getCantidad(product)}</span>
-                                </>
-                              )}
-                              <motion.button onClick={() => addOne(product)} whileTap={{ scale: 0.88 }} className={cn("w-6 h-6 rounded-lg flex items-center justify-center font-bold text-sm", getCantidad(product) > 0 ? 'bg-[#0066B3] text-white' : (isDark ? 'bg-white/8 text-white/40' : 'bg-slate-100 text-slate-400'))}>
-                                +
-                              </motion.button>
+                                </div>
                             </div>
                         </motion.div>
                     ))}
