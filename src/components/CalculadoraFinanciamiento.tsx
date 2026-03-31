@@ -333,7 +333,7 @@ export default function CalculadoraFinanciamiento({ isDark = true, externalItems
                                 </div>
                             </div>
                             
-                            <div className="flex justify-between items-center md:justify-end gap-3 w-full md:w-auto pt-2 md:pt-0 border-t md:border-t-0 border-white/5 md:border-transparent">
+                            <div className="flex justify-between items-center md:justify-end gap-3 w-full md:w-auto mt-1 md:mt-0">
                                 <div className="text-left md:text-right flex-shrink-0">
                                     <p className={cn("text-[13px] font-black tracking-tight", getCantidad(product) > 0 ? 'text-[#0066B3]' : textPrimary)}>{fmt(product.total)}</p>
                                     <p className={cn("text-[10px] md:text-[11px] font-bold", textSecondary)}>sin ITBIS: {fmt(product.price)}</p>
