@@ -9,11 +9,29 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Leiham Company | by Royal Prestige",
-  description:
-    "Leiham Company — Distribuidor autorizado de Royal Prestige. Utensilios de cocina premium.",
-  icons: {
-    icon: "/favicon.png",
+  title: 'Leiham Company — Royal Prestige®',
+  description: 'Catálogo de productos y calculadora de financiamiento Royal Prestige®',
+  openGraph: {
+    title: 'Leiham Company — Royal Prestige®',
+    description: 'Catálogo de productos y calculadora de financiamiento Royal Prestige®',
+    url: 'https://leiham-company.vercel.app',
+    siteName: 'Leiham Company',
+    images: [
+      {
+        url: 'https://leiham-company.vercel.app/catalogo_pages/webp/page-01.webp',
+        width: 1400,
+        height: 1000,
+        alt: 'Leiham Company — Royal Prestige®',
+      },
+    ],
+    locale: 'es_DO',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Leiham Company — Royal Prestige®',
+    description: 'Catálogo de productos y calculadora de financiamiento Royal Prestige®',
+    images: ['https://leiham-company.vercel.app/catalogo_pages/webp/page-01.webp'],
   },
 };
 
