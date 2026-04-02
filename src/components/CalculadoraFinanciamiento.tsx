@@ -62,6 +62,7 @@ export default function CalculadoraFinanciamiento({ isDark = true, externalItems
   const [cuotaInput, setCuotaInput] = useState("");
   const [mesSeleccionado, setMesSeleccionado] = useState<number | null>(null);
   const [isClearing, setIsClearing] = useState(false);
+  const [showResumen, setShowResumen] = useState(false);
   
   const shouldReduceMotion = useReducedMotion();
   const [isMobile, setIsMobile] = useState(false);
@@ -146,6 +147,7 @@ export default function CalculadoraFinanciamiento({ isDark = true, externalItems
   const totalProductos = selectedItems.reduce((s, p) => s + (p.total * (p.cantidad || 1)), 0);
   const precioSinItbis = selectedItems.reduce((s, p) => s + (p.price * (p.cantidad || 1)), 0);
   const itbisTotal = selectedItems.reduce((s, p) => s + (p.itbis * (p.cantidad || 1)), 0);
+  const totalUnidades = selectedItems.reduce((s, p) => s + (p.cantidad || 1), 0);
   
   const inicialDadoNum = parseFloat(inicialDado.replace(/[^0-9.]/g, '')) || 0;
   const pagoInicial = Math.min(inicialDadoNum, totalProductos);
@@ -359,15 +361,76 @@ export default function CalculadoraFinanciamiento({ isDark = true, externalItems
             ))}
           </div>
           
-          <div className={cn("pt-3 mt-3 flex justify-between items-center border-t", isDark ? "border-white/6" : "border-slate-100")}>
-            <div>
-              <p className={cn("text-[11px] font-bold mb-0.5", textSecondary)}>Seleccionados</p>
-              <p className={cn("text-base font-black tracking-tight", textPrimary)}>{selectedItems.length} <span className="text-[11px] font-bold opacity-50">productos</span></p>
-            </div>
-            <div className="text-right">
-              <p className={cn("text-[11px] font-bold mb-0.5", textSecondary)}>Total</p>
-              <p className="text-[#0066B3] text-base font-black tracking-tight">{fmt(totalProductos)}</p>
-            </div>
+          <div className={cn('border-t mt-2', isDark ? 'border-white/10' : 'border-slate-200')}>
+            
+            {/* Botón toggle del resumen */}
+            <button
+              onClick={() => setShowResumen(!showResumen)}
+              className="w-full flex items-center justify-between px-4 py-3"
+            >
+              <div>
+                <p className={cn('text-xs uppercase tracking-widest font-bold', isDark ? 'text-white/40' : 'text-slate-400')}>
+                  Seleccionados
+                </p>
+                <p className={cn('text-lg font-black', isDark ? 'text-white' : 'text-slate-900')}>
+                  {totalUnidades} <span className={cn('text-xs font-medium', isDark ? 'text-white/30' : 'text-slate-400')}>
+                    producto{totalUnidades !== 1 ? 's' : ''}
+                  </span>
+                </p>
+              </div>
+              <div className="text-right">
+                <p className={cn('text-xs uppercase tracking-widest font-bold', isDark ? 'text-white/40' : 'text-slate-400')}>
+                  Total
+                </p>
+                <p className="text-[#0066B3] font-black text-lg">{fmt(totalProductos)}</p>
+              </div>
+            </button>
+
+            {/* Resumen expandible */}
+            {showResumen && selectedItems.length > 0 && (
+              <div className={cn(
+                'mx-3 mb-3 rounded-xl border overflow-hidden',
+                isDark ? 'border-white/10 bg-black/30' : 'border-slate-200 bg-slate-50'
+              )}>
+                <div className="max-h-[220px] overflow-y-auto"
+                  style={{ scrollbarWidth: 'thin', scrollbarColor: 'rgba(0,102,179,0.2) transparent' }}>
+                  {selectedItems.map((p, idx) => (
+                    <div key={p.code + p.name + idx}
+                      className={cn(
+                        'flex items-center justify-between px-3 py-2',
+                        idx !== 0 && (isDark ? 'border-t border-white/5' : 'border-t border-slate-100')
+                      )}>
+                      <div className="flex-1 min-w-0 mr-2">
+                        <p className={cn('text-xs font-semibold truncate', isDark ? 'text-white/80' : 'text-slate-700')}>
+                          {p.name}
+                        </p>
+                        <p className={cn('text-[10px]', isDark ? 'text-white/30' : 'text-slate-400')}>
+                          x{p.cantidad || 1} · {fmt(p.total * (p.cantidad || 1))}
+                        </p>
+                      </div>
+                      <p className="text-[#0066B3] text-xs font-bold flex-shrink-0">
+                        {fmt(p.total * (p.cantidad || 1))}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+                <div className={cn(
+                  'flex justify-between items-center px-3 py-2 border-t font-black',
+                  isDark ? 'border-white/10 bg-white/5' : 'border-slate-200 bg-white'
+                )}>
+                  <span className={cn('text-xs uppercase tracking-wider', isDark ? 'text-white/50' : 'text-slate-500')}>
+                    Total
+                  </span>
+                  <span className="text-[#0066B3] text-sm">{fmt(totalProductos)}</span>
+                </div>
+              </div>
+            )}
+
+            {selectedItems.length === 0 && (
+              <p className={cn('text-xs text-center pb-3', isDark ? 'text-white/20' : 'text-slate-300')}>
+                Ningún producto seleccionado
+              </p>
+            )}
           </div>
         </div>
 
