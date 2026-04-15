@@ -62,7 +62,8 @@ export default function CalculadoraFinanciamiento({ isDark = true, externalItems
   const [cuotaInput, setCuotaInput] = useState("");
   const [mesSeleccionado, setMesSeleccionado] = useState<number | null>(null);
   const [isClearing, setIsClearing] = useState(false);
-  const [totalEditado, setTotalEditado] = useState('');
+  const [totalManualInput, setTotalManualInput] = useState('');
+  const [descuentoManual, setDescuentoManual] = useState(0);
   const [editandoTotal, setEditandoTotal] = useState(false);
   
   const shouldReduceMotion = useReducedMotion();
@@ -145,14 +146,10 @@ export default function CalculadoraFinanciamiento({ isDark = true, externalItems
   const visibleCategories = useMemo(() => [...new Set(filtered.map(p => p.category))].sort(), [filtered]);
   const allCategories = useMemo(() => [...new Set(products.map(p => p.category))].sort(), []);
   
-  const totalProductos = selectedItems.reduce((s, p) => s + (p.total * (p.cantidad || 1)), 0);
-  const precioSinItbis = selectedItems.reduce((s, p) => s + (p.price * (p.cantidad || 1)), 0);
-  const itbisTotal = selectedItems.reduce((s, p) => s + (p.itbis * (p.cantidad || 1)), 0);
   const totalUnidades = selectedItems.reduce((s, p) => s + (p.cantidad || 1), 0);
   
-  const totalEditadoNum = parseFloat(totalEditado.replace(/[^0-9.]/g, '')) || 0;
-  const totalEfectivo = totalEditadoNum > 0 ? totalEditadoNum : totalProductos;
-  const diferencia = totalProductos - totalEfectivo;
+  const totalEfectivo = totalProductos - descuentoManual;
+  const diferencia = descuentoManual;
   
   const inicialDadoNum = parseFloat(inicialDado.replace(/[^0-9.]/g, '')) || 0;
   const pagoInicial = Math.min(inicialDadoNum, totalEfectivo);
@@ -439,10 +436,24 @@ export default function CalculadoraFinanciamiento({ isDark = true, externalItems
               <div className="flex items-center gap-2">
                 <input
                   autoFocus
-                  value={totalEditado}
-                  onChange={e => setTotalEditado(e.target.value)}
-                  onBlur={() => setEditandoTotal(false)}
-                  onKeyDown={e => e.key === 'Enter' && setEditandoTotal(false)}
+                  value={totalManualInput}
+                  onChange={e => setTotalManualInput(e.target.value)}
+                  onBlur={() => {
+                    const val = parseFloat(totalManualInput.replace(/[^0-9.]/g, ''));
+                    if (!isNaN(val) && val > 0) {
+                      setDescuentoManual(totalProductos - val);
+                    }
+                    setEditandoTotal(false);
+                  }}
+                  onKeyDown={e => {
+                    if (e.key === 'Enter') {
+                      const val = parseFloat(totalManualInput.replace(/[^0-9.]/g, ''));
+                      if (!isNaN(val) && val > 0) {
+                        setDescuentoManual(totalProductos - val);
+                      }
+                      setEditandoTotal(false);
+                    }
+                  }}
                   placeholder={fmt(totalProductos)}
                   className={cn(
                     'w-full px-3 py-1.5 rounded-xl border outline-none font-black text-xl transition-all',
@@ -452,7 +463,10 @@ export default function CalculadoraFinanciamiento({ isDark = true, externalItems
               </div>
             ) : (
               <button
-                onClick={() => setEditandoTotal(true)}
+                onClick={() => {
+                  setTotalManualInput(totalEfectivo.toString());
+                  setEditandoTotal(true);
+                }}
                 className="w-full text-left group"
               >
                 <p className={cn('font-black text-2xl tracking-tighter group-hover:text-[#0066B3] transition-colors', isDark ? 'text-white' : 'text-slate-900')}>
@@ -494,9 +508,9 @@ export default function CalculadoraFinanciamiento({ isDark = true, externalItems
                   { label: 'ITBIS', value: fmt(itbisTotal) },
                   { label: 'Tasa de interés anual', value: `${TASA_INTERES_ANUAL}%` },
                   { label: 'Valor productos', value: fmt(totalProductos) },
-                  ...(diferencia !== 0 ? [{ 
-                    label: diferencia > 0 ? 'Descuento aplicado' : 'Cargo adicional', 
-                    value: `${diferencia > 0 ? '-' : '+'} ${fmt(Math.abs(diferencia))}`
+                  ...(descuentoManual !== 0 ? [{ 
+                    label: descuentoManual > 0 ? 'Descuento aplicado' : 'Cargo adicional', 
+                    value: `${descuentoManual > 0 ? '-' : '+'} ${fmt(Math.abs(descuentoManual))}`
                   }] : []),
                   { label: 'Total efectivo', value: fmt(totalEfectivo) },
                   { label: 'Inicial aplicado', value: fmt(inicialDadoNum) },
