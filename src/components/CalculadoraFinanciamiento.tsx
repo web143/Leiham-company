@@ -53,10 +53,6 @@ export default function CalculadoraFinanciamiento({ isDark = true, externalItems
     }
   }, [externalItems]);
 
-  useEffect(() => {
-    setTotalEditado('');
-  }, [selectedItems]);
-
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [inicialDado, setInicialDado] = useState("");
