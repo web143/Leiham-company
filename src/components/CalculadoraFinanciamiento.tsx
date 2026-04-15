@@ -500,9 +500,7 @@ export default function CalculadoraFinanciamiento({ isDark = true, externalItems
                   { label: 'Valor productos', value: fmt(totalProductos) },
                   ...(diferencia !== 0 ? [{ 
                     label: diferencia > 0 ? 'Descuento aplicado' : 'Cargo adicional', 
-                    value: `${diferencia > 0 ? '-' : '+'} ${fmt(Math.abs(diferencia))}`,
-                    highlight: false,
-                    color: diferencia > 0 ? 'text-green-400' : 'text-red-400'
+                    value: `${diferencia > 0 ? '-' : '+'} ${fmt(Math.abs(diferencia))}`
                   }] : []),
                   { label: 'Total efectivo', value: fmt(totalEfectivo) },
                   { label: 'Inicial aplicado', value: fmt(inicialDadoNum) },
@@ -514,7 +512,7 @@ export default function CalculadoraFinanciamiento({ isDark = true, externalItems
                 ].map((row) => (
                   <div key={row.label} className="flex justify-between items-center py-1">
                     <span className={cn("text-[9px] font-bold uppercase tracking-widest", textSecondary)}>{row.label}</span>
-                    <span className={cn(row.color || (row.highlight ? 'text-[#0066B3] font-black text-lg' : (isDark ? 'text-white text-xs font-mono font-bold' : 'text-slate-900 text-xs font-mono font-bold')))}>
+                    <span className={cn(row.highlight ? 'text-[#0066B3] font-black text-lg' : (isDark ? 'text-white text-xs font-mono font-bold' : 'text-slate-900 text-xs font-mono font-bold'))}>
                       {row.value}
                     </span>
                   </div>
