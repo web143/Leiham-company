@@ -146,6 +146,9 @@ export default function CalculadoraFinanciamiento({ isDark = true, externalItems
   const visibleCategories = useMemo(() => [...new Set(filtered.map(p => p.category))].sort(), [filtered]);
   const allCategories = useMemo(() => [...new Set(products.map(p => p.category))].sort(), []);
   
+  const totalProductos = selectedItems.reduce((s, p) => s + (p.total * (p.cantidad || 1)), 0);
+  const precioSinItbis = selectedItems.reduce((s, p) => s + (p.price * (p.cantidad || 1)), 0);
+  const itbisTotal = selectedItems.reduce((s, p) => s + (p.itbis * (p.cantidad || 1)), 0);
   const totalUnidades = selectedItems.reduce((s, p) => s + (p.cantidad || 1), 0);
   
   const totalEfectivo = totalProductos - descuentoManual;
