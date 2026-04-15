@@ -53,6 +53,10 @@ export default function CalculadoraFinanciamiento({ isDark = true, externalItems
     }
   }, [externalItems]);
 
+  useEffect(() => {
+    setTotalEditado('');
+  }, [selectedItems]);
+
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [inicialDado, setInicialDado] = useState("");
@@ -62,6 +66,8 @@ export default function CalculadoraFinanciamiento({ isDark = true, externalItems
   const [cuotaInput, setCuotaInput] = useState("");
   const [mesSeleccionado, setMesSeleccionado] = useState<number | null>(null);
   const [isClearing, setIsClearing] = useState(false);
+  const [totalEditado, setTotalEditado] = useState('');
+  const [editandoTotal, setEditandoTotal] = useState(false);
   
   const shouldReduceMotion = useReducedMotion();
   const [isMobile, setIsMobile] = useState(false);
@@ -148,9 +154,13 @@ export default function CalculadoraFinanciamiento({ isDark = true, externalItems
   const itbisTotal = selectedItems.reduce((s, p) => s + (p.itbis * (p.cantidad || 1)), 0);
   const totalUnidades = selectedItems.reduce((s, p) => s + (p.cantidad || 1), 0);
   
+  const totalEditadoNum = parseFloat(totalEditado.replace(/[^0-9.]/g, '')) || 0;
+  const totalEfectivo = totalEditadoNum > 0 ? totalEditadoNum : totalProductos;
+  const diferencia = totalProductos - totalEfectivo;
+  
   const inicialDadoNum = parseFloat(inicialDado.replace(/[^0-9.]/g, '')) || 0;
-  const pagoInicial = Math.min(inicialDadoNum, totalProductos);
-  const montoFinanciar = Math.max(0, totalProductos - pagoInicial);
+  const pagoInicial = Math.min(inicialDadoNum, totalEfectivo);
+  const montoFinanciar = Math.max(0, totalEfectivo - pagoInicial);
   const TASA_INTERES_ANUAL = 26;
 
   const handleInicialChange = (value: string) => {
@@ -425,25 +435,38 @@ export default function CalculadoraFinanciamiento({ isDark = true, externalItems
         {/* COLUMNA 3 — Calculadora Financiera */}
         <div className={cn("rounded-2xl p-5 flex flex-col gap-4 border transition duration-200 overflow-y-auto custom-scrollbar", isDark ? "bg-white/[0.03] border-white/8 shadow-2xl shadow-black/30" : "bg-slate-50 border-slate-200/80 shadow-slate-200/50")} data-lenis-prevent>
           
-          {/* Card Principal: Total */}
-          <div className={cn("relative overflow-hidden rounded-2xl p-5 border transition duration-300", isDark ? "bg-white/[0.04] border-white/8" : "bg-white border-slate-100")}>
-            <div className="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent pointer-events-none" />
-            <div className="relative z-10 text-center mb-4">
-               <span className={cn("text-[11px] font-bold tracking-widest uppercase opacity-70", textPrimary)}>Total De Productos</span>
-               <motion.div animate={{ filter: isClearing ? "blur(4px)" : "blur(0px)", opacity: isClearing ? 0.3 : 1 }} className={cn("text-3xl font-black tracking-tighter mt-0.5", textPrimary)}>
-                 {fmt(totalProductos)}
-               </motion.div>
-            </div>
-            <div className="relative z-10 flex justify-between items-end border-t pt-2 border-white/5">
-              <div className="flex flex-col">
-                <span className={cn("text-[9px] font-bold uppercase tracking-widest", textSecondary)}>Inicial aportado</span>
-                <span className={cn("text-sm font-black tracking-tight", textPrimary)}>{fmt(inicialDadoNum)}</span>
+          <div className={cn("rounded-2xl p-4 border transition-all", isDark ? "bg-black/40 border-white/5" : "bg-slate-50 border-slate-200")}>
+            <p className={cn("text-[10px] font-black tracking-[0.2em] uppercase mb-1", isDark ? "text-white/40" : "text-slate-400")}>
+              Total a pagar
+            </p>
+            {editandoTotal ? (
+              <div className="flex items-center gap-2">
+                <input
+                  autoFocus
+                  value={totalEditado}
+                  onChange={e => setTotalEditado(e.target.value)}
+                  onBlur={() => setEditandoTotal(false)}
+                  onKeyDown={e => e.key === 'Enter' && setEditandoTotal(false)}
+                  placeholder={fmt(totalProductos)}
+                  className={cn(
+                    'w-full px-3 py-1.5 rounded-xl border outline-none font-black text-xl transition-all',
+                    isDark ? 'bg-black/60 border-[#0066B3]/50 text-white' : 'bg-white border-[#0066B3]/50 text-slate-900'
+                  )}
+                />
               </div>
-              <div className="flex flex-col text-right items-end">
-                <span className={cn("text-[9px] font-bold uppercase tracking-widest", textSecondary)}>Base a financiar</span>
-                <span className={cn("text-sm font-black tracking-tight text-[#0066B3]")}>{fmt(montoFinanciar)}</span>
-              </div>
-            </div>
+            ) : (
+              <button
+                onClick={() => setEditandoTotal(true)}
+                className="w-full text-left group"
+              >
+                <p className={cn('font-black text-2xl tracking-tighter group-hover:text-[#0066B3] transition-colors', isDark ? 'text-white' : 'text-slate-900')}>
+                  {fmt(totalEfectivo)}
+                </p>
+                <p className={cn('text-[10px] mt-0.5', isDark ? 'text-white/20' : 'text-slate-400')}>
+                  ✏️ Toca para editar
+                </p>
+              </button>
+            )}
           </div>
 
           <div className="space-y-4 flex-1 overflow-y-auto custom-scrollbar pr-1">
@@ -469,22 +492,31 @@ export default function CalculadoraFinanciamiento({ isDark = true, externalItems
                 />
               </div>
 
-              <div className={cn("space-y-1.5 pt-3 border-t", isDark ? "border-white/10" : "border-slate-200")}>
+              <div className={cn("space-y-1 pt-3 border-t", isDark ? "border-white/10" : "border-slate-200")}>
                 {[
                   { label: 'Precio de compra', value: fmt(precioSinItbis) },
                   { label: 'ITBIS', value: fmt(itbisTotal) },
-                  { label: 'Tasa anual fija', value: `${TASA_INTERES_ANUAL}%` },
+                  { label: 'Tasa de interés anual', value: `${TASA_INTERES_ANUAL}%` },
                   { label: 'Valor productos', value: fmt(totalProductos) },
+                  ...(diferencia !== 0 ? [{ 
+                    label: diferencia > 0 ? 'Descuento aplicado' : 'Cargo adicional', 
+                    value: `${diferencia > 0 ? '-' : '+'} ${fmt(Math.abs(diferencia))}`,
+                    highlight: false,
+                    color: diferencia > 0 ? 'text-green-400' : 'text-red-400'
+                  }] : []),
+                  { label: 'Total efectivo', value: fmt(totalEfectivo) },
                   { label: 'Inicial aplicado', value: fmt(inicialDadoNum) },
                   { label: 'Equivalencia %', value: `${porcentaje.toFixed(2)}%` },
                   { label: 'Monto a financiar', value: fmt(montoFinanciar) },
                   ...(filaActiva && montoFinanciar > 0 && !bajoDeMinimoMsg ? [
-                    { label: 'Plan de pagos', value: `${filaActiva.cuotas} meses — ${filaActiva.pct.toFixed(2)}%`, highlight: true },
+                    { label: 'Plan de pagos', value: `${filaActiva.cuotas} meses — ${filaActiva.pct.toFixed(2)}%`, highlight: true }
                   ] : []),
                 ].map((row) => (
-                  <div key={row.label} className="flex justify-between items-center">
+                  <div key={row.label} className="flex justify-between items-center py-1">
                     <span className={cn("text-[9px] font-bold uppercase tracking-widest", textSecondary)}>{row.label}</span>
-                    <span className={cn('text-xs font-black tracking-tight', row.highlight ? 'text-[#0066B3]' : textPrimary)}>{row.value}</span>
+                    <span className={cn(row.color || (row.highlight ? 'text-[#0066B3] font-black text-lg' : (isDark ? 'text-white text-xs font-mono font-bold' : 'text-slate-900 text-xs font-mono font-bold')))}>
+                      {row.value}
+                    </span>
                   </div>
                 ))}
               </div>
