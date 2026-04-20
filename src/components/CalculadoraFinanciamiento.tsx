@@ -442,16 +442,22 @@ export default function CalculadoraFinanciamiento({ isDark = true, externalItems
                   value={totalManualInput}
                   onChange={e => setTotalManualInput(e.target.value)}
                   onBlur={() => {
-                    const val = parseFloat(totalManualInput.replace(/[^0-9.]/g, ''));
-                    if (!isNaN(val) && val > 0) {
+                    const raw = totalManualInput.replace(/[^0-9.]/g, '');
+                    const val = parseFloat(raw);
+                    if (!raw || val === 0) {
+                      setDescuentoManual(0);
+                    } else if (!isNaN(val) && val > 0) {
                       setDescuentoManual(totalProductos - val);
                     }
                     setEditandoTotal(false);
                   }}
                   onKeyDown={e => {
                     if (e.key === 'Enter') {
-                      const val = parseFloat(totalManualInput.replace(/[^0-9.]/g, ''));
-                      if (!isNaN(val) && val > 0) {
+                      const raw = totalManualInput.replace(/[^0-9.]/g, '');
+                      const val = parseFloat(raw);
+                      if (!raw || val === 0) {
+                        setDescuentoManual(0);
+                      } else if (!isNaN(val) && val > 0) {
                         setDescuentoManual(totalProductos - val);
                       }
                       setEditandoTotal(false);
@@ -596,19 +602,19 @@ export default function CalculadoraFinanciamiento({ isDark = true, externalItems
         <div className={cardContainer}>
           <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
             <h3 className={cn("text-base font-black tracking-tight", textPrimary)}>Regalos</h3>
-            {totalProductos > 0 && <span className={cn("text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full", isDark ? "text-white/50 bg-white/10" : "text-slate-500 bg-slate-100")}>MAX {fmt(totalProductos * 0.10)}</span>}
+            {totalEfectivo > 0 && <span className={cn("text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full", isDark ? "text-white/50 bg-white/10" : "text-slate-500 bg-slate-100")}>MAX {fmt(totalEfectivo * 0.10)}</span>}
           </div>
 
-          {totalProductos === 0 ? (
+          {totalEfectivo <= 0 ? (
             <div className="flex-1 flex flex-col items-center justify-center gap-2 opacity-50">
               <Gift className="w-6 h-6" />
               <p className="text-[11px] font-bold text-center">Selecciona productos<br/>para ver regalos</p>
             </div>
           ) : (() => {
             const EXCLUIR = ['aro', 'reparac', 'reemplaz', 'tapa'];
-            const maxR = totalProductos * 0.10;
+            const maxR = totalEfectivo * 0.10;
             const totalRegalos = selectedRegalos.reduce((s, p) => s + p.total, 0);
-            const porcentajeUsado = totalProductos > 0 ? (totalRegalos / totalProductos) * 100 : 0;
+            const porcentajeUsado = totalEfectivo > 0 ? (totalRegalos / totalEfectivo) * 100 : 0;
             const cerca = totalRegalos > 0 && porcentajeUsado >= 7 && totalRegalos <= maxR;
             const excedido = totalRegalos > maxR;
             const REGALOS_VOLUMEN = ['PR1044', 'PR0196', 'PR1675', 'PR1685', 'PR2120', 'PR2129', 'PR0008', 'PR0021', 'CO2124', 'CU0825'];
