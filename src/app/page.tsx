@@ -25,6 +25,7 @@ export default function Home() {
   const [isDark, setIsDark] = useState(true);
   const [mounted, setMounted] = useState(false);
   const [catalogoItems, setCatalogoItems] = useState<any[]>([]);
+  const [hideThemeToggle, setHideThemeToggle] = useState(false);
 
   const heroRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
@@ -61,7 +62,9 @@ export default function Home() {
 
   return (
     <main className={`transition-colors duration-300 ${mounted ? (isDark ? 'bg-black' : 'bg-white') : 'bg-black'}`}>
-      <ThemeToggle isDark={isDark} onToggle={toggleTheme} className="fixed top-3 right-3 z-[100] shadow-lg" />
+      {!hideThemeToggle && (
+        <ThemeToggle isDark={isDark} onToggle={toggleTheme} className="fixed top-3 right-3 z-[100] shadow-lg" />
+      )}
       <div ref={heroRef}>
         <HeroLeiham isDark={mounted ? isDark : true} scrollProgress={scrollYProgress} />
       </div>
@@ -98,7 +101,11 @@ export default function Home() {
 
           {/* Content layer */}
           <div className="relative z-10">
-            <CatalogoViewer isDark={mounted ? isDark : true} onProductsChange={(items) => setCatalogoItems([...items])} />
+            <CatalogoViewer 
+              isDark={mounted ? isDark : true} 
+              onProductsChange={(items) => setCatalogoItems([...items])} 
+              onOverlayStateChange={setHideThemeToggle}
+            />
             <CalculadoraFinanciamiento isDark={mounted ? isDark : true} externalItems={catalogoItems} />
           </div>
         </div>

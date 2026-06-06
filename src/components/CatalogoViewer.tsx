@@ -55,9 +55,10 @@ const PAGES = [
 interface Props {
   isDark?: boolean;
   onProductsChange?: (items: typeof products) => void;
+  onOverlayStateChange?: (active: boolean) => void;
 }
 
-export default function CatalogoViewer({ isDark = true, onProductsChange }: Props) {
+export default function CatalogoViewer({ isDark = true, onProductsChange, onOverlayStateChange }: Props) {
   const [currentPage, setCurrentPage] = useState(0);
   const [pageInput, setPageInput] = useState('1');
   const [activePanel, setActivePanel] = useState<{ title: string; items: typeof products } | null>(null);
@@ -65,6 +66,23 @@ export default function CatalogoViewer({ isDark = true, onProductsChange }: Prop
   const [cantidades, setCantidades] = useState<{ [key: string]: number }>({});
   const [isFullscreen, setIsFullscreen] = useState(false);
   const touchStartX = useRef(0);
+
+  useEffect(() => {
+    const active = isFullscreen || !!activePanel;
+    if (active) {
+      document.body.style.overflow = 'hidden';
+      document.body.classList.add('overflow-hidden');
+    } else {
+      document.body.style.overflow = '';
+      document.body.classList.remove('overflow-hidden');
+    }
+    onOverlayStateChange?.(active);
+    return () => {
+      document.body.style.overflow = '';
+      document.body.classList.remove('overflow-hidden');
+      onOverlayStateChange?.(false);
+    };
+  }, [isFullscreen, activePanel, onOverlayStateChange]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -313,46 +331,46 @@ export default function CatalogoViewer({ isDark = true, onProductsChange }: Prop
           <div ref={modalBgRef} className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
           <div
             ref={modalContentRef}
-            className="relative w-full max-w-lg max-h-[85vh] rounded-2xl overflow-hidden flex flex-col shadow-2xl bg-zinc-900 border border-zinc-800"
+            className="relative w-full max-w-lg max-h-[85vh] landscape:max-h-[95dvh] rounded-2xl overflow-hidden flex flex-col shadow-2xl bg-zinc-900 border border-zinc-800"
             onClick={e => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between p-4 border-b border-zinc-800 bg-zinc-900/50">
+            <div className="flex items-center justify-between p-4 landscape:p-2.5 border-b border-zinc-800 bg-zinc-900/50">
               <div>
-                <h3 className="font-black text-lg uppercase tracking-tight text-white">{activePanel.title}</h3>
-                <p className="text-xs text-zinc-400">{activePanel.items.length} productos disponibles</p>
+                <h3 className="font-black text-lg landscape:text-sm uppercase tracking-tight text-white">{activePanel.title}</h3>
+                <p className="text-xs landscape:text-[10px] text-zinc-400">{activePanel.items.length} productos disponibles</p>
               </div>
-              <button onClick={() => setActivePanel(null)} className="p-2 rounded-xl hover:bg-zinc-800 text-zinc-400 hover:text-white transition-colors">
+              <button onClick={() => setActivePanel(null)} className="p-2 rounded-xl hover:bg-zinc-800 text-zinc-400 hover:text-white transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center">
                 <X className="w-5 h-5" />
               </button>
             </div>
             
             {/* Contenedor de lista con data-lenis-prevent para permitir scroll natural nativo sin que Lenis lo bloquee accidentalmente */}
-            <div data-lenis-prevent className="flex-1 overflow-y-auto p-4 space-y-2">
+            <div data-lenis-prevent className="flex-1 overflow-y-auto p-4 landscape:p-2 space-y-2 landscape:space-y-1">
               {activePanel.items.map((p, index) => (
                 <div
                   key={p.code + p.name}
                   ref={(el) => { modalItemsRef.current[index] = el; }}
-                  className={cn('flex items-center gap-3 px-4 py-3 rounded-xl border transition-all',
+                  className={cn('flex items-center gap-3 landscape:gap-2 px-4 landscape:px-3 py-3 landscape:py-1.5 rounded-xl border transition-all',
                     isSelected(p)
                       ? 'bg-zinc-800 border-zinc-700 text-white'
                       : 'bg-zinc-900/60 border-zinc-800 text-zinc-300 hover:bg-zinc-800/50'
                   )}
                 >
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold truncate text-white">{p.name}</p>
-                    <p className="text-xs text-zinc-400">{p.code !== '-' ? p.code : p.category}</p>
+                    <p className="text-sm landscape:text-xs font-semibold truncate text-white">{p.name}</p>
+                    <p className="text-xs landscape:text-[10px] text-zinc-400">{p.code !== '-' ? p.code : p.category}</p>
                   </div>
-                  <p className="text-white font-bold text-sm flex-shrink-0">{fmt(p.total)}</p>
+                  <p className="text-white font-bold text-sm landscape:text-xs flex-shrink-0">{fmt(p.total)}</p>
                   <div className="flex items-center gap-1 flex-shrink-0">
                     {getCantidad(p) > 0 && (
                       <>
-                        <button onClick={() => removeOne(p)} className="w-7 h-7 rounded-lg flex items-center justify-center bg-zinc-700 text-white hover:bg-red-500/50 transition-all font-bold">−</button>
-                        <span className="text-white font-black text-sm w-6 text-center">{getCantidad(p)}</span>
+                        <button onClick={() => removeOne(p)} className="w-7 h-7 landscape:w-6 landscape:h-6 rounded-lg flex items-center justify-center bg-zinc-700 text-white hover:bg-red-500/50 transition-all font-bold">−</button>
+                        <span className="text-white font-black text-sm landscape:text-xs w-6 text-center">{getCantidad(p)}</span>
                       </>
                     )}
                     <button
                       onClick={() => addOne(p)}
-                      className={cn('w-7 h-7 rounded-lg flex items-center justify-center transition-all font-bold',
+                      className={cn('w-7 h-7 landscape:w-6 landscape:h-6 rounded-lg flex items-center justify-center transition-all font-bold',
                         getCantidad(p) > 0 ? 'bg-white text-zinc-900' : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700'
                       )}
                     >+</button>
@@ -360,10 +378,10 @@ export default function CatalogoViewer({ isDark = true, onProductsChange }: Prop
                 </div>
               ))}
             </div>
-            <div className="p-4 border-t border-zinc-800 bg-zinc-900/50">
+            <div className="p-4 landscape:p-2 border-t border-zinc-800 bg-zinc-900/50">
               <NativeButton
                 onClick={() => setActivePanel(null)}
-                className="w-full justify-center bg-zinc-950 hover:bg-zinc-800 text-white border border-zinc-800 py-3 rounded-xl font-bold transition-colors"
+                className="w-full justify-center bg-zinc-950 hover:bg-zinc-800 text-white border border-zinc-800 py-3 landscape:py-1.5 rounded-xl font-bold transition-colors"
               >
                 Listo — {selectedItems.length} producto{selectedItems.length !== 1 ? 's' : ''} seleccionado{selectedItems.length !== 1 ? 's' : ''}
               </NativeButton>
@@ -374,11 +392,11 @@ export default function CatalogoViewer({ isDark = true, onProductsChange }: Prop
 
       {/* Modo Pantalla Completa (Fullscreen Focus) */}
       {isFullscreen && (
-        <div className="fixed inset-0 z-[150] bg-zinc-950/98 flex flex-col items-center justify-center p-4 md:p-8" data-lenis-prevent="true">
+        <div className="fixed inset-0 z-[150] bg-zinc-950/98 flex flex-col items-center justify-center p-4 md:p-8 landscape:p-2 h-[100dvh] w-full" data-lenis-prevent="true">
           {/* Botón de cierre */}
           <button
             onClick={() => setIsFullscreen(false)}
-            className="absolute top-4 right-4 w-11 h-11 rounded-full bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-400 hover:text-white flex items-center justify-center transition-all z-[160] hover:scale-105 active:scale-95 shadow-lg cursor-pointer"
+            className="absolute top-4 right-4 landscape:top-2 landscape:right-2 w-11 h-11 rounded-full bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-400 hover:text-white flex items-center justify-center transition-all z-[160] hover:scale-105 active:scale-95 shadow-lg cursor-pointer min-w-[44px] min-h-[44px]"
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -386,9 +404,9 @@ export default function CatalogoViewer({ isDark = true, onProductsChange }: Prop
             </svg>
           </button>
 
-          <div className="w-full max-w-[1000px] flex flex-col gap-4">
+          <div className="w-full max-w-[1000px] flex flex-col justify-between h-full landscape:h-full gap-4 landscape:gap-1.5">
             {/* Título en pantalla completa */}
-            <div className="text-center text-white">
+            <div className="text-center text-white landscape:hidden">
               <h2 className="text-xl md:text-2xl font-black uppercase tracking-tight">
                 {PAGES[currentPage].title}
               </h2>
@@ -400,7 +418,7 @@ export default function CatalogoViewer({ isDark = true, onProductsChange }: Prop
             {/* Contenedor Imagen */}
             <div
               className={cn(
-                'relative w-full overflow-hidden rounded-2xl border border-zinc-800 shadow-2xl bg-transparent aspect-[2/1]',
+                'relative w-full overflow-hidden rounded-2xl border border-zinc-800 shadow-2xl bg-transparent aspect-[2/1] landscape:h-[55vh] landscape:w-auto landscape:aspect-[2/1] mx-auto flex-1 flex items-center justify-center',
                 PAGES[currentPage].type !== 'static' && 'cursor-pointer group'
               )}
               onClick={() => handlePageClick(PAGES[currentPage])}
@@ -410,7 +428,7 @@ export default function CatalogoViewer({ isDark = true, onProductsChange }: Prop
                 alt={PAGES[currentPage].title}
                 width={1400}
                 height={700}
-                className="w-full h-auto block"
+                className="w-full h-auto max-h-full object-contain block"
                 priority
               />
 
@@ -443,25 +461,27 @@ export default function CatalogoViewer({ isDark = true, onProductsChange }: Prop
             </div>
 
             {/* Controles de paginación / Scrubber */}
-            <div className="flex items-center justify-center gap-3 mt-1 text-white">
-              <span className="text-xs text-zinc-400">Página</span>
-              <input
-                type="number" min={1} max={PAGES.length} value={pageInput}
-                onChange={e => { setPageInput(e.target.value); const n = parseInt(e.target.value); if (!isNaN(n) && n >= 1 && n <= PAGES.length) goTo(n - 1); }}
-                className="w-14 text-center px-2 py-1.5 rounded-lg border border-zinc-700 bg-zinc-800 text-white text-sm font-bold focus:border-[#0066B3]"
-              />
-              <span className="text-xs text-zinc-400">de {PAGES.length}</span>
-            </div>
+            <div className="flex flex-col gap-1.5 landscape:gap-0.5 justify-end">
+              <div className="flex items-center justify-center gap-3 text-white landscape:scale-90">
+                <span className="text-xs text-zinc-400">Página</span>
+                <input
+                  type="number" min={1} max={PAGES.length} value={pageInput}
+                  onChange={e => { setPageInput(e.target.value); const n = parseInt(e.target.value); if (!isNaN(n) && n >= 1 && n <= PAGES.length) goTo(n - 1); }}
+                  className="w-14 text-center px-2 py-1.5 rounded-lg border border-zinc-700 bg-zinc-800 text-white text-sm font-bold focus:border-[#0066B3] landscape:py-0.5"
+                />
+                <span className="text-xs text-zinc-400">de {PAGES.length}</span>
+              </div>
 
-            <div className="px-4">
-              <Slider
-                min={1}
-                max={PAGES.length}
-                step={1}
-                value={[currentPage + 1]}
-                onValueChange={(val) => goTo(val[0] - 1)}
-                className="w-full cursor-pointer py-3 touch-none"
-              />
+              <div className="px-4 landscape:px-2">
+                <Slider
+                  min={1}
+                  max={PAGES.length}
+                  step={1}
+                  value={[currentPage + 1]}
+                  onValueChange={(val) => goTo(val[0] - 1)}
+                  className="w-full cursor-pointer py-3 landscape:py-1 touch-none"
+                />
+              </div>
             </div>
           </div>
         </div>
