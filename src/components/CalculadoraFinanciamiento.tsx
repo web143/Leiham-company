@@ -56,8 +56,9 @@ export default function CalculadoraFinanciamiento({ isDark = true, externalItems
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [inicialDado, setInicialDado] = useState("");
-  const [porcentaje, setPorcentaje] = useState(4);
-  const [porcentajeInput, setPorcentajeInput] = useState("4");
+  const [porcentaje, setPorcentaje] = useState(5);
+  const [porcentajeInput, setPorcentajeInput] = useState("5");
+  const [hasManuallySetPorcentaje, setHasManuallySetPorcentaje] = useState(false);
   const [selectedRegalos, setSelectedRegalos] = useState<typeof products>([]);
   const [cuotaInput, setCuotaInput] = useState("");
   const [mesSeleccionado, setMesSeleccionado] = useState<number | null>(null);
@@ -166,39 +167,54 @@ export default function CalculadoraFinanciamiento({ isDark = true, externalItems
   const handleInicialChange = (value: string) => {
     setInicialDado(value);
     const num = parseFloat(value.replace(/[^0-9.]/g, '')) || 0;
-    if (totalProductos > 0) {
-      const pct = Math.min(100, Math.max(4, (num / totalProductos) * 100));
-      setPorcentaje(parseFloat(pct.toFixed(2)));
-      setPorcentajeInput(pct.toFixed(2));
+    if (totalEfectivo > 0) {
+      const pct = Math.min(100, Math.max(5, (num / totalEfectivo) * 100));
+      const pctRound = Math.round(pct);
+      setPorcentaje(pctRound);
+      setPorcentajeInput(pctRound.toString());
+      setHasManuallySetPorcentaje(true);
     }
   };
 
   const handlePorcentajeInput = (value: string) => {
     setPorcentajeInput(value);
-    const num = parseFloat(value);
-    if (!isNaN(num) && num >= 4 && num <= 100) {
+    const num = Math.round(parseFloat(value));
+    if (!isNaN(num) && num >= 5 && num <= 100) {
       setPorcentaje(num);
-      if (totalProductos > 0) setInicialDado((totalProductos * (num / 100)).toFixed(2));
+      setHasManuallySetPorcentaje(true);
+      if (totalEfectivo > 0) setInicialDado((totalEfectivo * (num / 100)).toFixed(2));
     }
   };
 
   const handlePorcentajeChange = (value: number) => {
-    const pct = Math.min(100, Math.max(4, value));
+    const pct = Math.min(100, Math.max(5, Math.round(value)));
     setPorcentaje(pct);
-    setPorcentajeInput(pct.toFixed(2));
-    if (totalProductos > 0) setInicialDado((totalProductos * (pct / 100)).toFixed(2));
+    setPorcentajeInput(pct.toString());
+    setHasManuallySetPorcentaje(true);
+    if (totalEfectivo > 0) setInicialDado((totalEfectivo * (pct / 100)).toFixed(2));
   };
 
+  const lastTotalEfectivoRef = useRef(-1);
+
   useEffect(() => {
-    if (totalProductos > 0 && inicialDadoNum > 0) {
-      const nuevoPct = Math.min(100, Math.max(4, (inicialDadoNum / totalProductos) * 100));
-      setPorcentaje(nuevoPct);
-      setPorcentajeInput(nuevoPct.toFixed(2));
-    } else if (totalProductos === 0) {
-      setPorcentaje(4);
-      setPorcentajeInput("4");
+    if (totalEfectivo !== lastTotalEfectivoRef.current) {
+      lastTotalEfectivoRef.current = totalEfectivo;
+      if (totalEfectivo > 0) {
+        if (!hasManuallySetPorcentaje) {
+          setPorcentaje(5);
+          setPorcentajeInput("5");
+          setInicialDado((totalEfectivo * 0.05).toFixed(2));
+        } else {
+          setInicialDado((totalEfectivo * (porcentaje / 100)).toFixed(2));
+        }
+      } else {
+        setPorcentaje(5);
+        setPorcentajeInput("5");
+        setInicialDado("");
+        setHasManuallySetPorcentaje(false);
+      }
     }
-  }, [selectedItems]);
+  }, [totalEfectivo, hasManuallySetPorcentaje, porcentaje]);
 
   const cuotaInputNum = parseFloat(cuotaInput.replace(/[^0-9.]/g, '')) || 0;
   const pctEscrito = montoFinanciar > 0 && cuotaInputNum > 0 ? (cuotaInputNum / montoFinanciar) * 100 : 0;
@@ -504,13 +520,13 @@ export default function CalculadoraFinanciamiento({ isDark = true, externalItems
                 <div className="flex justify-between items-center mb-2">
                   <label className={cn("text-[11px] font-bold", textSecondary)}>Porcentaje</label>
                   <div className="flex items-center gap-1.5">
-                    <input type="number" value={porcentajeInput} onChange={e => handlePorcentajeInput(e.target.value)} onBlur={() => { const num = parseFloat(porcentajeInput); if (isNaN(num) || num < 4) { setPorcentajeInput("4"); setPorcentaje(4); } }}
+                    <input type="number" value={porcentajeInput} onChange={e => handlePorcentajeInput(e.target.value)} onBlur={() => { const num = Math.round(parseFloat(porcentajeInput)); if (isNaN(num) || num < 5) { setPorcentajeInput("5"); setPorcentaje(5); } else if (num > 100) { setPorcentajeInput("100"); setPorcentaje(100); } else { setPorcentajeInput(num.toString()); setPorcentaje(num); } }}
                       className={cn("w-16 text-center px-2 py-1 rounded-lg font-black text-[13px] border outline-none", isDark ? "bg-white/5 border-white/8 text-white" : "bg-white border-slate-200 text-slate-800")}
                     />
                     <span className={cn("text-xs font-bold", textSecondary)}>%</span>
                   </div>
                 </div>
-                <input type="range" min={4} max={100} step={0.01} value={porcentaje} onChange={e => handlePorcentajeChange(Number(e.target.value))}
+                <input type="range" min={5} max={100} step={1} value={porcentaje} onChange={e => handlePorcentajeChange(Number(e.target.value))}
                   className={cn("w-full h-1.5 rounded-full appearance-none cursor-pointer accent-[#0066B3] transition", isDark ? "bg-white/10" : "bg-slate-200")}
                 />
               </div>
