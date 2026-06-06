@@ -82,3 +82,9 @@ html {
     scroll-behavior: auto !important;
   }
 }
+
+.layout-blur-subtle {
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+

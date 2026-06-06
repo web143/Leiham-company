@@ -5,6 +5,8 @@ import { useState, useEffect, useRef } from 'react';
 import { products } from '@/lib/products';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import { useScroll, useTransform, motion } from 'framer-motion';
+import { LightRays } from "@/components/ui/light-rays";
+import { cn } from "@/lib/utils";
 
 // Importación dinámica para deshabilitar SSR y prevenir errores en móvil
 const HeroLeiham = dynamic(() => import('../components/HeroLeiham'), { 
@@ -74,8 +76,23 @@ export default function Home() {
           width: '100%',
         }}
       >
-        <CatalogoViewer isDark={mounted ? isDark : true} onProductsChange={(items) => setCatalogoItems([...items])} />
-        <CalculadoraFinanciamiento isDark={mounted ? isDark : true} externalItems={catalogoItems} />
+        <div className={cn(
+          "relative overflow-hidden transition-colors duration-300",
+          isDark 
+            ? "bg-black bg-gradient-to-br from-[#0066B3]/[0.08] via-transparent to-[#0066B3]/[0.15]" 
+            : "bg-white bg-gradient-to-br from-[#0066B3]/[0.03] via-transparent to-[#0066B3]/[0.05]"
+        )}>
+          {/* Light Rays Background */}
+          <div className="absolute inset-0 z-0 pointer-events-none layout-blur-subtle">
+            <LightRays />
+          </div>
+
+          {/* Content layer */}
+          <div className="relative z-10">
+            <CatalogoViewer isDark={mounted ? isDark : true} onProductsChange={(items) => setCatalogoItems([...items])} />
+            <CalculadoraFinanciamiento isDark={mounted ? isDark : true} externalItems={catalogoItems} />
+          </div>
+        </div>
       </motion.div>
     </main>
   );
