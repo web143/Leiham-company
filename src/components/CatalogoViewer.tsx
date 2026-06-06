@@ -72,14 +72,23 @@ export default function CatalogoViewer({ isDark = true, onProductsChange, onOver
     if (active) {
       document.body.style.overflow = 'hidden';
       document.body.classList.add('overflow-hidden');
+      if (typeof window !== 'undefined' && (window as any).lenis) {
+        (window as any).lenis.stop();
+      }
     } else {
       document.body.style.overflow = '';
       document.body.classList.remove('overflow-hidden');
+      if (typeof window !== 'undefined' && (window as any).lenis) {
+        (window as any).lenis.start();
+      }
     }
     onOverlayStateChange?.(active);
     return () => {
       document.body.style.overflow = '';
       document.body.classList.remove('overflow-hidden');
+      if (typeof window !== 'undefined' && (window as any).lenis) {
+        (window as any).lenis.start();
+      }
       onOverlayStateChange?.(false);
     };
   }, [isFullscreen, activePanel, onOverlayStateChange]);
@@ -392,7 +401,7 @@ export default function CatalogoViewer({ isDark = true, onProductsChange, onOver
 
       {/* Modo Pantalla Completa (Fullscreen Focus) */}
       {isFullscreen && (
-        <div className="fixed inset-0 z-[150] bg-zinc-950/98 flex flex-col items-center justify-center p-4 md:p-8 landscape:p-2 h-[100dvh] w-full" data-lenis-prevent="true">
+        <div className="fixed inset-0 z-[150] bg-zinc-950/95 flex flex-col md:items-center md:justify-center p-4 md:p-8 landscape:p-2 h-[100dvh] w-full" data-lenis-prevent="true">
           {/* Botón de cierre */}
           <button
             onClick={() => setIsFullscreen(false)}
@@ -404,21 +413,11 @@ export default function CatalogoViewer({ isDark = true, onProductsChange, onOver
             </svg>
           </button>
 
-          <div className="w-full max-w-[1000px] flex flex-col justify-between h-full landscape:h-full gap-4 landscape:gap-1.5">
-            {/* Título en pantalla completa */}
-            <div className="text-center text-white landscape:hidden">
-              <h2 className="text-xl md:text-2xl font-black uppercase tracking-tight">
-                {PAGES[currentPage].title}
-              </h2>
-              <p className="text-[10px] text-zinc-400 mt-1 uppercase tracking-wider">
-                Catálogo Royal Prestige® — Página {currentPage + 1} de {PAGES.length}
-              </p>
-            </div>
-
+          <div className="w-full max-w-[1000px] md:max-w-[85vw] flex flex-col justify-between h-full landscape:h-full md:h-auto gap-4 landscape:gap-1.5 md:gap-4">
             {/* Contenedor Imagen */}
             <div
               className={cn(
-                'relative w-full overflow-hidden rounded-2xl border border-zinc-800 shadow-2xl bg-transparent aspect-[2/1] landscape:h-[55vh] landscape:w-auto landscape:aspect-[2/1] mx-auto flex-1 flex items-center justify-center',
+                'relative w-full overflow-hidden rounded-2xl border border-zinc-800 shadow-2xl bg-transparent aspect-[2/1] landscape:h-[55vh] landscape:w-auto landscape:aspect-[2/1] mx-auto flex-1 flex items-center justify-center md:flex-none md:max-w-full md:max-h-[calc(100vh-160px)] md:h-auto md:w-auto md:aspect-[2/1]',
                 PAGES[currentPage].type !== 'static' && 'cursor-pointer group'
               )}
               onClick={() => handlePageClick(PAGES[currentPage])}
@@ -428,7 +427,7 @@ export default function CatalogoViewer({ isDark = true, onProductsChange, onOver
                 alt={PAGES[currentPage].title}
                 width={1400}
                 height={700}
-                className="w-full h-auto max-h-full object-contain block"
+                className="w-full h-auto max-h-full md:max-h-[calc(100vh-160px)] object-contain block mx-auto"
                 priority
               />
 
@@ -462,7 +461,7 @@ export default function CatalogoViewer({ isDark = true, onProductsChange, onOver
 
             {/* Controles de paginación / Scrubber */}
             <div className="flex flex-col gap-1.5 landscape:gap-0.5 justify-end">
-              <div className="flex items-center justify-center gap-3 text-white landscape:scale-90">
+              <div className="flex items-center justify-center gap-3 text-white landscape:scale-90 md:mt-2">
                 <span className="text-xs text-zinc-400">Página</span>
                 <input
                   type="number" min={1} max={PAGES.length} value={pageInput}
