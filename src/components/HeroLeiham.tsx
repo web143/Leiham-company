@@ -161,20 +161,20 @@ export default function HeroLeiham({ isDark = true, scrollProgress }: { isDark?:
     // Choose the progress value based on device (without conditional hooks)
     const progress = isMobileHero ? activeScrollProgress : springProgress;
 
-    // On mobile: scale capped at 12 (vs 25 on desktop) — halves the GPU rasterization cost
-    const titleScale = useTransform(progress, [0, 0.7], [1, isMobileHero ? 12 : 25]);
-    const titleOpacity = useTransform(progress, [0, 0.1, 0.5, 0.7], [1, 1, 1, 0]);
-    const titleLetterSpacing = useTransform(progress, [0, 0.7], ["-0.02em", "0.3em"]);
+    // On mobile: scale capped at 3 (vs 8 on desktop) — halves the GPU rasterization cost
+    const titleScale = useTransform(progress, [0, 0.6], [1, isMobileHero ? 3 : 8]);
+    const titleOpacity = useTransform(progress, [0, 0.1, 0.55, 0.65], [1, 1, 1, 0]);
+    const titleLetterSpacing = useTransform(progress, [0, 0.6], ["-0.02em", "0.3em"]);
     
     // Subtitle animations
-    const subtitleOpacity = useTransform(progress, [0, 0.3], [1, 0]);
-    const subtitleY = useTransform(progress, [0, 0.3], [0, 30]);
+    const subtitleOpacity = useTransform(progress, [0, 0.2], [1, 0]);
+    const subtitleY = useTransform(progress, [0, 0.2], [0, 30]);
 
     const heroDisplay = useTransform(progress, v => v >= 0.98 ? "none" : "block");
-    const heroPointerEvents = useTransform(progress, v => v >= 0.85 ? "none" : "auto");
+    const heroPointerEvents = useTransform(progress, v => v >= 0.7 ? "none" : "auto");
 
     return (
-        <section ref={sectionRef} style={{ height: isMobileHero ? '110vh' : '120vh', minWidth: isMobileHero ? undefined : '1100px' }} className={cn("relative transition-colors duration-300", isDark ? 'bg-black' : 'bg-white')}>
+        <section ref={sectionRef} style={{ height: isMobileHero ? '115vh' : '125vh', minWidth: isMobileHero ? undefined : '1100px' }} className={cn("relative transition-colors duration-300", isDark ? 'bg-black' : 'bg-white')}>
             <motion.div style={{ display: heroDisplay, pointerEvents: heroPointerEvents }} className="sticky top-0 h-screen overflow-hidden">
                 <motion.div className="w-full h-full relative flex items-center justify-center">
                     {/* Lamp Effect - con ref para parallax */}
@@ -332,10 +332,10 @@ function FloatingProduct({
     const progress = scrollProgress ?? fallbackProgress;
 
     // TODOS los hooks siempre se llaman al inicio del componente
-    const moveX = useTransform(progress, [0, 0.65], [0, scrollTarget.x]);
-    const moveY = useTransform(progress, [0, 0.65], [0, scrollTarget.y]);
-    const scaleOut = useTransform(progress, [0, 0.65], [1, scrollTarget.scale]);
-    const opacityOut = useTransform(progress, [0, 0.65], [1, 0]);
+    const moveX = useTransform(progress, [0, 0.5], [0, scrollTarget.x]);
+    const moveY = useTransform(progress, [0, 0.5], [0, scrollTarget.y]);
+    const scaleOut = useTransform(progress, [0, 0.5], [1, scrollTarget.scale]);
+    const opacityOut = useTransform(progress, [0, 0.4], [1, 0]);
     
     // Emil Kowalski GPU-acceleration fix: use string interpolation instead of individual x/y props
     const transformString = useMotionTemplate`translateX(${moveX}px) translateY(${moveY}px) scale(${scaleOut})`;

@@ -30,12 +30,10 @@ export default function Home() {
     offset: ["start start", "end end"]
   });
 
-  const catálogoOpacity = useTransform(scrollYProgress, [0.4, 0.75], [0, 1]);
-  const catálogoScale = useTransform(scrollYProgress, [0.4, 0.75], [0.95, 1]);
-  const catálogoPointerEvents = useTransform(scrollYProgress, v => v >= 0.75 ? "auto" : "none");
-  const catálogoPosition = useTransform(scrollYProgress, v => v >= 0.98 ? "relative" : "fixed");
-  const catálogoTop = useTransform(scrollYProgress, v => v >= 0.98 ? "auto" : "0px");
-  const catálogoMarginTop = useTransform(scrollYProgress, v => v >= 0.98 ? "-100vh" : "0px");
+  const catálogoOpacity = useTransform(scrollYProgress, [0.35, 0.85], [0, 1]);
+  const catálogoScale = useTransform(scrollYProgress, [0.35, 0.85], [0.96, 1]);
+  const catálogoY = useTransform(scrollYProgress, [0.35, 0.85], [-200, 0]);
+  const catálogoPointerEvents = useTransform(scrollYProgress, v => v >= 0.85 ? "auto" : "none");
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -62,13 +60,11 @@ export default function Home() {
         style={{
           opacity: catálogoOpacity,
           scale: catálogoScale,
+          y: catálogoY,
           pointerEvents: catálogoPointerEvents,
-          position: catálogoPosition,
-          top: catálogoTop,
-          marginTop: catálogoMarginTop,
-          left: 0,
-          width: '100%',
+          position: 'relative',
           zIndex: 10,
+          width: '100%',
         }}
       >
         <CatalogoViewer isDark={mounted ? isDark : true} onProductsChange={(items) => setCatalogoItems([...items])} />
