@@ -154,6 +154,10 @@ export default function CalculadoraFinanciamiento({ isDark = true, externalItems
   const totalEfectivo = totalProductos - descuentoManual;
   const diferencia = descuentoManual;
   
+  const ratio = totalProductos > 0 ? totalEfectivo / totalProductos : 1;
+  const precioSinItbisEfectivo = precioSinItbis * ratio;
+  const itbisEfectivo = itbisTotal * ratio;
+  
   const inicialDadoNum = parseFloat(inicialDado.replace(/[^0-9.]/g, '')) || 0;
   const pagoInicial = Math.min(inicialDadoNum, totalEfectivo);
   const montoFinanciar = Math.max(0, totalEfectivo - pagoInicial);
@@ -513,8 +517,8 @@ export default function CalculadoraFinanciamiento({ isDark = true, externalItems
 
               <div className={cn("space-y-1 pt-3 border-t", isDark ? "border-white/10" : "border-slate-200")}>
                 {[
-                  { label: 'Precio de compra', value: fmt(precioSinItbis) },
-                  { label: 'ITBIS', value: fmt(itbisTotal) },
+                  { label: 'Precio de compra', value: fmt(precioSinItbisEfectivo) },
+                  { label: 'ITBIS', value: fmt(itbisEfectivo) },
                   { label: 'Tasa de interés anual', value: `${TASA_INTERES_ANUAL}%` },
                   { label: 'Valor productos', value: fmt(totalProductos) },
                   ...(descuentoManual !== 0 ? [{ 
