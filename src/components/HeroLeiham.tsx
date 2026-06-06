@@ -12,7 +12,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 
-export default function HeroLeiham({ isDark = true }: { isDark?: boolean }) {
+export default function HeroLeiham({ isDark = true, scrollProgress }: { isDark?: boolean; scrollProgress?: MotionValue<number> }) {
     const products = [
         {
             src: "/catalogo_assets/olla_presion.png",
@@ -150,17 +150,19 @@ export default function HeroLeiham({ isDark = true }: { isDark?: boolean }) {
         offset: ["start start", "end end"]
     });
 
+    const activeScrollProgress = scrollProgress || scrollYProgress;
+
     // Call hooks unconditionally to comply with React's Rules of Hooks
     // Higher stiffness = snappier tracking, less perceived lag vs stiffness:100
-    const springProgress = useSpring(scrollYProgress, { stiffness: 200, damping: 35, restDelta: 0.001 });
+    const springProgress = useSpring(activeScrollProgress, { stiffness: 200, damping: 35, restDelta: 0.001 });
     const desktopBlur = useTransform(springProgress, [0.5, 0.65], [0, 20]);
     const blurStyle = useTransform(desktopBlur, v => `blur(${v}px)`);
 
     // Choose the progress value based on device (without conditional hooks)
-    const progress = isMobileHero ? scrollYProgress : springProgress;
+    const progress = isMobileHero ? activeScrollProgress : springProgress;
 
-    // On mobile: scale capped at 3 (vs 8 on desktop) — halves the GPU rasterization cost
-    const titleScale = useTransform(progress, [0, 0.7], [1, isMobileHero ? 3 : 8]);
+    // On mobile: scale capped at 12 (vs 25 on desktop) — halves the GPU rasterization cost
+    const titleScale = useTransform(progress, [0, 0.7], [1, isMobileHero ? 12 : 25]);
     const titleOpacity = useTransform(progress, [0, 0.1, 0.5, 0.7], [1, 1, 1, 0]);
     const titleLetterSpacing = useTransform(progress, [0, 0.7], ["-0.02em", "0.3em"]);
     
@@ -168,9 +170,12 @@ export default function HeroLeiham({ isDark = true }: { isDark?: boolean }) {
     const subtitleOpacity = useTransform(progress, [0, 0.3], [1, 0]);
     const subtitleY = useTransform(progress, [0, 0.3], [0, 30]);
 
+    const heroDisplay = useTransform(progress, v => v >= 0.98 ? "none" : "block");
+    const heroPointerEvents = useTransform(progress, v => v >= 0.85 ? "none" : "auto");
+
     return (
         <section ref={sectionRef} style={{ height: isMobileHero ? '110vh' : '120vh', minWidth: isMobileHero ? undefined : '1100px' }} className={cn("relative transition-colors duration-300", isDark ? 'bg-black' : 'bg-white')}>
-            <div className="sticky top-0 h-screen overflow-hidden">
+            <motion.div style={{ display: heroDisplay, pointerEvents: heroPointerEvents }} className="sticky top-0 h-screen overflow-hidden">
                 <motion.div className="w-full h-full relative flex items-center justify-center">
                     {/* Lamp Effect - con ref para parallax */}
                     <div ref={bgGlowRef} style={{ position: 'absolute', top: '-10px', left: 0, right: 0, zIndex: 1, pointerEvents: 'none', height: '320px', overflow: 'visible' }}>
@@ -283,7 +288,7 @@ export default function HeroLeiham({ isDark = true }: { isDark?: boolean }) {
                         className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#0066B3]/60 to-transparent"
                     />
                 </motion.div>
-            </div>
+            </motion.div>
         </section>
     );
 }

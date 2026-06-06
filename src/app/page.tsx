@@ -1,9 +1,10 @@
 "use client";
 
 import dynamic from 'next/dynamic';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { products } from '@/lib/products';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
+import { useScroll, useTransform, motion } from 'framer-motion';
 
 // Importación dinámica para deshabilitar SSR y prevenir errores en móvil
 const HeroLeiham = dynamic(() => import('../components/HeroLeiham'), { 
@@ -23,6 +24,19 @@ export default function Home() {
   const [mounted, setMounted] = useState(false);
   const [catalogoItems, setCatalogoItems] = useState<any[]>([]);
 
+  const heroRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: heroRef,
+    offset: ["start start", "end end"]
+  });
+
+  const catálogoOpacity = useTransform(scrollYProgress, [0.4, 0.75], [0, 1]);
+  const catálogoScale = useTransform(scrollYProgress, [0.4, 0.75], [0.95, 1]);
+  const catálogoPointerEvents = useTransform(scrollYProgress, v => v >= 0.75 ? "auto" : "none");
+  const catálogoPosition = useTransform(scrollYProgress, v => v >= 0.98 ? "relative" : "fixed");
+  const catálogoTop = useTransform(scrollYProgress, v => v >= 0.98 ? "auto" : "0px");
+  const catálogoMarginTop = useTransform(scrollYProgress, v => v >= 0.98 ? "-100vh" : "0px");
+
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const saved = localStorage.getItem('leiham-theme');
@@ -41,9 +55,25 @@ export default function Home() {
   return (
     <main className={`transition-colors duration-300 ${mounted ? (isDark ? 'bg-black' : 'bg-white') : 'bg-black'}`}>
       <ThemeToggle isDark={isDark} onToggle={toggleTheme} className="fixed top-3 right-3 z-[100] shadow-lg" />
-      <HeroLeiham isDark={mounted ? isDark : true} />
-      <CatalogoViewer isDark={mounted ? isDark : true} onProductsChange={(items) => setCatalogoItems([...items])} />
-      <CalculadoraFinanciamiento isDark={mounted ? isDark : true} externalItems={catalogoItems} />
+      <div ref={heroRef}>
+        <HeroLeiham isDark={mounted ? isDark : true} scrollProgress={scrollYProgress} />
+      </div>
+      <motion.div
+        style={{
+          opacity: catálogoOpacity,
+          scale: catálogoScale,
+          pointerEvents: catálogoPointerEvents,
+          position: catálogoPosition,
+          top: catálogoTop,
+          marginTop: catálogoMarginTop,
+          left: 0,
+          width: '100%',
+          zIndex: 10,
+        }}
+      >
+        <CatalogoViewer isDark={mounted ? isDark : true} onProductsChange={(items) => setCatalogoItems([...items])} />
+        <CalculadoraFinanciamiento isDark={mounted ? isDark : true} externalItems={catalogoItems} />
+      </motion.div>
     </main>
   );
 }
