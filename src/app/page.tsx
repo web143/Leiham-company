@@ -33,7 +33,7 @@ export default function Home() {
   const catálogoOpacity = useTransform(scrollYProgress, [0.0, 0.75, 1.0], [0, 0, 1]);
   const catálogoScale = useTransform(scrollYProgress, [0.75, 1.0], [0.96, 1]);
   
-  const catálogoY = useTransform(scrollYProgress, v => {
+  const catálogoMarginTop = useTransform(scrollYProgress, v => {
     const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
     const startVal = isMobile ? -180 : -200;
     const currentVal = startVal + (-100 - startVal) * v;
@@ -67,7 +67,7 @@ export default function Home() {
         style={{
           opacity: catálogoOpacity,
           scale: catálogoScale,
-          y: catálogoY,
+          marginTop: catálogoMarginTop,
           pointerEvents: catálogoPointerEvents,
           position: 'relative',
           zIndex: 10,
