@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { motion, AnimatePresence } from 'framer-motion';
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
@@ -65,7 +66,6 @@ export default function CatalogoViewer({ isDark = true, onProductsChange }: Prop
   // GSAP Refs
   const sectionRef = useRef<HTMLElement>(null);
   const titleWrapperRef = useRef<HTMLDivElement>(null);
-  const imageRef = useRef<HTMLImageElement>(null);
   const modalBgRef = useRef<HTMLDivElement>(null);
   const modalContentRef = useRef<HTMLDivElement>(null);
   const modalItemsRef = useRef<(HTMLDivElement | null)[]>([]);
@@ -90,15 +90,7 @@ export default function CatalogoViewer({ isDark = true, onProductsChange }: Prop
     }
   }, { scope: sectionRef });
 
-  useGSAP(() => {
-    // 2. Image Transition Swap
-    if (imageRef.current) {
-      gsap.fromTo(imageRef.current, 
-        { opacity: 0.4, scale: 0.98 }, 
-        { opacity: 1, scale: 1, duration: 0.4, ease: 'power2.out' }
-      );
-    }
-  }, [currentPage]);
+  // 2. Image Transition Swap removed for Framer Motion replacement
 
   useGSAP(() => {
     // 3. Modal Entrance Stagger
@@ -211,26 +203,37 @@ export default function CatalogoViewer({ isDark = true, onProductsChange }: Prop
         {/* Contenedor imagen — solo tan alto como la imagen */}
         <div
           className={cn(
-            'relative w-full overflow-hidden rounded-2xl shadow-2xl bg-transparent',
+            'relative w-full overflow-hidden rounded-2xl shadow-2xl bg-transparent aspect-[14/10]',
             PAGES[currentPage].type !== 'static' && 'cursor-pointer group'
           )}
           onClick={() => handlePageClick(PAGES[currentPage])}
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
         >
-          <Image
-            ref={imageRef}
-            src={`/catalogo_pages/webp/page-${PAGES[currentPage].page}.webp`}
-            alt={PAGES[currentPage].title}
-            width={1400}
-            height={1000}
-            className="w-full h-auto block"
-            priority
-          />
+          <AnimatePresence mode="popLayout" initial={false}>
+            <motion.div
+              key={currentPage}
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -12 }}
+              transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+              className="w-full h-full"
+              style={{ transform: 'translateZ(0)' }}
+            >
+              <Image
+                src={`/catalogo_pages/webp/page-${PAGES[currentPage].page}.webp`}
+                alt={PAGES[currentPage].title}
+                width={1400}
+                height={1000}
+                className="w-full h-auto block"
+                priority
+              />
+            </motion.div>
+          </AnimatePresence>
 
           {/* Overlay */}
           {PAGES[currentPage].type !== 'static' && (
-            <div className="absolute inset-0 bg-[#0066B3]/0 group-hover:bg-[#0066B3]/10 transition-all duration-300 flex items-center justify-center">
+            <div className="absolute inset-0 z-10 bg-[#0066B3]/0 group-hover:bg-[#0066B3]/10 transition-all duration-300 flex items-center justify-center pointer-events-none">
               <div className="opacity-0 group-hover:opacity-100 transition-all bg-[#0066B3] text-white px-5 py-2.5 rounded-full text-sm font-bold shadow-xl flex items-center gap-2">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
@@ -245,12 +248,12 @@ export default function CatalogoViewer({ isDark = true, onProductsChange }: Prop
           <button
             onClick={e => { e.stopPropagation(); goTo(currentPage - 1); }}
             disabled={currentPage === 0}
-            className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/50 hover:bg-black/70 text-white text-xl flex items-center justify-center disabled:opacity-0 transition-all"
+            className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/50 hover:bg-black/70 text-white text-xl flex items-center justify-center disabled:opacity-0 transition-all z-20"
           >‹</button>
           <button
             onClick={e => { e.stopPropagation(); goTo(currentPage + 1); }}
             disabled={currentPage === PAGES.length - 1}
-            className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/50 hover:bg-black/70 text-white text-xl flex items-center justify-center disabled:opacity-0 transition-all"
+            className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/50 hover:bg-black/70 text-white text-xl flex items-center justify-center disabled:opacity-0 transition-all z-20"
           >›</button>
         </div>
 
