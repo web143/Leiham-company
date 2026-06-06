@@ -168,9 +168,12 @@ export default function HeroLeiham({ isDark = true }: { isDark?: boolean }) {
     const subtitleOpacity = useTransform(progress, [0, 0.3], [1, 0]);
     const subtitleY = useTransform(progress, [0, 0.3], [0, 30]);
 
+    const heroOpacity = useTransform(progress, [0.75, 0.95], [1, 0]);
+    const heroPointerEvents = useTransform(progress, v => v >= 0.85 ? "none" : "auto");
+
     return (
-        <section ref={sectionRef} style={{ height: isMobileHero ? '104vh' : '106vh', minWidth: isMobileHero ? undefined : '1100px' }} className={cn("relative transition-colors duration-300", isDark ? 'bg-black' : 'bg-white')}>
-            <div className="sticky top-0 h-screen overflow-hidden">
+        <section ref={sectionRef} style={{ height: isMobileHero ? '104vh' : '106vh', minWidth: isMobileHero ? undefined : '1100px' }} className={cn("relative transition-colors duration-300 z-20", isDark ? 'bg-black' : 'bg-white')}>
+            <motion.div style={{ opacity: heroOpacity, pointerEvents: heroPointerEvents }} className="sticky top-0 h-screen overflow-hidden">
                 <motion.div className="w-full h-full relative flex items-center justify-center">
                     {/* Lamp Effect - con ref para parallax */}
                     <div ref={bgGlowRef} style={{ position: 'absolute', top: '-10px', left: 0, right: 0, zIndex: 1, pointerEvents: 'none', height: '320px', overflow: 'visible' }}>
@@ -283,7 +286,7 @@ export default function HeroLeiham({ isDark = true }: { isDark?: boolean }) {
                         className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#0066B3]/60 to-transparent"
                     />
                 </motion.div>
-            </div>
+            </motion.div>
         </section>
     );
 }
