@@ -8,6 +8,7 @@ import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { motion, AnimatePresence } from 'framer-motion';
+import { NativeButton } from "@/components/ui/NativeButton";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
@@ -233,13 +234,18 @@ export default function CatalogoViewer({ isDark = true, onProductsChange }: Prop
 
           {/* Overlay */}
           {PAGES[currentPage].type !== 'static' && (
-            <div className="absolute inset-0 z-10 bg-[#0066B3]/0 group-hover:bg-[#0066B3]/10 transition-all duration-300 flex items-center justify-center pointer-events-none">
-              <div className="opacity-0 group-hover:opacity-100 transition-all bg-[#0066B3] text-white px-5 py-2.5 rounded-full text-sm font-bold shadow-xl flex items-center gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
-                  <circle cx="12" cy="12" r="3"/>
-                </svg>
-                Ver productos
+            <div className="absolute inset-0 z-10 bg-black/0 group-hover:bg-black/10 transition-all duration-300 flex items-center justify-center pointer-events-none">
+              <div className="opacity-0 group-hover:opacity-100 transition-all duration-300">
+                <NativeButton
+                  variant="default"
+                  size="default"
+                  className="bg-zinc-900 hover:bg-zinc-800 text-white border border-zinc-800 font-bold rounded-full h-11 px-6 flex items-center gap-2"
+                >
+                  <svg className="w-5 h-5 text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                    <path fillRule="evenodd" d="M4.998 7.78C6.729 6.345 9.198 5 12 5c2.802 0 5.27 1.345 7.002 2.78a12.713 12.713 0 0 1 2.096 2.183c.253.344.465.682.618.997.14.286.284.658.284 1.04s-.145.754-.284 1.04a6.6 6.6 0 0 1-.618.997 12.712 12.712 0 0 1-2.096 2.183C17.271 17.655 14.802 19 12 19c-2.802 0-5.27-1.345-7.002-2.78a12.712 12.712 0 0 1-2.096-2.183 6.6 6.6 0 0 1-.618-.997C2.144 12.754 2 12.382 2 12s.145-.754.284-1.04c.153-.315.365-.653.618-.997A12.714 12.714 0 0 1 4.998 7.78ZM12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" clipRule="evenodd"/>
+                  </svg>
+                  Ver productos
+                </NativeButton>
               </div>
             </div>
           )}
@@ -280,15 +286,15 @@ export default function CatalogoViewer({ isDark = true, onProductsChange }: Prop
           <div ref={modalBgRef} className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
           <div
             ref={modalContentRef}
-            className={cn('relative w-full max-w-lg max-h-[85vh] rounded-2xl overflow-hidden flex flex-col shadow-2xl', isDark ? 'bg-slate-900 border border-white/10' : 'bg-white border border-slate-200')}
+            className="relative w-full max-w-lg max-h-[85vh] rounded-2xl overflow-hidden flex flex-col shadow-2xl bg-zinc-900 border border-zinc-800"
             onClick={e => e.stopPropagation()}
           >
-            <div className={cn('flex items-center justify-between p-4 border-b', isDark ? 'border-white/10' : 'border-slate-200')}>
+            <div className="flex items-center justify-between p-4 border-b border-zinc-800 bg-zinc-900/50">
               <div>
-                <h3 className={cn('font-black text-lg uppercase tracking-tight', isDark ? 'text-white' : 'text-slate-900')}>{activePanel.title}</h3>
-                <p className={cn('text-xs', isDark ? 'text-white/30' : 'text-slate-400')}>{activePanel.items.length} productos disponibles</p>
+                <h3 className="font-black text-lg uppercase tracking-tight text-white">{activePanel.title}</h3>
+                <p className="text-xs text-zinc-400">{activePanel.items.length} productos disponibles</p>
               </div>
-              <button onClick={() => setActivePanel(null)} className={cn('p-2 rounded-xl', isDark ? 'hover:bg-white/10 text-white/50' : 'hover:bg-slate-100 text-slate-400')}>
+              <button onClick={() => setActivePanel(null)} className="p-2 rounded-xl hover:bg-zinc-800 text-zinc-400 hover:text-white transition-colors">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -301,36 +307,39 @@ export default function CatalogoViewer({ isDark = true, onProductsChange }: Prop
                   ref={(el) => { modalItemsRef.current[index] = el; }}
                   className={cn('flex items-center gap-3 px-4 py-3 rounded-xl border transition-all',
                     isSelected(p)
-                      ? 'bg-[#0066B3]/15 border-[#0066B3]/40'
-                      : isDark ? 'bg-slate-800/50 border-transparent' : 'bg-slate-50 border-transparent'
+                      ? 'bg-zinc-800 border-zinc-700 text-white'
+                      : 'bg-zinc-900/60 border-zinc-800 text-zinc-300 hover:bg-zinc-800/50'
                   )}
                 >
                   <div className="flex-1 min-w-0">
-                    <p className={cn('text-sm font-semibold truncate', isDark ? 'text-white' : 'text-slate-900')}>{p.name}</p>
-                    <p className={cn('text-xs', isDark ? 'text-white/30' : 'text-slate-400')}>{p.code !== '-' ? p.code : p.category}</p>
+                    <p className="text-sm font-semibold truncate text-white">{p.name}</p>
+                    <p className="text-xs text-zinc-400">{p.code !== '-' ? p.code : p.category}</p>
                   </div>
-                  <p className="text-[#0066B3] font-bold text-sm flex-shrink-0">{fmt(p.total)}</p>
+                  <p className="text-white font-bold text-sm flex-shrink-0">{fmt(p.total)}</p>
                   <div className="flex items-center gap-1 flex-shrink-0">
                     {getCantidad(p) > 0 && (
                       <>
-                        <button onClick={() => removeOne(p)} className="w-7 h-7 rounded-lg flex items-center justify-center bg-slate-700 text-white hover:bg-red-500/50 transition-all font-bold">−</button>
-                        <span className="text-[#0066B3] font-black text-sm w-6 text-center">{getCantidad(p)}</span>
+                        <button onClick={() => removeOne(p)} className="w-7 h-7 rounded-lg flex items-center justify-center bg-zinc-700 text-white hover:bg-red-500/50 transition-all font-bold">−</button>
+                        <span className="text-white font-black text-sm w-6 text-center">{getCantidad(p)}</span>
                       </>
                     )}
                     <button
                       onClick={() => addOne(p)}
                       className={cn('w-7 h-7 rounded-lg flex items-center justify-center transition-all font-bold',
-                        getCantidad(p) > 0 ? 'bg-[#0066B3] text-white' : isDark ? 'bg-white/10 text-white/40 hover:bg-[#0066B3]/30' : 'bg-slate-200 text-slate-400'
+                        getCantidad(p) > 0 ? 'bg-white text-zinc-900' : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700'
                       )}
                     >+</button>
                   </div>
                 </div>
               ))}
             </div>
-            <div className={cn('p-4 border-t', isDark ? 'border-white/10' : 'border-slate-200')}>
-              <button onClick={() => setActivePanel(null)} className="w-full bg-[#0066B3] text-white py-3 rounded-xl font-bold">
+            <div className="p-4 border-t border-zinc-800 bg-zinc-900/50">
+              <NativeButton
+                onClick={() => setActivePanel(null)}
+                className="w-full justify-center bg-zinc-950 hover:bg-zinc-800 text-white border border-zinc-800 py-3 rounded-xl font-bold transition-colors"
+              >
                 Listo — {selectedItems.length} producto{selectedItems.length !== 1 ? 's' : ''} seleccionado{selectedItems.length !== 1 ? 's' : ''}
-              </button>
+              </NativeButton>
             </div>
           </div>
         </div>
