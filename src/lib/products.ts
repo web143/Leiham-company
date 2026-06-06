@@ -21,6 +21,7 @@ export const products = [
     // ── JUEGOS DE OLLAS + TAPA ADICIONAL ────────────────────────
     { code: "-", name: "Sist. de Cocina Complementario de 5 Pzs Innove + Tapa Grand. 26cm", category: "Juegos de Ollas + Tapa Adicional", price: 106355.93, itbis: 19144.07, total: 125500 },
     { code: "-", name: "Sist. de Cocina Clásico de 7 Pzs Innove + Tapa Med. 20 Cm", category: "Juegos de Ollas + Tapa Adicional", price: 127118.64, itbis: 22881.36, total: 150000 },
+    { code: "-", name: "Sist. de Cocina Especial de 8 Pzs Innove + Tapa Med. 20 Cm", category: "Juegos de Ollas + Tapa Adicional", price: 153389.83, itbis: 27610.17, total: 181000 },
     { code: "-", name: "Sist. de Cocina Familiar de 10 Pzs Innove + Perfect Pop + Tapa Med. 20 Cm", category: "Juegos de Ollas + Tapa Adicional", price: 192796.61, itbis: 34703.39, total: 227500 },
 
     // ── OLLAS DE SANCOCHO ────────────────────────────────────────

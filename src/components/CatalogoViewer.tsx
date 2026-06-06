@@ -52,6 +52,43 @@ const PAGES = [
   { page: '36', type: 'products', title: 'Accesorios y Filtración', categoryKeywords: ['accesorios', 'cuchillería', 'filtro'] },
 ];
 
+const catalogProductsData: { [key: string]: typeof products } = {
+  pagina4: [
+    products.find(p => p.name === "Sist. de Cocina Familiar de 10 Pzs Innove + Perfect Pop + Tapa Med. 20 Cm")!,
+    products.find(p => p.name === "Sistema de Cocina Familiar de 10 Pzs Innove + Perfect Pop")!,
+    products.find(p => p.name === "Olla de 2 Qt. Con Tapa")!,
+    products.find(p => p.name === "Colador Pequeño Innove de 20 cm.")!,
+    products.find(p => p.name === "Olla de 4 Qt. Con Tapa")!,
+    products.find(p => p.name === "Sartén de 8\" Con Tapa")!,
+    products.find(p => p.name === "Sartén Innove de 8\" Innove")!,
+    products.find(p => p.name === "Sartén de 10.5\" / 4QT / 26cm Con Tapa")!,
+    products.find(p => p.name === "Olla Innove de 6 Qt. Innove")!,
+  ].filter(Boolean),
+  pagina5: [
+    products.find(p => p.name === "Sist. de Cocina Especial de 8 Pzs Innove + Tapa Med. 20 Cm")!,
+    products.find(p => p.name === "Sistema de Cocina Especial de 8 Pzs Innove")!,
+    products.find(p => p.name === "Olla de 2 Qt. Con Tapa")!,
+    products.find(p => p.name === "Olla de 4 Qt. Con Tapa")!,
+    products.find(p => p.name === "Paellera Innove de 14\" con tapa 316L")!,
+  ].filter(Boolean),
+  pagina6: [
+    products.find(p => p.name === "Sist. de Cocina Clásico de 7 Pzs Innove + Tapa Med. 20 Cm")!,
+    products.find(p => p.name === "Sistema de Cocina Clásico de 7 Pzs Innove")!,
+    products.find(p => p.name === "Olla de 2 Qt. Con Tapa")!,
+    products.find(p => p.name === "Sartén de 8\" Con Tapa")!,
+    products.find(p => p.name === "Olla de 4 Qt. Con Tapa")!,
+    products.find(p => p.name === "Olla Innove de 4 Qt. Innove")!,
+    products.find(p => p.name === "Sartén de 10.5\" / 4QT / 26cm Con Tapa")!,
+  ].filter(Boolean),
+  pagina7: [
+    products.find(p => p.name === "Sist. de Cocina Complementario de 5 Pzs Innove + Tapa Grand. 26cm")!,
+    products.find(p => p.name === "Sistema de Cocina Complementario de 5 Pzs Innove")!,
+    products.find(p => p.name === "Olla de 3 Qt. Con Tapa")!,
+    products.find(p => p.name === "Olla de 6 Qt. con Tapa")!,
+    products.find(p => p.name === "Sartén de 10.5\" / 4QT / 26cm Con Tapa")!,
+  ].filter(Boolean),
+};
+
 interface Props {
   isDark?: boolean;
   onProductsChange?: (items: typeof products) => void;
@@ -195,6 +232,20 @@ export default function CatalogoViewer({ isDark = true, onProductsChange, onOver
   };
 
   const getProductsForPage = (pageInfo: typeof PAGES[0]) => {
+    const pageNum = pageInfo.page;
+    if (pageNum === '04' || pageNum === '05') {
+      return catalogProductsData.pagina4;
+    }
+    if (pageNum === '06' || pageNum === '07') {
+      return catalogProductsData.pagina5;
+    }
+    if (pageNum === '08' || pageNum === '09') {
+      return catalogProductsData.pagina6;
+    }
+    if (pageNum === '10' || pageNum === '11') {
+      return catalogProductsData.pagina7;
+    }
+
     const keywords = (pageInfo as any).productKeywords || (pageInfo as any).categoryKeywords || [];
     return products.filter(p =>
       keywords.some((kw: string) =>
@@ -336,11 +387,11 @@ export default function CatalogoViewer({ isDark = true, onProductsChange, onOver
 
       {/* Panel modal (BottomSheet) */}
       {activePanel && (
-        <div className="fixed inset-0 z-[200] flex items-end md:items-center justify-center p-4" onClick={() => setActivePanel(null)}>
+        <div className="fixed inset-0 z-[200] flex items-end md:items-center justify-center md:p-4" onClick={() => setActivePanel(null)}>
           <div ref={modalBgRef} className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
           <div
             ref={modalContentRef}
-            className="relative w-full max-w-lg max-h-[85vh] landscape:max-h-[95dvh] rounded-2xl overflow-hidden flex flex-col shadow-2xl bg-zinc-900 border border-zinc-800"
+            className="relative w-full max-w-lg h-[55vh] md:h-auto md:max-h-[85vh] landscape:h-auto landscape:max-h-[95dvh] rounded-t-2xl md:rounded-2xl overflow-hidden flex flex-col shadow-2xl bg-zinc-900 border-t md:border border-zinc-800"
             onClick={e => e.stopPropagation()}
           >
             <div className="flex items-center justify-between p-4 landscape:p-2.5 border-b border-zinc-800 bg-zinc-900/50">
@@ -413,11 +464,11 @@ export default function CatalogoViewer({ isDark = true, onProductsChange, onOver
             </svg>
           </button>
 
-          <div className="w-full max-w-[1000px] md:max-w-[85vw] flex flex-col justify-between h-full landscape:h-full md:h-auto gap-4 landscape:gap-1.5 md:gap-4">
+          <div className="w-full max-w-[1000px] md:max-w-7xl md:w-[95vw] md:h-[92vh] flex flex-col justify-between h-full landscape:h-full md:h-auto gap-4 landscape:gap-1.5 md:gap-4 md:p-2">
             {/* Contenedor Imagen */}
             <div
               className={cn(
-                'relative w-full overflow-hidden rounded-2xl border border-zinc-800 shadow-2xl bg-transparent aspect-[2/1] landscape:h-[55vh] landscape:w-auto landscape:aspect-[2/1] mx-auto flex-1 flex items-center justify-center md:flex-none md:max-w-full md:max-h-[calc(100vh-160px)] md:h-auto md:w-auto md:aspect-[2/1]',
+                'relative w-full overflow-hidden rounded-2xl border border-zinc-800 shadow-2xl bg-transparent aspect-[2/1] landscape:h-[55vh] landscape:w-auto landscape:aspect-[2/1] mx-auto flex-1 flex items-center justify-center md:h-[75vh] md:max-h-[75vh] md:w-auto md:aspect-[2/1]',
                 PAGES[currentPage].type !== 'static' && 'cursor-pointer group'
               )}
               onClick={() => handlePageClick(PAGES[currentPage])}
@@ -427,7 +478,7 @@ export default function CatalogoViewer({ isDark = true, onProductsChange, onOver
                 alt={PAGES[currentPage].title}
                 width={1400}
                 height={700}
-                className="w-full h-auto max-h-full md:max-h-[calc(100vh-160px)] object-contain block mx-auto"
+                className="w-full h-auto max-h-full md:h-full md:w-auto object-contain block mx-auto"
                 priority
               />
 
