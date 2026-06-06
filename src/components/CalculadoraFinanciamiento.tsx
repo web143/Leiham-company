@@ -407,13 +407,17 @@ export default function CalculadoraFinanciamiento({ isDark = true, externalItems
                     <div
                       key={p.code + p.name + idx}
                       onClick={() => {
-                        // Scroll al producto en la lista y resaltarlo
-                        const el = document.getElementById(`producto-${p.code}-${p.name.replace(/\s+/g, '-')}`);
-                        if (el) {
-                          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                          el.classList.add('ring-2', 'ring-[#0066B3]');
-                          setTimeout(() => el.classList.remove('ring-2', 'ring-[#0066B3]'), 2000);
-                        }
+                        // Limpiar buscador y categoría para mostrar todos los productos
+                        setSearch("");
+                        setActiveCategory(null);
+                        setTimeout(() => {
+                          const el = document.getElementById(`producto-${p.code}-${p.name.replace(/\s+/g, '-')}`);
+                          if (el) {
+                            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            el.classList.add('ring-2', 'ring-[#0066B3]');
+                            setTimeout(() => el.classList.remove('ring-2', 'ring-[#0066B3]'), 2000);
+                          }
+                        }, 100);
                       }}
                       className={cn(
                         'flex items-center justify-between px-3 py-2 cursor-pointer transition-colors',
