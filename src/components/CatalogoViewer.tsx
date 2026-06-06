@@ -1,5 +1,5 @@
 'use client';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import { X } from 'lucide-react';
 import { products } from '@/lib/products';
@@ -9,6 +9,7 @@ import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { motion, AnimatePresence } from 'framer-motion';
 import { NativeButton } from "@/components/ui/NativeButton";
+import { Slider } from "@/components/ui/slider";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
@@ -62,7 +63,18 @@ export default function CatalogoViewer({ isDark = true, onProductsChange }: Prop
   const [activePanel, setActivePanel] = useState<{ title: string; items: typeof products } | null>(null);
   const [selectedItems, setSelectedItems] = useState<typeof products>([]);
   const [cantidades, setCantidades] = useState<{ [key: string]: number }>({});
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const touchStartX = useRef(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY < 400 && activePanel) {
+        setActivePanel(null);
+      }
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [activePanel]);
 
   // GSAP Refs
   const sectionRef = useRef<HTMLElement>(null);
@@ -239,11 +251,8 @@ export default function CatalogoViewer({ isDark = true, onProductsChange }: Prop
                 <NativeButton
                   variant="default"
                   size="default"
-                  className="bg-zinc-900 hover:bg-zinc-800 text-white border border-zinc-800 font-bold rounded-full h-11 px-6 flex items-center gap-2"
+                  className="bg-zinc-900 hover:bg-zinc-800 text-white border border-zinc-800 font-bold rounded-full h-11 px-6 flex items-center justify-center"
                 >
-                  <svg className="w-5 h-5 text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
-                    <path fillRule="evenodd" d="M4.998 7.78C6.729 6.345 9.198 5 12 5c2.802 0 5.27 1.345 7.002 2.78a12.713 12.713 0 0 1 2.096 2.183c.253.344.465.682.618.997.14.286.284.658.284 1.04s-.145.754-.284 1.04a6.6 6.6 0 0 1-.618.997 12.712 12.712 0 0 1-2.096 2.183C17.271 17.655 14.802 19 12 19c-2.802 0-5.27-1.345-7.002-2.78a12.712 12.712 0 0 1-2.096-2.183 6.6 6.6 0 0 1-.618-.997C2.144 12.754 2 12.382 2 12s.145-.754.284-1.04c.153-.315.365-.653.618-.997A12.714 12.714 0 0 1 4.998 7.78ZM12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" clipRule="evenodd"/>
-                  </svg>
                   Ver productos
                 </NativeButton>
               </div>
@@ -261,6 +270,17 @@ export default function CatalogoViewer({ isDark = true, onProductsChange }: Prop
             disabled={currentPage === PAGES.length - 1}
             className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/50 hover:bg-black/70 text-white text-xl flex items-center justify-center disabled:opacity-0 transition-all z-20"
           >›</button>
+
+          {/* Botón Maximizar (Modo Pantalla Completa) */}
+          <button
+            onClick={(e) => { e.stopPropagation(); setIsFullscreen(true); }}
+            className="absolute right-3 top-3 w-9 h-9 rounded-full bg-black/50 hover:bg-black/70 text-white flex items-center justify-center transition-all z-20 hover:scale-105 active:scale-95 shadow-md"
+            title="Pantalla Completa"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/>
+            </svg>
+          </button>
         </div>
 
         {/* Controles pegados debajo de la imagen */}
@@ -274,9 +294,16 @@ export default function CatalogoViewer({ isDark = true, onProductsChange }: Prop
           <span className={cn('text-xs', isDark ? 'text-white/30' : 'text-slate-400')}>de 36</span>
         </div>
 
-        {/* Barra de progreso */}
-        <div className={cn('w-full h-1 rounded-full -mt-4 mb-6 overflow-hidden', isDark ? 'bg-white/10' : 'bg-slate-200')}>
-          <div className="h-full bg-[#0066B3] rounded-full transition-all duration-300" style={{ width: `${((currentPage + 1) / PAGES.length) * 100}%` }} />
+        {/* Barra de desplazamiento rápido (Page Scrubber) */}
+        <div className="w-full mt-2 mb-6 px-1 flex flex-col gap-1.5">
+          <Slider
+            min={1}
+            max={PAGES.length}
+            step={1}
+            value={[currentPage + 1]}
+            onValueChange={(val) => goTo(val[0] - 1)}
+            className="w-full cursor-pointer py-3 touch-none"
+          />
         </div>
       </div>
 
@@ -340,6 +367,101 @@ export default function CatalogoViewer({ isDark = true, onProductsChange }: Prop
               >
                 Listo — {selectedItems.length} producto{selectedItems.length !== 1 ? 's' : ''} seleccionado{selectedItems.length !== 1 ? 's' : ''}
               </NativeButton>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modo Pantalla Completa (Fullscreen Focus) */}
+      {isFullscreen && (
+        <div className="fixed inset-0 z-[150] bg-zinc-950/98 flex flex-col items-center justify-center p-4 md:p-8" data-lenis-prevent="true">
+          {/* Botón de cierre */}
+          <button
+            onClick={() => setIsFullscreen(false)}
+            className="absolute top-4 right-4 w-11 h-11 rounded-full bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-400 hover:text-white flex items-center justify-center transition-all z-[160] hover:scale-105 active:scale-95 shadow-lg cursor-pointer"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+
+          <div className="w-full max-w-[1000px] flex flex-col gap-4">
+            {/* Título en pantalla completa */}
+            <div className="text-center text-white">
+              <h2 className="text-xl md:text-2xl font-black uppercase tracking-tight">
+                {PAGES[currentPage].title}
+              </h2>
+              <p className="text-[10px] text-zinc-400 mt-1 uppercase tracking-wider">
+                Catálogo Royal Prestige® — Página {currentPage + 1} de {PAGES.length}
+              </p>
+            </div>
+
+            {/* Contenedor Imagen */}
+            <div
+              className={cn(
+                'relative w-full overflow-hidden rounded-2xl border border-zinc-800 shadow-2xl bg-transparent aspect-[2/1]',
+                PAGES[currentPage].type !== 'static' && 'cursor-pointer group'
+              )}
+              onClick={() => handlePageClick(PAGES[currentPage])}
+            >
+              <Image
+                src={`/catalogo_pages/webp/page-${PAGES[currentPage].page}.webp`}
+                alt={PAGES[currentPage].title}
+                width={1400}
+                height={700}
+                className="w-full h-auto block"
+                priority
+              />
+
+              {/* Overlay en pantalla completa */}
+              {PAGES[currentPage].type !== 'static' && (
+                <div className="absolute inset-0 z-10 bg-black/0 group-hover:bg-black/15 transition-all duration-300 flex items-center justify-center pointer-events-none">
+                  <div className="opacity-0 group-hover:opacity-100 transition-all duration-300">
+                    <NativeButton
+                      variant="default"
+                      size="default"
+                      className="bg-zinc-900 hover:bg-zinc-800 text-white border border-zinc-800 font-bold rounded-full h-11 px-6 flex items-center justify-center"
+                    >
+                      Ver productos
+                    </NativeButton>
+                  </div>
+                </div>
+              )}
+
+              {/* Flechas en pantalla completa */}
+              <button
+                onClick={e => { e.stopPropagation(); goTo(currentPage - 1); }}
+                disabled={currentPage === 0}
+                className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/50 hover:bg-black/70 text-white text-xl flex items-center justify-center disabled:opacity-0 transition-all z-20"
+              >‹</button>
+              <button
+                onClick={e => { e.stopPropagation(); goTo(currentPage + 1); }}
+                disabled={currentPage === PAGES.length - 1}
+                className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/50 hover:bg-black/70 text-white text-xl flex items-center justify-center disabled:opacity-0 transition-all z-20"
+              >›</button>
+            </div>
+
+            {/* Controles de paginación / Scrubber */}
+            <div className="flex items-center justify-center gap-3 mt-1 text-white">
+              <span className="text-xs text-zinc-400">Página</span>
+              <input
+                type="number" min={1} max={PAGES.length} value={pageInput}
+                onChange={e => { setPageInput(e.target.value); const n = parseInt(e.target.value); if (!isNaN(n) && n >= 1 && n <= PAGES.length) goTo(n - 1); }}
+                className="w-14 text-center px-2 py-1.5 rounded-lg border border-zinc-700 bg-zinc-800 text-white text-sm font-bold focus:border-[#0066B3]"
+              />
+              <span className="text-xs text-zinc-400">de {PAGES.length}</span>
+            </div>
+
+            <div className="px-4">
+              <Slider
+                min={1}
+                max={PAGES.length}
+                step={1}
+                value={[currentPage + 1]}
+                onValueChange={(val) => goTo(val[0] - 1)}
+                className="w-full cursor-pointer py-3 touch-none"
+              />
             </div>
           </div>
         </div>
