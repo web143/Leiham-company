@@ -203,7 +203,7 @@ export default function CatalogoViewer({ isDark = true, onProductsChange }: Prop
         {/* Contenedor imagen — solo tan alto como la imagen */}
         <div
           className={cn(
-            'relative w-full overflow-hidden rounded-2xl shadow-2xl bg-transparent aspect-[14/10]',
+            'relative w-full overflow-hidden rounded-2xl shadow-2xl bg-transparent aspect-[2/1]',
             PAGES[currentPage].type !== 'static' && 'cursor-pointer group'
           )}
           onClick={() => handlePageClick(PAGES[currentPage])}
@@ -224,7 +224,7 @@ export default function CatalogoViewer({ isDark = true, onProductsChange }: Prop
                 src={`/catalogo_pages/webp/page-${PAGES[currentPage].page}.webp`}
                 alt={PAGES[currentPage].title}
                 width={1400}
-                height={1000}
+                height={700}
                 className="w-full h-auto block"
                 priority
               />
