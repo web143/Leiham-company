@@ -27,13 +27,13 @@ export default function Home() {
   const heroRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: heroRef,
-    offset: ["start start", "end end"]
+    offset: ["start start", "end start"]
   });
 
-  const catálogoOpacity = useTransform(scrollYProgress, [0.35, 0.85], [0, 1]);
-  const catálogoScale = useTransform(scrollYProgress, [0.35, 0.85], [0.96, 1]);
-  const catálogoY = useTransform(scrollYProgress, [0.35, 0.85], [-200, 0]);
-  const catálogoPointerEvents = useTransform(scrollYProgress, v => v >= 0.85 ? "auto" : "none");
+  const catálogoOpacity = useTransform(scrollYProgress, [0.0, 0.5], [0, 1]);
+  const catálogoScale = useTransform(scrollYProgress, [0.0, 0.5], [0.96, 1]);
+  const catálogoY = useTransform(scrollYProgress, [0.0, 0.5], [-100, 0]);
+  const catálogoPointerEvents = useTransform(scrollYProgress, v => v >= 0.5 ? "auto" : "none");
 
   useEffect(() => {
     if (typeof window === 'undefined') return;

@@ -147,7 +147,7 @@ export default function HeroLeiham({ isDark = true, scrollProgress }: { isDark?:
 
     const { scrollYProgress } = useScroll({
         target: sectionRef,
-        offset: ["start start", "end end"]
+        offset: ["start start", "end start"]
     });
 
     const activeScrollProgress = scrollProgress || scrollYProgress;
@@ -162,19 +162,19 @@ export default function HeroLeiham({ isDark = true, scrollProgress }: { isDark?:
     const progress = isMobileHero ? activeScrollProgress : springProgress;
 
     // On mobile: scale capped at 3 (vs 8 on desktop) — halves the GPU rasterization cost
-    const titleScale = useTransform(progress, [0, 0.6], [1, isMobileHero ? 3 : 8]);
-    const titleOpacity = useTransform(progress, [0, 0.1, 0.55, 0.65], [1, 1, 1, 0]);
-    const titleLetterSpacing = useTransform(progress, [0, 0.6], ["-0.02em", "0.3em"]);
+    const titleScale = useTransform(progress, [0, 0.5], [1, isMobileHero ? 3 : 8]);
+    const titleOpacity = useTransform(progress, [0, 0.1, 0.35, 0.5], [1, 1, 1, 0]);
+    const titleLetterSpacing = useTransform(progress, [0, 0.5], ["-0.02em", "0.3em"]);
     
     // Subtitle animations
     const subtitleOpacity = useTransform(progress, [0, 0.2], [1, 0]);
     const subtitleY = useTransform(progress, [0, 0.2], [0, 30]);
 
-    const heroDisplay = useTransform(progress, v => v >= 0.98 ? "none" : "block");
-    const heroPointerEvents = useTransform(progress, v => v >= 0.7 ? "none" : "auto");
+    const heroDisplay = useTransform(progress, v => v >= 0.6 ? "none" : "block");
+    const heroPointerEvents = useTransform(progress, v => v >= 0.5 ? "none" : "auto");
 
     return (
-        <section ref={sectionRef} style={{ height: isMobileHero ? '115vh' : '125vh', minWidth: isMobileHero ? undefined : '1100px' }} className={cn("relative transition-colors duration-300", isDark ? 'bg-black' : 'bg-white')}>
+        <section ref={sectionRef} style={{ height: '100vh', minWidth: isMobileHero ? undefined : '1100px' }} className={cn("relative transition-colors duration-300", isDark ? 'bg-black' : 'bg-white')}>
             <motion.div style={{ display: heroDisplay, pointerEvents: heroPointerEvents }} className="sticky top-0 h-screen overflow-hidden">
                 <motion.div className="w-full h-full relative flex items-center justify-center">
                     {/* Lamp Effect - con ref para parallax */}
