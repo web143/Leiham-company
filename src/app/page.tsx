@@ -82,8 +82,17 @@ export default function Home() {
             ? "bg-black bg-gradient-to-br from-[#0066B3]/[0.08] via-transparent to-[#0066B3]/[0.15]" 
             : "bg-white bg-gradient-to-br from-[#0066B3]/[0.03] via-transparent to-[#0066B3]/[0.05]"
         )}>
-          {/* Light Rays Background */}
-          <div className="absolute inset-0 z-0 pointer-events-none layout-blur-subtle">
+          {/* Light Rays Corner Glow Effects */}
+          <div className="absolute top-0 left-0 -translate-x-1/4 -translate-y-1/4 pointer-events-none z-0 opacity-75 sm:opacity-100 w-[35vw] h-[35vw] min-w-[300px] min-h-[300px] layout-blur-subtle">
+            <LightRays />
+          </div>
+          <div className="absolute top-0 right-0 translate-x-1/4 -translate-y-1/4 pointer-events-none z-0 opacity-75 sm:opacity-100 scale-x-[-1] w-[35vw] h-[35vw] min-w-[300px] min-h-[300px] layout-blur-subtle">
+            <LightRays />
+          </div>
+          <div className="absolute bottom-0 left-0 -translate-x-1/4 translate-y-1/4 pointer-events-none z-0 opacity-75 sm:opacity-100 scale-y-[-1] w-[35vw] h-[35vw] min-w-[300px] min-h-[300px] layout-blur-subtle">
+            <LightRays />
+          </div>
+          <div className="absolute bottom-0 right-0 translate-x-1/4 translate-y-1/4 pointer-events-none z-0 opacity-75 sm:opacity-100 scale-[-1] w-[35vw] h-[35vw] min-w-[300px] min-h-[300px] layout-blur-subtle">
             <LightRays />
           </div>
 
