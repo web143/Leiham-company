@@ -4,6 +4,7 @@ import { Search, Plus, Check, X, Gift, AlertTriangle, CheckCircle2, AlertCircle 
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { products } from "@/lib/products";
 import { cn } from "@/lib/utils";
+import { Slider } from "@/components/ui/slider";
 
 const TABLA_PAGOS = [
   { cuotas: 2, pct: 51.95 }, { cuotas: 3, pct: 35.07 }, { cuotas: 4, pct: 26.64 },
@@ -530,8 +531,12 @@ export default function CalculadoraFinanciamiento({ isDark = true, externalItems
                     <span className={cn("text-xs font-bold", textSecondary)}>%</span>
                   </div>
                 </div>
-                <input type="range" min={5} max={100} step={1} value={porcentaje} onChange={e => handlePorcentajeChange(Number(e.target.value))}
-                  className={cn("w-full h-1.5 rounded-full appearance-none cursor-pointer accent-[#0066B3] transition", isDark ? "bg-white/10" : "bg-slate-200")}
+                <Slider
+                  min={5}
+                  max={100}
+                  step={1}
+                  value={[porcentaje]}
+                  onValueChange={(val) => handlePorcentajeChange(val[0])}
                 />
               </div>
 
