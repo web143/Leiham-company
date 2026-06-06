@@ -30,8 +30,8 @@ export default function Home() {
     offset: ["start start", "end end"]
   });
 
-  const catálogoOpacity = useTransform(scrollYProgress, [0.0, 0.6], [0, 1]);
-  const catálogoScale = useTransform(scrollYProgress, [0.0, 0.6], [0.96, 1]);
+  const catálogoOpacity = useTransform(scrollYProgress, [0.0, 0.75, 1.0], [0, 0, 1]);
+  const catálogoScale = useTransform(scrollYProgress, [0.75, 1.0], [0.96, 1]);
   
   const catálogoY = useTransform(scrollYProgress, v => {
     const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
@@ -40,7 +40,7 @@ export default function Home() {
     return `${currentVal}vh`;
   });
 
-  const catálogoPointerEvents = useTransform(scrollYProgress, v => v >= 0.65 ? "auto" : "none");
+  const catálogoPointerEvents = useTransform(scrollYProgress, v => v >= 0.95 ? "auto" : "none");
 
   useEffect(() => {
     if (typeof window === 'undefined') return;

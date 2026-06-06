@@ -162,16 +162,16 @@ export default function HeroLeiham({ isDark = true, scrollProgress }: { isDark?:
     const progress = isMobileHero ? activeScrollProgress : springProgress;
 
     // On mobile: scale capped at 3 (vs 8 on desktop) — halves the GPU rasterization cost
-    const titleScale = useTransform(progress, [0, 0.6], [1, isMobileHero ? 3 : 8]);
-    const titleOpacity = useTransform(progress, [0, 0.1, 0.55, 0.65], [1, 1, 1, 0]);
-    const titleLetterSpacing = useTransform(progress, [0, 0.6], ["-0.02em", "0.3em"]);
+    const titleScale = useTransform(progress, [0, 0.85], [1, isMobileHero ? 3 : 8]);
+    const titleOpacity = useTransform(progress, [0, 0.1, 0.65, 0.85], [1, 1, 1, 0]);
+    const titleLetterSpacing = useTransform(progress, [0, 0.85], ["-0.02em", "0.3em"]);
     
     // Subtitle animations
-    const subtitleOpacity = useTransform(progress, [0, 0.25], [1, 0]);
-    const subtitleY = useTransform(progress, [0, 0.25], [0, 30]);
+    const subtitleOpacity = useTransform(progress, [0, 0.45], [1, 0]);
+    const subtitleY = useTransform(progress, [0, 0.45], [0, 30]);
 
-    const heroDisplay = useTransform(progress, v => v >= 0.85 ? "none" : "block");
-    const heroPointerEvents = useTransform(progress, v => v >= 0.65 ? "none" : "auto");
+    const heroDisplay = useTransform(progress, v => v >= 0.9 ? "none" : "block");
+    const heroPointerEvents = useTransform(progress, v => v >= 0.8 ? "none" : "auto");
 
     return (
         <section ref={sectionRef} style={{ height: isMobileHero ? '180vh' : '200vh', minWidth: isMobileHero ? undefined : '1100px' }} className={cn("relative transition-colors duration-300", isDark ? 'bg-black' : 'bg-white')}>
@@ -332,10 +332,10 @@ function FloatingProduct({
     const progress = scrollProgress ?? fallbackProgress;
 
     // TODOS los hooks siempre se llaman al inicio del componente
-    const moveX = useTransform(progress, [0, 0.5], [0, scrollTarget.x]);
-    const moveY = useTransform(progress, [0, 0.5], [0, scrollTarget.y]);
-    const scaleOut = useTransform(progress, [0, 0.5], [1, scrollTarget.scale]);
-    const opacityOut = useTransform(progress, [0, 0.4], [1, 0]);
+    const moveX = useTransform(progress, [0, 0.8], [0, scrollTarget.x]);
+    const moveY = useTransform(progress, [0, 0.8], [0, scrollTarget.y]);
+    const scaleOut = useTransform(progress, [0, 0.8], [1, scrollTarget.scale]);
+    const opacityOut = useTransform(progress, [0, 0.75], [1, 0]);
     
     // Emil Kowalski GPU-acceleration fix: use string interpolation instead of individual x/y props
     const transformString = useMotionTemplate`translateX(${moveX}px) translateY(${moveY}px) scale(${scaleOut})`;
