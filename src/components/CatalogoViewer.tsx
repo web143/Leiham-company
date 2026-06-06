@@ -192,7 +192,7 @@ export default function CatalogoViewer({ isDark = true, onProductsChange }: Prop
   };
 
   return (
-    <section ref={sectionRef} className={cn('w-full transition-colors duration-300 relative z-10 -mt-[104vh] md:-mt-[106vh]', isDark ? 'bg-black' : 'bg-white')}>
+    <section ref={sectionRef} className={cn('w-full transition-colors duration-300', isDark ? 'bg-black' : 'bg-white')}>
 
       {/* Título animado con Mask Reveal simulado */}
       <div ref={titleWrapperRef} className="text-center pt-8 pb-4 px-4 overflow-hidden">
