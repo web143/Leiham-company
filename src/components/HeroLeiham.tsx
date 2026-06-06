@@ -161,8 +161,8 @@ export default function HeroLeiham({ isDark = true, scrollProgress }: { isDark?:
     // Choose the progress value based on device (without conditional hooks)
     const progress = isMobileHero ? activeScrollProgress : springProgress;
 
-    // On mobile: scale capped at 3 (vs 8 on desktop) — halves the GPU rasterization cost
-    const titleScale = useTransform(progress, [0, 0.85], [1, isMobileHero ? 3 : 8]);
+    // On mobile: scale capped at 2 (vs 8 on desktop) — halves the GPU rasterization cost
+    const titleScale = useTransform(progress, [0, 0.85], [1, isMobileHero ? 2 : 8]);
     const titleOpacity = useTransform(progress, [0, 0.1, 0.65, 0.85], [1, 1, 1, 0]);
     const titleLetterSpacing = useTransform(progress, [0, 0.85], ["-0.02em", "0.3em"]);
     
@@ -175,7 +175,7 @@ export default function HeroLeiham({ isDark = true, scrollProgress }: { isDark?:
 
     return (
         <section ref={sectionRef} style={{ height: isMobileHero ? '180vh' : '200vh', minWidth: isMobileHero ? undefined : '1100px' }} className={cn("relative transition-colors duration-300", isDark ? 'bg-black' : 'bg-white')}>
-            <motion.div style={{ display: heroDisplay, pointerEvents: heroPointerEvents }} className="sticky top-0 h-screen overflow-hidden">
+            <motion.div style={{ display: heroDisplay, pointerEvents: heroPointerEvents, transform: "translateZ(0)", willChange: "transform, opacity" }} className="sticky top-0 h-screen overflow-hidden">
                 <motion.div className="w-full h-full relative flex items-center justify-center">
                     {/* Lamp Effect - con ref para parallax */}
                     <div ref={bgGlowRef} style={{ position: 'absolute', top: '-10px', left: 0, right: 0, zIndex: 1, pointerEvents: 'none', height: '320px', overflow: 'visible' }}>
@@ -233,6 +233,7 @@ export default function HeroLeiham({ isDark = true, scrollProgress }: { isDark?:
                                     filter: isMobileHero ? "none" : blurStyle,
                                     transformOrigin: "center center",
                                     willChange: "transform, opacity",
+                                    transform: "translateZ(0)",
                                 }}
                             >
                                 <h1 className={cn("text-[clamp(2.5rem,10vw,9rem)] font-black tracking-tight uppercase leading-none transition-colors duration-300", isDark ? "text-white" : "text-slate-900")}>
@@ -338,7 +339,7 @@ function FloatingProduct({
     const opacityOut = useTransform(progress, [0, 0.75], [1, 0]);
     
     // Emil Kowalski GPU-acceleration fix: use string interpolation instead of individual x/y props
-    const transformString = useMotionTemplate`translateX(${moveX}px) translateY(${moveY}px) scale(${scaleOut})`;
+    const transformString = useMotionTemplate`translateX(${moveX}px) translateY(${moveY}px) scale(${scaleOut}) translateZ(0)`;
 
     useEffect(() => {
         if (typeof window === 'undefined') return;
@@ -426,7 +427,7 @@ function FloatingProduct({
                         alt={alt}
                         fill
                         className="object-contain"
-                        style={{ filter: "drop-shadow(0 25px 50px rgba(0,0,0,0.5))" }}
+                        style={{ filter: isMobile ? "none" : "drop-shadow(0 25px 50px rgba(0,0,0,0.5))" }}
                     />
                 </motion.div>
             </motion.div>
