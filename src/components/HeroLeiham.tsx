@@ -177,11 +177,10 @@ export default function HeroLeiham({ isDark = true, scrollProgress }: { isDark?:
         <section 
             ref={sectionRef} 
             style={{ 
-                height: isMobileHero ? 'calc(var(--vh, 1vh) * 180)' : 'calc(var(--vh, 1vh) * 200)', 
-                minHeight: 'calc(var(--vh, 1vh) * 100)',
+                height: 'calc(var(--vh, 1vh) * 100)',
                 minWidth: isMobileHero ? undefined : '1100px' 
             }} 
-            className={cn("relative transition-colors duration-300 w-full flex flex-col justify-between", isDark ? 'bg-black' : 'bg-white')}
+            className="relative w-full overflow-hidden"
         >
             <motion.div 
                 style={{ 
@@ -191,9 +190,9 @@ export default function HeroLeiham({ isDark = true, scrollProgress }: { isDark?:
                     willChange: "transform, opacity",
                     height: "calc(var(--vh, 1vh) * 100)"
                 }} 
-                className="sticky top-0 w-full overflow-hidden"
+                className={cn("sticky top-0 w-full overflow-hidden transition-colors duration-300", isDark ? 'bg-black' : 'bg-white')}
             >
-                <motion.div className="w-full h-full relative flex items-center justify-center">
+                <motion.div className="absolute inset-0 w-full h-full flex items-center justify-center">
                     {/* Lamp Effect - con ref para parallax */}
                     <div ref={bgGlowRef} style={{ position: 'absolute', top: '-10px', left: 0, right: 0, zIndex: 1, pointerEvents: 'none', height: '320px', overflow: 'visible' }}>
                         {/* Glow principal */}
