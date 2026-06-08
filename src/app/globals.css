@@ -34,6 +34,8 @@ body {
 html {
   /* Smooth scroll only on the root — NOT on every element */
   scroll-behavior: smooth;
+  /* Eliminates double-tap zoom (300ms delay) — universal browser support */
+  touch-action: manipulation;
 }
 
 /* 

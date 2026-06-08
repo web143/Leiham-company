@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
 
@@ -33,6 +33,15 @@ export const metadata: Metadata = {
     description: 'Catálogo de productos y calculadora de financiamiento Royal Prestige®',
     images: ['https://leiham-company.vercel.app/catalogo_pages/webp/page-01.webp'],
   },
+};
+
+// Viewport export: blocks pinch-to-zoom on Android/Chromium/Brave via meta viewport tag.
+// iOS Safari ignores user-scalable=no by policy — handled separately in page.tsx via touchmove listener.
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
 };
 
 import ErrorBoundary from "@/components/ErrorBoundary";

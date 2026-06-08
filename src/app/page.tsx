@@ -60,6 +60,19 @@ export default function Home() {
     return () => window.removeEventListener('resize', setRealH);
   }, []);
 
+  // Block iOS Safari pinch-to-zoom: iOS ignores user-scalable=no in the viewport meta tag
+  // by policy, so we must intercept multi-touch gestures at the event level.
+  // { passive: false } is required — browsers ignore preventDefault() on passive listeners.
+  useEffect(() => {
+    const handleTouchMove = (event: TouchEvent) => {
+      if (event.touches.length > 1) {
+        event.preventDefault();
+      }
+    };
+    document.addEventListener('touchmove', handleTouchMove, { passive: false });
+    return () => document.removeEventListener('touchmove', handleTouchMove);
+  }, []);
+
   const toggleTheme = () => {
     const newMode = !isDark;
     setIsDark(newMode);
