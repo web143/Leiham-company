@@ -177,8 +177,9 @@ export default function HeroLeiham({ isDark = true, scrollProgress }: { isDark?:
         <section 
             ref={sectionRef} 
             style={{ 
-                height: 'calc(var(--vh, 1vh) * 100)',
-                minWidth: isMobileHero ? undefined : '1100px' 
+                height: isMobileHero ? 'calc(var(--vh, 1vh) * 180)' : 'calc(var(--vh, 1vh) * 200)',
+                position: 'relative',
+                width: '100%'
             }} 
             className="relative w-full overflow-hidden"
         >
