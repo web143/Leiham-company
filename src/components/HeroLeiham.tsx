@@ -174,23 +174,30 @@ export default function HeroLeiham({ isDark = true, scrollProgress }: { isDark?:
     const heroPointerEvents = useTransform(progress, v => v >= 0.8 ? "none" : "auto");
 
     return (
-        <section 
-            ref={sectionRef} 
-            style={{ 
+        // ORIGINAL structure restored exactly from d1fd50f.
+        // Android fix: section height uses calc(var(--vh,1vh)*N) instead of raw vh units.
+        // Sticky div height uses inline style with --vh polyfill instead of h-[100dvh] Tailwind class
+        // (Tailwind can't process calc(var(...)) with fallback commas reliably in production builds).
+        // Everything else is IDENTICAL to the original — no z-index, no flex, no animation changes.
+        <section
+            ref={sectionRef}
+            style={{
                 height: isMobileHero ? 'calc(var(--vh, 1vh) * 180)' : 'calc(var(--vh, 1vh) * 200)',
                 minWidth: isMobileHero ? undefined : '1100px'
-            }} 
-            className={cn("relative transition-colors duration-300 min-h-screen w-full flex flex-col justify-between overflow-hidden", isDark ? 'bg-black' : 'bg-white')}
+            }}
+            className={cn("relative transition-colors duration-300", isDark ? 'bg-black' : 'bg-white')}
         >
-            <motion.div 
-                style={{ 
-                    display: heroDisplay, 
-                    pointerEvents: heroPointerEvents, 
-                    transform: "translateZ(0)", 
+            <motion.div
+                style={{
+                    display: heroDisplay,
+                    pointerEvents: heroPointerEvents,
+                    transform: "translateZ(0)",
                     willChange: "transform, opacity",
-                    height: "calc(var(--vh, 1vh) * 100)"
-                }} 
-                className={cn("sticky top-0 w-full overflow-hidden transition-colors duration-300", isDark ? 'bg-black' : 'bg-white')}
+                    // Android/Samsung fix: use --vh polyfill instead of 100dvh.
+                    // On desktop this falls back to 1vh * 100 = 100vh (identical to h-screen).
+                    height: 'calc(var(--vh, 1vh) * 100)'
+                }}
+                className="sticky top-0 overflow-hidden"
             >
                 <motion.div className="w-full h-full relative flex items-center justify-center">
                     {/* Lamp Effect - con ref para parallax */}
@@ -450,5 +457,3 @@ function FloatingProduct({
         </motion.div>
     );
 }
-
-
