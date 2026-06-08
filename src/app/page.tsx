@@ -50,6 +50,14 @@ export default function Home() {
     const saved = localStorage.getItem('leiham-theme');
     if (saved === 'light') setIsDark(false);
     setMounted(true);
+
+    const setRealH = () => {
+      const vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty('--vh', `${vh}px`);
+    };
+    setRealH();
+    window.addEventListener('resize', setRealH);
+    return () => window.removeEventListener('resize', setRealH);
   }, []);
 
   const toggleTheme = () => {

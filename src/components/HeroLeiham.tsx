@@ -174,8 +174,24 @@ export default function HeroLeiham({ isDark = true, scrollProgress }: { isDark?:
     const heroPointerEvents = useTransform(progress, v => v >= 0.8 ? "none" : "auto");
 
     return (
-        <section ref={sectionRef} style={{ height: isMobileHero ? '180vh' : '200vh', minWidth: isMobileHero ? undefined : '1100px' }} className={cn("relative transition-colors duration-300", isDark ? 'bg-black' : 'bg-white')}>
-            <motion.div style={{ display: heroDisplay, pointerEvents: heroPointerEvents, transform: "translateZ(0)", willChange: "transform, opacity" }} className="sticky top-0 h-[100dvh] md:h-screen overflow-hidden">
+        <section 
+            ref={sectionRef} 
+            style={{ 
+                height: isMobileHero ? '180vh' : '200vh', 
+                minWidth: isMobileHero ? undefined : '1100px' 
+            }} 
+            className={cn("relative transition-colors duration-300 min-h-screen min-h-[100svh] w-full flex flex-col justify-between", isDark ? 'bg-black' : 'bg-white')}
+        >
+            <motion.div 
+                style={{ 
+                    display: heroDisplay, 
+                    pointerEvents: heroPointerEvents, 
+                    transform: "translateZ(0)", 
+                    willChange: "transform, opacity",
+                    height: "calc(var(--vh, 1vh) * 100)"
+                }} 
+                className="sticky top-0 w-full overflow-hidden"
+            >
                 <motion.div className="w-full h-full relative flex items-center justify-center">
                     {/* Lamp Effect - con ref para parallax */}
                     <div ref={bgGlowRef} style={{ position: 'absolute', top: '-10px', left: 0, right: 0, zIndex: 1, pointerEvents: 'none', height: '320px', overflow: 'visible' }}>
