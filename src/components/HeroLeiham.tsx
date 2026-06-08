@@ -177,10 +177,11 @@ export default function HeroLeiham({ isDark = true, scrollProgress }: { isDark?:
         <section 
             ref={sectionRef} 
             style={{ 
-                height: isMobileHero ? '180vh' : '200vh', 
+                height: isMobileHero ? 'calc(var(--vh, 1vh) * 180)' : 'calc(var(--vh, 1vh) * 200)', 
+                minHeight: 'calc(var(--vh, 1vh) * 100)',
                 minWidth: isMobileHero ? undefined : '1100px' 
             }} 
-            className={cn("relative transition-colors duration-300 min-h-screen min-h-[100svh] w-full flex flex-col justify-between", isDark ? 'bg-black' : 'bg-white')}
+            className={cn("relative transition-colors duration-300 w-full flex flex-col justify-between", isDark ? 'bg-black' : 'bg-white')}
         >
             <motion.div 
                 style={{ 
