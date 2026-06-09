@@ -388,10 +388,10 @@ export default function CatalogoViewer({ isDark = true, onProductsChange, onOver
       {/* Panel modal (BottomSheet) */}
       {activePanel && (
         <div className="fixed inset-0 z-[200] flex items-end md:items-center justify-center md:p-4" onClick={() => setActivePanel(null)}>
-          <div ref={modalBgRef} className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
+          <div ref={modalBgRef} className="absolute inset-0 w-full h-full bg-black/70 backdrop-blur-sm" />
           <div
             ref={modalContentRef}
-            className="relative w-full max-w-lg h-[55vh] md:h-auto md:max-h-[85vh] landscape:h-auto landscape:max-h-[95dvh] rounded-t-2xl md:rounded-2xl overflow-hidden flex flex-col shadow-2xl bg-zinc-900 border-t md:border border-zinc-800"
+            className="relative w-full max-w-lg h-[55vh] md:h-auto md:max-h-[85vh] landscape:h-auto landscape:max-h-[95dvh] rounded-t-2xl md:rounded-2xl overflow-hidden flex flex-col shadow-2xl bg-zinc-900 border-t md:border border-zinc-800 md:fixed md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:bottom-auto"
             onClick={e => e.stopPropagation()}
           >
             <div className="flex items-center justify-between p-4 landscape:p-2.5 border-b border-zinc-800 bg-zinc-900/50">
