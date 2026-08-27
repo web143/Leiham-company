@@ -345,7 +345,7 @@ export default function CalculadoraFinanciamiento({ isDark = true, externalItems
               value={search} onChange={e => setSearch(e.target.value)}
               placeholder="Buscar producto o código..."
               className={cn("w-full pl-10 pr-9 py-3 rounded-xl font-bold text-[13px] border outline-none transition", 
-                isDark ? "bg-white/5 border-white/8 text-white placeholder:text-white/20 focus:border-[#0066B3]/60 focus:bg-white/10" : "bg-white border-slate-200 placeholder:text-slate-400 focus:border-[#0066B3]/50 focus:bg-slate-50")}
+                isDark ? "bg-white/5 border-white/8 text-white placeholder:text-white/20 focus:border-[#0066B3]/60 focus:bg-white/10" : "bg-white border-slate-200 text-slate-900 placeholder:text-slate-400 focus:border-[#0066B3]/50 focus:bg-slate-50")}
             />
             {search && (
               <button onClick={() => setSearch("")} className={cn("absolute right-3.5 top-1/2 -translate-y-1/2", textSecondary)}>
@@ -690,7 +690,7 @@ export default function CalculadoraFinanciamiento({ isDark = true, externalItems
                   </div>
                 )}
                 
-                <p className="text-[9px] font-bold uppercase tracking-widest opacity-40">Máx 10% · Sin combinaciones</p>
+                <p className={cn("text-[9px] font-bold uppercase tracking-widest", isDark ? "text-white/40" : "text-slate-500")}>Máx 10% · Sin combinaciones</p>
                 {descuentoUtensilios > 0 && (
                   <div className={cn("px-3 py-2 rounded-xl text-[11px] font-bold border flex justify-between items-center", isDark ? "bg-white/[0.04] border-white/8 text-white/60" : "bg-slate-50 border-slate-200 text-slate-500")}>
                     <span>Jgo. Utensilios 3PZ incluido</span>
