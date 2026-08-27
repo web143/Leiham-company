@@ -131,6 +131,9 @@ export default function CalculadoraFinanciamiento({ isDark = true, externalItems
 
   const fmt = (n: number) => `RD$ ${n.toLocaleString("es-DO", { minimumFractionDigits: 2 })}`;
 
+  // Coloca el signo negativo antes del "RD$" en vez de despues. No reemplaza a fmt.
+  const fmtSigno = (n: number) => (n < 0 ? `-${fmt(Math.abs(n))}` : fmt(n));
+
   const filtered = useMemo(() => {
     const normalize = (s: string) => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
     const searchLower = normalize(search.trim());
@@ -649,7 +652,7 @@ export default function CalculadoraFinanciamiento({ isDark = true, externalItems
         <div className={cardContainer}>
           <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
             <h3 className={cn("text-base font-black tracking-tight", textPrimary)}>Regalos</h3>
-            {totalEfectivo > 0 && <span className={cn("text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full", isDark ? "text-white/50 bg-white/10" : "text-slate-500 bg-slate-100")}>MAX {fmt(maxRegalos)}</span>}
+            {totalEfectivo > 0 && <span className={cn("text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full", isDark ? "text-white/50 bg-white/10" : "text-slate-500 bg-slate-100")}>MAX {fmtSigno(maxRegalos)}</span>}
           </div>
 
           {totalEfectivo <= 0 ? (
@@ -691,7 +694,7 @@ export default function CalculadoraFinanciamiento({ isDark = true, externalItems
                 {descuentoUtensilios > 0 && (
                   <div className={cn("px-3 py-2 rounded-xl text-[11px] font-bold border flex justify-between items-center", isDark ? "bg-white/[0.04] border-white/8 text-white/60" : "bg-slate-50 border-slate-200 text-slate-500")}>
                     <span>Jgo. Utensilios 3PZ incluido</span>
-                    <span className="font-black">- {fmt(descuentoUtensilios)}</span>
+                    <span className={cn("font-black", isDark ? "text-red-400" : "text-red-500")}>{fmtSigno(-descuentoUtensilios)}</span>
                   </div>
                 )}
                 
