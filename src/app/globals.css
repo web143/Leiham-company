@@ -90,16 +90,3 @@ html {
   -webkit-backdrop-filter: blur(4px);
 }
 
-/* Escala visual global al 90% — solo escritorio.
-   Reproduce el aspecto del zoom del navegador al 90% sin tocar el zoom del
-   usuario. No se aplica en <=768px para no afectar el layout móvil ni el
-   guard de font-size:16px de los inputs que evita el auto-zoom de iOS.
-   Nota: no hace falta compensar vh/vw/dvh. Con zoom en el elemento html,
-   Chrome escala el initial containing block, así que las unidades de viewport
-   ya resuelven al tamaño correcto por sí solas. Verificado por medición. */
-@media (min-width: 769px) {
-  html {
-    zoom: 0.9;
-  }
-}
-
