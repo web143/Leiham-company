@@ -97,13 +97,10 @@ export const products = [
     { code: "SP0252", name: "Jgo. de 2 Copas P/Helados C/Pared Doble", category: "Extractor de Jugos RP", price: 3813.56, itbis: 686.44, total: 4500 },
 
     // ── RECIPIENTES / TAZONES / BOWLS ───────────────────────────
-    { code: "SP0066", name: "Tazón Mezclar De 10 QT C/Tapa Con Base Silicona", category: "Recipientes / Tazones / Bowls", price: 6779.66, itbis: 1220.34, total: 8000 },
-    { code: "SP0062", name: "Tazón De 5 QT C/Tapa Doble Pared", category: "Recipientes / Tazones / Bowls", price: 5084.75, itbis: 915.25, total: 6000 },
-    { code: "PR1044", name: "Jgo 4 Tazones P/Mezclar C/Tapas 1, 2, 3 y 5 QT Base Silic", category: "Recipientes / Tazones / Bowls", price: 12288.14, itbis: 2211.86, total: 14500 },
-    { code: "SP0262", name: "Jgo 2 Tazónes P/Mezclar con Silicona 2.5 & 4 QT. 304SS", category: "Recipientes / Tazones / Bowls", price: 6186.44, itbis: 1113.56, total: 7300 },
-    { code: "SP0111", name: "6 Recipientes RP C/Capacidad de 2 Tzs - 500ml", category: "Recipientes / Tazones / Bowls", price: 2457.63, itbis: 442.37, total: 2900 },
-    { code: "-", name: "1 Recipiente RP C/Capacidad de 2 Tzs - 500ml", category: "Recipientes / Tazones / Bowls", price: 677.97, itbis: 122.03, total: 800 },
-    { code: "SP0113", name: "Jgo 8 Pzs Recip. de Comida RP 4, 8, 32, 48 OZ", category: "Recipientes / Tazones / Bowls", price: 3389.83, itbis: 610.17, total: 4000 },
+    { code: "CO4900", name: "Juego de 5 tazones con cuchillas", category: "Recipientes / Tazones / Bowls", price: 34322.03, itbis: 6177.97, total: 40500 },
+    { code: "PR4904", name: "Set de 4 tazones para mezclar sin cuchilla RP", category: "Recipientes / Tazones / Bowls", price: 19915.25, itbis: 3584.75, total: 23500 },
+    { code: "PR4902", name: "Set de 3 tazones para mezclar RP", category: "Recipientes / Tazones / Bowls", price: 12711.86, itbis: 2288.14, total: 15000 },
+    { code: "-", name: "Tazón individual", category: "Recipientes / Tazones / Bowls", price: 5084.75, itbis: 915.25, total: 6000 },
 
     // ── PLANCHAS ─────────────────────────────────────────────────
     { code: "CO9218", name: "Plancha Doble Acero Innove 316 L", category: "Planchas", price: 23728.81, itbis: 4271.19, total: 28000 },
