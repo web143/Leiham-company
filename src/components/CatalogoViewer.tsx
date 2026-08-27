@@ -1,5 +1,6 @@
 'use client';
 import { useState, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import Image from 'next/image';
 import { X } from 'lucide-react';
 import { products } from '@/lib/products';
@@ -386,12 +387,12 @@ export default function CatalogoViewer({ isDark = true, onProductsChange, onOver
       </div>
 
       {/* Panel modal (BottomSheet) */}
-      {activePanel && (
+      {activePanel && createPortal(
         <div className="fixed inset-0 z-[200] flex items-end md:items-center justify-center md:p-4" onClick={() => setActivePanel(null)}>
           <div ref={modalBgRef} className="absolute inset-0 w-full h-full bg-black/70 backdrop-blur-sm" />
           <div
             ref={modalContentRef}
-            className="relative w-full max-w-lg h-[55vh] md:h-auto md:max-h-[85vh] landscape:h-auto landscape:max-h-[95dvh] rounded-t-2xl md:rounded-2xl overflow-hidden flex flex-col shadow-2xl bg-zinc-900 border-t md:border border-zinc-800 md:fixed md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:bottom-auto"
+            className="relative w-full max-w-lg h-[55vh] md:h-auto md:max-h-[85vh] landscape:h-auto landscape:max-h-[95dvh] rounded-t-2xl md:rounded-2xl overflow-hidden flex flex-col shadow-2xl bg-zinc-900 border-t md:border border-zinc-800"
             onClick={e => e.stopPropagation()}
           >
             <div className="flex items-center justify-between p-4 landscape:p-2.5 border-b border-zinc-800 bg-zinc-900/50">
@@ -447,11 +448,12 @@ export default function CatalogoViewer({ isDark = true, onProductsChange, onOver
               </NativeButton>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* Modo Pantalla Completa (Fullscreen Focus) */}
-      {isFullscreen && (
+      {isFullscreen && createPortal(
         <div className="fixed inset-0 z-[150] bg-zinc-950/95 flex flex-col md:items-center md:justify-center p-4 md:p-8 landscape:p-2 h-[100dvh] w-full" data-lenis-prevent="true">
           {/* Botón de cierre */}
           <button
@@ -534,7 +536,8 @@ export default function CatalogoViewer({ isDark = true, onProductsChange, onOver
               </div>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </section>
   );
