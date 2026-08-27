@@ -101,6 +101,8 @@ export const products = [
     { code: "PR4904", name: "Set de 4 tazones para mezclar sin cuchilla RP", category: "Recipientes / Tazones / Bowls", price: 19915.25, itbis: 3584.75, total: 23500 },
     { code: "PR4902", name: "Set de 3 tazones para mezclar RP", category: "Recipientes / Tazones / Bowls", price: 12711.86, itbis: 2288.14, total: 15000 },
     { code: "-", name: "Tazón individual", category: "Recipientes / Tazones / Bowls", price: 5084.75, itbis: 915.25, total: 6000 },
+    { code: "SP0066", name: "Tazón Mezclar De 10 QT C/Tapa Con Base Silicona", category: "Recipientes / Tazones / Bowls", price: 6779.66, itbis: 1220.34, total: 8000 },
+    { code: "SP0262", name: "Jgo 2 Tazónes P/Mezclar con Silicona 2.5 & 4 QT. 304SS", category: "Recipientes / Tazones / Bowls", price: 6186.44, itbis: 1113.56, total: 7300 },
 
     // ── PLANCHAS ─────────────────────────────────────────────────
     { code: "CO9218", name: "Plancha Doble Acero Innove 316 L", category: "Planchas", price: 23728.81, itbis: 4271.19, total: 28000 },

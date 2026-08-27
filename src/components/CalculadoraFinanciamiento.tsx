@@ -647,7 +647,7 @@ export default function CalculadoraFinanciamiento({ isDark = true, externalItems
             const porcentajeUsado = totalEfectivo > 0 ? (totalRegalos / totalEfectivo) * 100 : 0;
             const cerca = totalRegalos > 0 && porcentajeUsado >= 7 && totalRegalos <= maxR;
             const excedido = totalRegalos > maxR;
-            const REGALOS_VOLUMEN = ['PR1044', 'PR0196', 'PR1675', 'PR1685', 'PR2120', 'PR2129', 'PR0008', 'PR0021', 'CO2124', 'CU0825'];
+            const REGALOS_VOLUMEN = ['PR4904', 'PR4902', 'PR0196', 'PR1675', 'PR1685', 'PR2120', 'PR2129', 'PR0008', 'PR0021', 'CO2124', 'CU0825'];
             const elegiblesNormales = products.filter(p => !EXCLUIR.some(ex => p.category.toLowerCase().includes(ex) || p.name.toLowerCase().includes(ex)) && p.total <= maxR && !REGALOS_VOLUMEN.includes(p.code));
             const elegiblesVolumen = products.filter(p => REGALOS_VOLUMEN.includes(p.code));
             const elegibles = [...elegiblesVolumen, ...elegiblesNormales].map((p, index) => {
