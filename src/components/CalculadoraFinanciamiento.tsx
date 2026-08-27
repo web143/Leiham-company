@@ -275,7 +275,7 @@ export default function CalculadoraFinanciamiento({ isDark = true, externalItems
   const bgGlass = isDark ? "bg-white/[0.04] border-white/8" : "bg-white/80 border-slate-200/70";
 
   return (
-    <section id="calculadora" className={cn("w-full min-h-screen transition-colors duration-500 ease-out", isDark ? "bg-[#050505]" : "bg-white")}>
+    <section id="calculadora" className={cn("  w-full min-h-screen min-[769px]:min-h-[calc(100vh/0.9)] transition-colors duration-500 ease-out", isDark ? "bg-[#050505]" : "bg-white")}>
       
       <div className="text-center py-4 px-4">
         <p className="text-[#0066B3] text-[11px] font-black tracking-[0.25em] uppercase mb-2">Leiham Company</p>

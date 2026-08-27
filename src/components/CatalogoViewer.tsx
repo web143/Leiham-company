@@ -391,7 +391,7 @@ export default function CatalogoViewer({ isDark = true, onProductsChange, onOver
           <div ref={modalBgRef} className="absolute inset-0 w-full h-full bg-black/70 backdrop-blur-sm" />
           <div
             ref={modalContentRef}
-            className="relative w-full max-w-lg h-[55vh] md:h-auto md:max-h-[85vh] landscape:h-auto landscape:max-h-[95dvh] rounded-t-2xl md:rounded-2xl overflow-hidden flex flex-col shadow-2xl bg-zinc-900 border-t md:border border-zinc-800 md:fixed md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:bottom-auto"
+            className="relative w-full max-w-lg h-[55vh] md:h-auto   md:max-h-[85vh] min-[769px]:max-h-[calc(85vh/0.9)] landscape:h-auto landscape:max-h-[95dvh] rounded-t-2xl md:rounded-2xl overflow-hidden flex flex-col shadow-2xl bg-zinc-900 border-t md:border border-zinc-800 md:fixed md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:bottom-auto"
             onClick={e => e.stopPropagation()}
           >
             <div className="flex items-center justify-between p-4 landscape:p-2.5 border-b border-zinc-800 bg-zinc-900/50">
@@ -452,7 +452,7 @@ export default function CatalogoViewer({ isDark = true, onProductsChange, onOver
 
       {/* Modo Pantalla Completa (Fullscreen Focus) */}
       {isFullscreen && (
-        <div className="fixed inset-0 z-[150] bg-zinc-950/95 flex flex-col md:items-center md:justify-center p-4 md:p-8 landscape:p-2 h-[100dvh] w-full" data-lenis-prevent="true">
+        <div className="fixed inset-0 z-[150] bg-zinc-950/95 flex flex-col md:items-center md:justify-center p-4 md:p-8   landscape:p-2 h-[100dvh] min-[769px]:h-[calc(100dvh/0.9)] w-full" data-lenis-prevent="true">
           {/* Botón de cierre */}
           <button
             onClick={() => setIsFullscreen(false)}
@@ -464,7 +464,7 @@ export default function CatalogoViewer({ isDark = true, onProductsChange, onOver
             </svg>
           </button>
 
-          <div className="w-full max-w-[1000px] md:max-w-7xl md:w-[95vw] md:h-[92vh] flex flex-col justify-between h-full landscape:h-full md:h-auto gap-4 landscape:gap-1.5 md:gap-4 md:p-2">
+          <div className="w-full max-w-[1000px] md:max-w-7xl   md:w-[95vw] md:h-[92vh] min-[769px]:w-[calc(95vw/0.9)] min-[769px]:h-[calc(92vh/0.9)] flex flex-col justify-between h-full landscape:h-full md:h-auto gap-4 landscape:gap-1.5 md:gap-4 md:p-2">
             {/* Contenedor Imagen */}
             <div
               className={cn(

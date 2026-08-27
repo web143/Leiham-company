@@ -11,12 +11,12 @@ import { cn } from "@/lib/utils";
 // Importación dinámica para deshabilitar SSR y prevenir errores en móvil
 const HeroLeiham = dynamic(() => import('../components/HeroLeiham'), { 
   ssr: false,
-  loading: () => <div className="w-full h-screen bg-black" />
+  loading: () => <div     className="w-full h-screen min-[769px]:h-[calc(100vh/0.9)] bg-black" />
 });
 
 const CalculadoraFinanciamiento = dynamic(() => import('../components/CalculadoraFinanciamiento'), { 
   ssr: false,
-  loading: () => <div className="w-full h-screen bg-black" />
+  loading: () => <div     className="w-full h-screen min-[769px]:h-[calc(100vh/0.9)] bg-black" />
 });
 
 const CatalogoViewer = dynamic(() => import('../components/CatalogoViewer'), { ssr: false });
@@ -52,7 +52,7 @@ export default function Home() {
     setMounted(true);
 
     const setRealH = () => {
-      const vh = window.innerHeight * 0.01;
+      const vh = (window.innerWidth >= 769 ? window.innerHeight / 0.9 : window.innerHeight) * 0.01;
       document.documentElement.style.setProperty('--vh', `${vh}px`);
     };
     setRealH();
@@ -107,10 +107,10 @@ export default function Home() {
             : "bg-white bg-gradient-to-br from-[#0066B3]/[0.03] via-transparent to-[#0066B3]/[0.05]"
         )}>
           {/* Light Rays Corner Glow Effects */}
-          <div className="absolute top-0 left-0 -translate-x-1/4 -translate-y-1/4 pointer-events-none z-0 opacity-75 sm:opacity-100 w-[35vw] h-[35vw] min-w-[300px] min-h-[300px] layout-blur-subtle">
+          <div className="absolute top-0 left-0 -translate-x-1/4 -translate-y-1/4 pointer-events-none z-0 opacity-75 sm:opacity-100 w-[35vw] h-[35vw] min-[769px]:w-[calc(35vw/0.9)] min-[769px]:h-[calc(35vw/0.9)] min-w-[300px] min-h-[300px] layout-blur-subtle">
             <LightRays />
           </div>
-          <div className="absolute top-0 right-0 translate-x-1/4 -translate-y-1/4 pointer-events-none z-0 opacity-75 sm:opacity-100 scale-x-[-1] w-[35vw] h-[35vw] min-w-[300px] min-h-[300px] layout-blur-subtle">
+          <div className="absolute top-0 right-0 translate-x-1/4 -translate-y-1/4 pointer-events-none z-0 opacity-75 sm:opacity-100 scale-x-[-1] w-[35vw] h-[35vw] min-[769px]:w-[calc(35vw/0.9)] min-[769px]:h-[calc(35vw/0.9)] min-w-[300px] min-h-[300px] layout-blur-subtle">
             <LightRays />
           </div>
 
