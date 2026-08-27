@@ -17,8 +17,8 @@ export default function HeroLeiham({ isDark = true, scrollProgress }: { isDark?:
         {
             src: "/catalogo_assets/olla_presion.png",
             alt: "Olla de Presión Royal Prestige",
-            width: 420,
-            height: 460,
+            width: 378,
+            height: 414,
             mobileWidth: 160,
             mobileHeight: 175,
             mobilePosition: "left-[-3%] top-[22%]",
@@ -31,8 +31,8 @@ export default function HeroLeiham({ isDark = true, scrollProgress }: { isDark?:
         {
             src: "/catalogo_assets/jarra.png",
             alt: "Jarra Royal Prestige",
-            width: 250,
-            height: 320,
+            width: 225,
+            height: 288,
             mobileWidth: 100,
             mobileHeight: 125,
             mobilePosition: "left-[10%] top-[4%]",
@@ -45,8 +45,8 @@ export default function HeroLeiham({ isDark = true, scrollProgress }: { isDark?:
         {
             src: "/catalogo_assets/cuchillo_chef.png",
             alt: "Cuchillo Chef Royal Prestige",
-            width: 480,
-            height: 180,
+            width: 432,
+            height: 162,
             mobileWidth: 180,
             mobileHeight: 68,
             mobilePosition: "left-[1%] bottom-[14%]",
@@ -59,8 +59,8 @@ export default function HeroLeiham({ isDark = true, scrollProgress }: { isDark?:
         {
             src: "/catalogo_assets/licuadora.png",
             alt: "Licuadora Royal Prestige",
-            width: 420,
-            height: 460,
+            width: 378,
+            height: 414,
             mobileWidth: 160,
             mobileHeight: 175,
             mobilePosition: "right-[-3%] top-[22%]",
@@ -73,8 +73,8 @@ export default function HeroLeiham({ isDark = true, scrollProgress }: { isDark?:
         {
             src: "/catalogo_assets/multipan.png",
             alt: "Wok Royal Prestige",
-            width: 320,
-            height: 400,
+            width: 288,
+            height: 360,
             mobileWidth: 100,
             mobileHeight: 125,
             mobilePosition: "right-[10%] top-[4%]",
@@ -87,8 +87,8 @@ export default function HeroLeiham({ isDark = true, scrollProgress }: { isDark?:
         {
             src: "/catalogo_assets/Expertea.png",
             alt: "Sartén Deluxe Easy Release",
-            width: 380,
-            height: 140,
+            width: 342,
+            height: 126,
             mobileWidth: 180,
             mobileHeight: 68,
             mobilePosition: "right-[1%] bottom-[14%]",
@@ -183,7 +183,7 @@ export default function HeroLeiham({ isDark = true, scrollProgress }: { isDark?:
             ref={sectionRef}
             style={{
                 height: isMobileHero ? 'calc(var(--vh, 1vh) * 180)' : 'calc(var(--vh, 1vh) * 200)',
-                minWidth: isMobileHero ? undefined : '1100px'
+                minWidth: isMobileHero ? undefined : '990px'
             }}
             className={cn("relative transition-colors duration-300", isDark ? 'bg-black' : 'bg-white')}
         >
@@ -201,14 +201,14 @@ export default function HeroLeiham({ isDark = true, scrollProgress }: { isDark?:
             >
                 <motion.div className="w-full h-full relative flex items-center justify-center">
                     {/* Lamp Effect - con ref para parallax */}
-                    <div ref={bgGlowRef} style={{ position: 'absolute', top: '-10px', left: 0, right: 0, zIndex: 1, pointerEvents: 'none', height: '320px', overflow: 'visible' }}>
+                    <div ref={bgGlowRef} style={{ position: 'absolute', top: '-10px', left: 0, right: 0, zIndex: 1, pointerEvents: 'none', height: '288px', overflow: 'visible' }}>
                         {/* Glow principal */}
                         <div style={{ 
                             position: 'absolute', 
                             top: 0, 
                             left: 0, 
                             right: 0, 
-                            height: '320px', 
+                            height: '288px', 
                             background: isDark
                                 ? 'radial-gradient(ellipse 90% 120% at 50% 0%, rgba(0,102,179,0.55) 0%, transparent 70%)'
                                 : 'radial-gradient(ellipse 90% 120% at 50% 0%, rgba(0,102,179,0.75) 0%, transparent 70%)',

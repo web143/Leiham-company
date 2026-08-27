@@ -302,7 +302,7 @@ export default function CalculadoraFinanciamiento({ isDark = true, externalItems
           ))}
         </div>
 
-      <div className="max-w-[1400px] mx-auto px-4 pb-8 grid grid-cols-1 md:grid-cols-[220px_1fr_300px_300px] gap-4 h-auto md:h-[680px]">
+      <div className="max-w-[1260px] mx-auto px-4 pb-8 grid grid-cols-1 md:grid-cols-[198px_1fr_270px_270px] gap-4 h-auto md:h-[612px]">
 
 
 
