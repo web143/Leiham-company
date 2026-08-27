@@ -113,12 +113,7 @@ export default function Home() {
           <div className="absolute top-0 right-0 translate-x-1/4 -translate-y-1/4 pointer-events-none z-0 opacity-75 sm:opacity-100 scale-x-[-1] w-[35vw] h-[35vw] min-w-[300px] min-h-[300px] layout-blur-subtle">
             <LightRays />
           </div>
-          <div className="absolute bottom-0 left-0 -translate-x-1/4 translate-y-1/4 pointer-events-none z-0 opacity-75 sm:opacity-100 scale-y-[-1] w-[35vw] h-[35vw] min-w-[300px] min-h-[300px] layout-blur-subtle">
-            <LightRays />
-          </div>
-          <div className="absolute bottom-0 right-0 translate-x-1/4 translate-y-1/4 pointer-events-none z-0 opacity-75 sm:opacity-100 scale-[-1] w-[35vw] h-[35vw] min-w-[300px] min-h-[300px] layout-blur-subtle">
-            <LightRays />
-          </div>
+
 
           {/* Content layer */}
           <div className="relative z-10">

@@ -132,12 +132,13 @@ export default function CalculadoraFinanciamiento({ isDark = true, externalItems
   const fmt = (n: number) => `RD$ ${n.toLocaleString("es-DO", { minimumFractionDigits: 2 })}`;
 
   const filtered = useMemo(() => {
-    const searchLower = search.toLowerCase().trim();
+    const normalize = (s: string) => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+    const searchLower = normalize(search.trim());
     if (!searchLower) return activeCategory ? products.filter(p => p.category === activeCategory) : products;
     
     return products.filter(p => {
-      const matchName = p.name.toLowerCase().includes(searchLower);
-      const matchCode = p.code.toLowerCase().includes(searchLower);
+      const matchName = normalize(p.name).includes(searchLower);
+      const matchCode = normalize(p.code).includes(searchLower);
       const matchTotal = p.total.toString().includes(searchLower);
       const matchPrice = p.price.toString().includes(searchLower);
       const matchCategory = activeCategory ? p.category === activeCategory : true;
