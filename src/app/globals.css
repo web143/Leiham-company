@@ -90,3 +90,35 @@ html {
   -webkit-backdrop-filter: blur(4px);
 }
 
+/* ── Escala tipográfica al 90% — solo escritorio ────────────────────────────
+   Objetivo: que el texto y los elementos medidos en rem se vean un 10% más
+   pequeños (el aspecto que tenía el navegador al 90% de zoom) SIN usar zoom ni
+   transform, que rompen las animaciones ligadas al scroll.
+
+   Cómo funciona:
+   1. font-size: 90% baja la raíz de 16px a 14.4px. Eso encoge todo lo escrito
+      en rem: las clases de texto de Tailwind, el clamp del título del hero y
+      también la escala de espaciado.
+   2. --spacing se sube de 0.25rem a 0.2777778rem para devolver el espaciado a
+      su valor original: 0.2777778 × 14.4px = 4px, los mismos 4px que daba
+      0.25rem × 16px. Así p-4, gap-6, space-y-8, etc. quedan idénticos.
+
+   Efecto neto: letra un 10% menor, separaciones sin cambio, es decir más aire.
+
+   No se aplica en <=768px: la letra en móvil ya es pequeña y ahí está el guard
+   de font-size:16px de los inputs que evita el auto-zoom de iOS.
+
+   Nota: los tamaños escritos en px fijos (text-[10px], min-w-[300px],
+   h-[680px], iconos) NO se ven afectados a propósito. Se ajustarán aparte si
+   hace falta.
+   ────────────────────────────────────────────────────────────────────────── */
+@media (min-width: 769px) {
+  html {
+    font-size: 90%;
+  }
+
+  :root {
+    --spacing: 0.2777778rem;
+  }
+}
+
