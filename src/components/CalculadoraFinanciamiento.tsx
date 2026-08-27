@@ -155,6 +155,23 @@ export default function CalculadoraFinanciamiento({ isDark = true, externalItems
   const totalUnidades = selectedItems.reduce((s, p) => s + (p.cantidad || 1), 0);
   
   const totalEfectivo = totalProductos - descuentoManual;
+
+  const VALOR_JGO_UTENSILIOS = 6000;
+  const EASY_RELEASE_CODIGOS = [
+    "CO9718", "CO9714", "CO9777", "CO9778", "CO9779",
+    "CO9732", "CO9733", "CO9734", "CO9726",
+  ];
+
+  // El Jgo. Ollas Easy Release 6PZ no tiene codigo (aparece como "-"), entra por nombre.
+  // SP0018 se excluye: si el cliente lo compra suelto lo esta pagando, no es un regalo.
+  const incluyeJgoUtensilios = selectedItems.some(
+    (item) =>
+      item.code !== "SP0018" &&
+      (EASY_RELEASE_CODIGOS.includes(item.code) || item.name.includes("Easy Release"))
+  );
+  const descuentoUtensilios = incluyeJgoUtensilios ? VALOR_JGO_UTENSILIOS : 0;
+  const maxRegalos = totalEfectivo * 0.10 - descuentoUtensilios;
+
   const diferencia = descuentoManual;
   
   const ratio = totalProductos > 0 ? totalEfectivo / totalProductos : 1;
@@ -632,7 +649,7 @@ export default function CalculadoraFinanciamiento({ isDark = true, externalItems
         <div className={cardContainer}>
           <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
             <h3 className={cn("text-base font-black tracking-tight", textPrimary)}>Regalos</h3>
-            {totalEfectivo > 0 && <span className={cn("text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full", isDark ? "text-white/50 bg-white/10" : "text-slate-500 bg-slate-100")}>MAX {fmt(totalEfectivo * 0.10)}</span>}
+            {totalEfectivo > 0 && <span className={cn("text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full", isDark ? "text-white/50 bg-white/10" : "text-slate-500 bg-slate-100")}>MAX {fmt(maxRegalos)}</span>}
           </div>
 
           {totalEfectivo <= 0 ? (
@@ -642,7 +659,7 @@ export default function CalculadoraFinanciamiento({ isDark = true, externalItems
             </div>
           ) : (() => {
             const EXCLUIR = ['aro', 'reparac', 'reemplaz', 'tapa'];
-            const maxR = totalEfectivo * 0.10;
+            const maxR = maxRegalos;
             const totalRegalos = selectedRegalos.reduce((s, p) => s + p.total, 0);
             const porcentajeUsado = totalEfectivo > 0 ? (totalRegalos / totalEfectivo) * 100 : 0;
             const cerca = totalRegalos > 0 && porcentajeUsado >= 7 && totalRegalos <= maxR;
@@ -671,6 +688,12 @@ export default function CalculadoraFinanciamiento({ isDark = true, externalItems
                 )}
                 
                 <p className="text-[9px] font-bold uppercase tracking-widest opacity-40">Máx 10% · Sin combinaciones</p>
+                {descuentoUtensilios > 0 && (
+                  <div className={cn("px-3 py-2 rounded-xl text-[11px] font-bold border flex justify-between items-center", isDark ? "bg-white/[0.04] border-white/8 text-white/60" : "bg-slate-50 border-slate-200 text-slate-500")}>
+                    <span>Jgo. Utensilios 3PZ incluido</span>
+                    <span className="font-black">- {fmt(descuentoUtensilios)}</span>
+                  </div>
+                )}
                 
                 <div className="flex-1 overflow-y-auto space-y-1.5 pr-1 custom-scrollbar" data-lenis-prevent>
                   <AnimatePresence mode="popLayout">
