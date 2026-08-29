@@ -18,77 +18,178 @@ const PAGES = [
   { page: '01', type: 'static', title: 'Portada' },
   { page: '02', type: 'static', title: 'Índice' },
   { page: '03', type: 'static', title: 'Características' },
-  { page: '04', type: 'combo', title: 'Sistema 10 Piezas Familiar', productKeywords: ['familiar', '10 pz', '10pz', '10 piezas'] },
-  { page: '05', type: 'combo', title: 'Sistema 10 Piezas Familiar', productKeywords: ['familiar', '10 pz', '10pz', '10 piezas'] },
-  { page: '06', type: 'combo', title: 'Sistema 8 Piezas Especial', productKeywords: ['especial', '8 pz', '8 piezas'] },
-  { page: '07', type: 'combo', title: 'Sistema 8 Piezas Especial', productKeywords: ['especial', '8 pz', '8 piezas'] },
-  { page: '08', type: 'combo', title: 'Sistema 7 Piezas Clásico', productKeywords: ['clásico', 'clasico', '7 pz', '7 piezas'] },
-  { page: '09', type: 'combo', title: 'Sistema 7 Piezas Clásico', productKeywords: ['clásico', 'clasico', '7 pz', '7 piezas'] },
-  { page: '10', type: 'combo', title: 'Sistema 5 Piezas Complementario', productKeywords: ['complementario', '5 pz', '5 piezas'] },
-  { page: '11', type: 'combo', title: 'Sistema 5 Piezas Complementario', productKeywords: ['complementario', '5 pz', '5 piezas'] },
-  { page: '12', type: 'products', title: 'Las Grandes', categoryKeywords: ['sancocho', 'grandes'] },
-  { page: '13', type: 'products', title: 'Las Grandes', categoryKeywords: ['sancocho', 'grandes'] },
-  { page: '14', type: 'products', title: 'Las Paelleras', categoryKeywords: ['paellera'] },
-  { page: '15', type: 'products', title: 'Las Paelleras', categoryKeywords: ['paellera'] },
-  { page: '16', type: 'products', title: 'Los Gourmets', categoryKeywords: ['gourmet', 'easy release / acero'] },
-  { page: '17', type: 'products', title: 'Los Gourmets', categoryKeywords: ['gourmet', 'easy release / acero'] },
-  { page: '18', type: 'products', title: 'Ollas de Presión', categoryKeywords: ['presión', 'presion'] },
-  { page: '19', type: 'products', title: 'Ollas de Presión', categoryKeywords: ['presión', 'presion'] },
-  { page: '20', type: 'products', title: 'Las Planchas', categoryKeywords: ['plancha', 'parrilla'] },
-  { page: '21', type: 'products', title: 'Las Planchas', categoryKeywords: ['plancha', 'parrilla'] },
-  { page: '22', type: 'products', title: 'El Wok', categoryKeywords: ['wok'] },
-  { page: '23', type: 'products', title: 'Los Coladores', categoryKeywords: ['colador'] },
-  { page: '24', type: 'products', title: 'Pavera', categoryKeywords: ['pavera'] },
-  { page: '25', type: 'products', title: 'Accesorios', categoryKeywords: ['accesorios'] },
-  { page: '26', type: 'products', title: 'Easy Release', categoryKeywords: ['easy release'] },
-  { page: '27', type: 'products', title: 'Easy Release', categoryKeywords: ['easy release'] },
-  { page: '28', type: 'products', title: 'Casserole', categoryKeywords: ['casserole', 'cacerola'] },
-  { page: '29', type: 'products', title: 'Perfect Pop y Salad Machine', categoryKeywords: ['perfect pop', 'salad'] },
-  { page: '30', type: 'products', title: 'Precision Cook', categoryKeywords: ['precision', 'inducción'] },
-  { page: '31', type: 'products', title: 'Power Blender', categoryKeywords: ['power blender', 'licuadora'] },
-  { page: '32', type: 'products', title: 'Power Blender Go', categoryKeywords: ['power blender', 'licuadora', 'chocolatera'] },
-  { page: '33', type: 'products', title: 'Chocolatera', categoryKeywords: ['chocolatera', 'café / té'] },
-  { page: '34', type: 'products', title: 'ExperTea', categoryKeywords: ['expertea'] },
-  { page: '35', type: 'products', title: 'Café y Espresso', categoryKeywords: ['espresso', 'barista', 'café / té'] },
-  { page: '36', type: 'products', title: 'Accesorios y Filtración', categoryKeywords: ['accesorios', 'cuchillería', 'filtro'] },
+  { page: '04', type: 'products', title: 'Sistema Familiar de 10 Pzs' },
+  { page: '05', type: 'products', title: 'Sistema Especial de 8 Pzs' },
+  { page: '06', type: 'products', title: 'Sistema Clásico de 7 Pzs' },
+  { page: '07', type: 'products', title: 'Sistema Complementario de 5 Pzs' },
+  { page: '08', type: 'products', title: 'Ollas de Sancocho' },
+  { page: '09', type: 'products', title: 'Las Paelleras' },
+  { page: '10', type: 'products', title: 'Los Gourmets' },
+  { page: '11', type: 'products', title: 'Ollas de Presión' },
+  { page: '12', type: 'products', title: 'Las Planchas' },
+  { page: '13', type: 'products', title: 'El Wok' },
+  { page: '14', type: 'products', title: 'Los Coladores' },
+  { page: '15', type: 'products', title: 'La Pavera' },
+  { page: '16', type: 'products', title: 'Sartenes Easy Release' },
+  { page: '17', type: 'products', title: 'Ollas Easy Release' },
+  { page: '18', type: 'products', title: 'La Cacerola' },
+  { page: '19', type: 'products', title: 'Perfect Pop y Máquina para Ensaladas' },
+  { page: '20', type: 'products', title: 'Precision Cook' },
+  { page: '21', type: 'products', title: 'Power Blender' },
+  { page: '22', type: 'products', title: 'Power Blender Go' },
+  { page: '23', type: 'static', title: 'Accesorios Power Blender Go' },
+  { page: '24', type: 'products', title: 'La Chocolatera' },
+  { page: '25', type: 'products', title: 'ExperTea y Café' },
+  { page: '26', type: 'products', title: 'Cafetera Barista' },
+  { page: '27', type: 'products', title: 'Extractor de Jugos' },
+  { page: '28', type: 'products', title: 'Los Tazones' },
+  { page: '29', type: 'products', title: 'Precisión Serie 3' },
+  { page: '30', type: 'products', title: 'Cuchillería' },
+  { page: '31', type: 'products', title: 'Cuchillos y Accesorios de Cocina' },
+  { page: '32', type: 'products', title: 'Recipientes y Tazas' },
+  { page: '33', type: 'products', title: 'Utensilios y Hervidores' },
+  { page: '34', type: 'products', title: 'Cubiertería y Recipientes' },
+  { page: '35', type: 'products', title: 'Juego de Cubiertos' },
+  { page: '36', type: 'products', title: 'Filtros de Ducha y Purificador' },
 ];
 
-const catalogProductsData: { [key: string]: typeof products } = {
+type Product = typeof products[number];
+type GrupoLamina = {
+  titulo: string | null
+  items: Product[]
+}
+
+const byCode = (code: string) => products.find(p => p.code === code)
+const byName = (name: string) => products.find(p => p.name === name)
+const g = (titulo: string | null, items: Array<Product | undefined>) =>
+  ({ titulo, items: items.filter(Boolean) as Product[] })
+
+const catalogProductsData: Record<string, GrupoLamina[]> = {
+  // 1, 2 y 3: informativas, sin productos
+
   pagina4: [
-    products.find(p => p.name === "Sist. de Cocina Familiar de 10 Pzs Innove + Perfect Pop + Tapa Med. 20 Cm")!,
-    products.find(p => p.name === "Sistema de Cocina Familiar de 10 Pzs Innove + Perfect Pop")!,
-    products.find(p => p.name === "Olla de 2 Qt. Con Tapa")!,
-    products.find(p => p.name === "Colador Pequeño Innove de 20 cm.")!,
-    products.find(p => p.name === "Olla de 4 Qt. Con Tapa")!,
-    products.find(p => p.name === "Sartén de 8\" Con Tapa")!,
-    products.find(p => p.name === "Sartén Innove de 8\" Innove")!,
-    products.find(p => p.name === "Sartén de 10.5\" / 4QT / 26cm Con Tapa")!,
-    products.find(p => p.name === "Olla Innove de 6 Qt. Innove")!,
-  ].filter(Boolean),
+    g("Juegos", [byCode("CO9261"), byName("Sist. de Cocina Familiar de 10 Pzs Innove + Perfect Pop + Tapa Med. 20 Cm")]),
+    g("Piezas individuales", [byCode("CO9201"), byCode("CO9085"), byCode("CO9086"), byCode("CO9076"), byCode("CO9205"), byCode("CO9211"), byCode("CO9087"), byCode("CO9213"), byCode("CO9088"), byCode("CO9207")]),
+  ],
+
   pagina5: [
-    products.find(p => p.name === "Sist. de Cocina Especial de 8 Pzs Innove + Tapa Med. 20 Cm")!,
-    products.find(p => p.name === "Sistema de Cocina Especial de 8 Pzs Innove")!,
-    products.find(p => p.name === "Olla de 2 Qt. Con Tapa")!,
-    products.find(p => p.name === "Olla de 4 Qt. Con Tapa")!,
-    products.find(p => p.name === "Paellera Innove de 14\" con tapa 316L")!,
-  ].filter(Boolean),
+    g("Juegos", [byCode("CO9254")]),
+    g("Piezas individuales", [byCode("CO9085"), byCode("CO9201"), byCode("CO9086"), byCode("CO9205"), byCode("CO9087"), byCode("CO9209"), byCode("CO9215")]),
+  ],
+
   pagina6: [
-    products.find(p => p.name === "Sist. de Cocina Clásico de 7 Pzs Innove + Tapa Med. 20 Cm")!,
-    products.find(p => p.name === "Sistema de Cocina Clásico de 7 Pzs Innove")!,
-    products.find(p => p.name === "Olla de 2 Qt. Con Tapa")!,
-    products.find(p => p.name === "Sartén de 8\" Con Tapa")!,
-    products.find(p => p.name === "Olla de 4 Qt. Con Tapa")!,
-    products.find(p => p.name === "Olla Innove de 4 Qt. Innove")!,
-    products.find(p => p.name === "Sartén de 10.5\" / 4QT / 26cm Con Tapa")!,
-  ].filter(Boolean),
+    g("Juegos", [byCode("CO9253"), byName("Sist. de Cocina Clásico de 7 Pzs Innove + Tapa Med. 20 Cm")]),
+    g("Piezas individuales", [byCode("CO9085"), byCode("CO9201"), byCode("CO9211"), byCode("CO9086"), byCode("CO9205"), byCode("CO9087"), byCode("CO9213")]),
+  ],
+
   pagina7: [
-    products.find(p => p.name === "Sist. de Cocina Complementario de 5 Pzs Innove + Tapa Grand. 26cm")!,
-    products.find(p => p.name === "Sistema de Cocina Complementario de 5 Pzs Innove")!,
-    products.find(p => p.name === "Olla de 3 Qt. Con Tapa")!,
-    products.find(p => p.name === "Olla de 6 Qt. con Tapa")!,
-    products.find(p => p.name === "Sartén de 10.5\" / 4QT / 26cm Con Tapa")!,
-  ].filter(Boolean),
-};
+    g("Juegos", [byCode("CO9245"), byName("Sist. de Cocina Complementario de 5 Pzs Innove + Tapa Grand. 26cm")]),
+    g("Piezas individuales", [byCode("CO9086"), byCode("CO9203"), byCode("CO9207"), byCode("CO9087"), byCode("CO9213")]),
+  ],
+
+  pagina8: [ g(null, [byCode("CO9224"), byCode("CO9226"), byCode("CO9228")]) ],
+
+  pagina9: [ g(null, [byCode("CO9217"), byCode("CO9215")]) ],
+
+  pagina10: [
+    g("Juegos", [byCode("CO9265")]),
+    g("Piezas individuales", [byCode("CO9230"), byCode("CO9232"), byCode("CO9234")]),
+  ],
+
+  pagina11: [ g(null, [byCode("CO1251"), byCode("CO1255")]) ],
+
+  pagina12: [ g(null, [byCode("CO9219"), byCode("CO9220"), byCode("CO9218")]) ],
+
+  pagina13: [ g(null, [byCode("CO9222")]) ],
+
+  pagina14: [ g(null, [byCode("CO9076"), byCode("CO9080")]) ],
+
+  pagina15: [ g(null, [byCode("CO6589")]) ],
+
+  pagina16: [
+    g("Juegos", [byCode("CO9726")]),
+    g("Piezas individuales", [byCode("CO9732"), byCode("CO9733"), byCode("CO9734")]),
+    g("Utensilios", [byCode("SP0018")]),
+  ],
+
+  pagina17: [
+    g("Juegos", [byName("Jgo. Ollas Easy Release 6PZ C/Tapa Vidrio + 3PZ Utensilios")]),
+    g("Piezas individuales", [byCode("CO9777"), byCode("CO9778"), byCode("CO9779")]),
+    g("Utensilios", [byCode("SP0018")]),
+  ],
+
+  pagina18: [ g(null, [byCode("CO2124")]) ],
+
+  pagina19: [
+    g("Perfect Pop", [byCode("PR0025")]),
+    g("Máquina para Ensaladas", [byCode("PR2614")]),
+  ],
+
+  pagina20: [ g(null, [byCode("ES3101")]) ],
+
+  pagina21: [
+    g("Power Blender", [byCode("ES0003")]),
+    g("Accesorios", [byCode("LT2209")]),
+  ],
+
+  pagina22: [ g(null, [byCode("ES4200"), byName("Power Blender Go Completa C/ Picadora y Taza")]) ],
+
+  // 23: estática, ver Paso 5
+
+  pagina24: [ g(null, [byCode("CO0101")]) ],
+
+  pagina25: [
+    g("ExperTea", [byCode("CO0801")]),
+    g("Café", [byCode("PR2129"), byCode("PR2120")]),
+  ],
+
+  pagina26: [
+    g("Cafetera Barista", [byCode("CO2106")]),
+    g("Accesorios", [byCode("PR2134")]),
+  ],
+
+  pagina27: [
+    g("Extractores", [byCode("JU0026"), byName("Extractor de Jugos Completo")]),
+    g("Piezas y accesorios", [byCode("PR1460"), byCode("PR1459"), byCode("LT2258"), byCode("SP0252")]),
+    g("Modelo anterior (Maxtractor)", [byCode("PR1452")]),
+  ],
+
+  pagina28: [ g(null, [byCode("CO4900"), byCode("PR4904"), byCode("PR4902"), byName("Tazón individual"), byCode("SP0066"), byCode("SP0262")]) ],
+
+  pagina29: [ g(null, [byCode("CU0800"), byCode("CU0820")]) ],
+
+  pagina30: [
+    g("Juego Completo Precisión Serie 3", [byCode("CU0831")]),
+    g("Carving Knife Set", [byCode("CU0815")]),
+    g("Bloque de Madera de Acacia", [byCode("CU0056")]),
+    g("Cuchillo Santoku Royal Prestige", [byCode("SP0297"), byCode("SP0296")]),
+    g("Cuchillo de Carnicero Royal Prestige", [byCode("CU0825")]),
+  ],
+
+  pagina31: [
+    g("Cuchillos", [byCode("CU0810"), byCode("CU0814")]),
+    g("Accesorios de Cocina", [byCode("SP1850"), byCode("SP1851"), byCode("SP1852"), byCode("SP1853"), byCode("SP1854"), byCode("SP1856"), byCode("SP1857"), byCode("SP1861")]),
+  ],
+
+  pagina32: [ g(null, [byCode("SP0145"), byCode("SP0136"), byCode("SP0135"), byCode("SP0252")]) ],
+
+  pagina33: [
+    g("Juego de Utensilios", [byCode("PR0196")]),
+    g("Base Magnética", [byCode("SP0305")]),
+    g("Hervidores", [byCode("PR1675"), byCode("PR1685")]),
+  ],
+
+  // SP0111 y SP0113 todavía no existen en el archivo: el filtro los descarta
+  // sin romper nada, y aparecerán solos cuando se den de alta.
+  pagina34: [ g(null, [byCode("SP0111"), byCode("SP0113"), byCode("SP0081"), byCode("SP0091")]) ],
+
+  pagina35: [ g(null, [byCode("SP0009")]) ],
+
+  pagina36: [
+    g("Filtros de Ducha", [byCode("PR0003"), byCode("WF0080"), byCode("WF0075"), byName("Kit Reemplazo Cubierta de Ducha")]),
+    g("Purificador de Aire", [byCode("AP2101"), byCode("AP2004")]),
+  ],
+}
 
 interface Props {
   isDark?: boolean;
@@ -99,7 +200,7 @@ interface Props {
 export default function CatalogoViewer({ isDark = true, onProductsChange, onOverlayStateChange }: Props) {
   const [currentPage, setCurrentPage] = useState(0);
   const [pageInput, setPageInput] = useState('1');
-  const [activePanel, setActivePanel] = useState<{ title: string; items: typeof products } | null>(null);
+  const [activePanel, setActivePanel] = useState<{ title: string; grupos: GrupoLamina[] } | null>(null);
   const [selectedItems, setSelectedItems] = useState<typeof products>([]);
   const [cantidades, setCantidades] = useState<{ [key: string]: number }>({});
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -232,35 +333,18 @@ export default function CatalogoViewer({ isDark = true, onProductsChange, onOver
     onProductsChange?.(buildArray(newItems, newCnts));
   };
 
-  const getProductsForPage = (pageInfo: typeof PAGES[0]) => {
+  const getProductsForPage = (pageInfo: typeof PAGES[0]): GrupoLamina[] => {
     const pageNum = pageInfo.page;
-    if (pageNum === '04' || pageNum === '05') {
-      return catalogProductsData.pagina4;
-    }
-    if (pageNum === '06' || pageNum === '07') {
-      return catalogProductsData.pagina5;
-    }
-    if (pageNum === '08' || pageNum === '09') {
-      return catalogProductsData.pagina6;
-    }
-    if (pageNum === '10' || pageNum === '11') {
-      return catalogProductsData.pagina7;
-    }
-
-    const keywords = (pageInfo as any).productKeywords || (pageInfo as any).categoryKeywords || [];
-    return products.filter(p =>
-      keywords.some((kw: string) =>
-        p.name.toLowerCase().includes(kw.toLowerCase()) ||
-        p.category.toLowerCase().includes(kw.toLowerCase())
-      )
-    );
+    const key = 'pagina' + Number(pageNum);
+    return (catalogProductsData as any)[key] || [];
   };
 
   const handlePageClick = (pageInfo: typeof PAGES[0]) => {
     if (pageInfo.type === 'static') return;
-    const items = getProductsForPage(pageInfo);
-    if (items.length === 0) return;
-    setActivePanel({ title: pageInfo.title, items });
+    const grupos = getProductsForPage(pageInfo);
+    const total = grupos.reduce((s, g) => s + g.items.length, 0);
+    if (total === 0) return;
+    setActivePanel({ title: pageInfo.title, grupos });
   };
 
   const goTo = (i: number) => {
@@ -384,6 +468,17 @@ export default function CatalogoViewer({ isDark = true, onProductsChange, onOver
             className="w-full cursor-pointer py-3 touch-none"
           />
         </div>
+
+        {/* Bloque informativo lámina 23 — solo bajo la imagen, no en modal */}
+        {PAGES[currentPage].page === '23' && (
+          <div className="mt-2 mb-6 rounded-2xl border border-zinc-800 bg-zinc-900 p-4">
+            <p className="text-[11px] font-black uppercase tracking-[0.15em] text-zinc-400 mb-3">Accesorios — no se venden por separado</p>
+            <div className="space-y-1.5">
+              <p className="text-[11px] font-bold text-zinc-300">PE0029 · Conjunto Batidor &amp; Cepillo - Blender Go</p>
+              <p className="text-[11px] font-bold text-zinc-300">PE0028 · Conjunto Picadora y Taza - Blender Go</p>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Panel modal (BottomSheet) */}
@@ -398,7 +493,7 @@ export default function CatalogoViewer({ isDark = true, onProductsChange, onOver
             <div className="flex items-center justify-between p-4 landscape:p-2.5 border-b border-zinc-800 bg-zinc-900/50">
               <div>
                 <h3 className="font-black text-lg landscape:text-sm uppercase tracking-tight text-white">{activePanel.title}</h3>
-                <p className="text-xs landscape:text-[10px] text-zinc-400">{activePanel.items.length} productos disponibles</p>
+                <p className="text-xs landscape:text-[10px] text-zinc-400">{activePanel.grupos.reduce((s, g) => s + g.items.length, 0)} productos disponibles</p>
               </div>
               <button onClick={() => setActivePanel(null)} className="p-2 rounded-xl hover:bg-zinc-800 text-zinc-400 hover:text-white transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center">
                 <X className="w-5 h-5" />
@@ -406,38 +501,53 @@ export default function CatalogoViewer({ isDark = true, onProductsChange, onOver
             </div>
             
             {/* Contenedor de lista con data-lenis-prevent para permitir scroll natural nativo sin que Lenis lo bloquee accidentalmente */}
-            <div data-lenis-prevent className="flex-1 overflow-y-auto p-4 landscape:p-2 space-y-2 landscape:space-y-1">
-              {activePanel.items.map((p, index) => (
-                <div
-                  key={p.code + p.name}
-                  ref={(el) => { modalItemsRef.current[index] = el; }}
-                  className={cn('flex items-center gap-3 landscape:gap-2 px-4 landscape:px-3 py-3 landscape:py-1.5 rounded-xl border transition-all',
-                    isSelected(p)
-                      ? 'bg-zinc-800 border-zinc-700 text-white'
-                      : 'bg-zinc-900/60 border-zinc-800 text-zinc-300 hover:bg-zinc-800/50'
-                  )}
-                >
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm landscape:text-xs font-semibold truncate text-white">{p.name}</p>
-                    <p className="text-xs landscape:text-[10px] text-zinc-400">{p.code !== '-' ? p.code : p.category}</p>
-                  </div>
-                  <p className="text-white font-bold text-sm landscape:text-xs flex-shrink-0">{fmt(p.total)}</p>
-                  <div className="flex items-center gap-1 flex-shrink-0">
-                    {getCantidad(p) > 0 && (
-                      <>
-                        <button onClick={() => removeOne(p)} className="w-7 h-7 landscape:w-6 landscape:h-6 rounded-lg flex items-center justify-center bg-zinc-700 text-white hover:bg-red-500/50 transition-all font-bold">−</button>
-                        <span className="text-white font-black text-sm landscape:text-xs w-6 text-center">{getCantidad(p)}</span>
-                      </>
+            <div data-lenis-prevent className="flex-1 overflow-y-auto p-4 landscape:p-2 space-y-4">
+              {(() => {
+                let globalIndex = 0;
+                return activePanel.grupos.map((grupo, gi) => (
+                  <div key={gi} className={cn(gi === 0 ? "mt-1" : "mt-4")}>
+                    {grupo.titulo && activePanel.grupos.length > 1 && grupo.items.length > 0 && (
+                      <p className="text-[11px] font-black uppercase tracking-[0.15em] text-zinc-400 border-b border-zinc-800 pb-1.5 mb-2">{grupo.titulo}</p>
                     )}
-                    <button
-                      onClick={() => addOne(p)}
-                      className={cn('w-7 h-7 landscape:w-6 landscape:h-6 rounded-lg flex items-center justify-center transition-all font-bold',
-                        getCantidad(p) > 0 ? 'bg-white text-zinc-900' : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700'
-                      )}
-                    >+</button>
+                    <div className="space-y-2">
+                      {grupo.items.map((p) => {
+                        const idx = globalIndex++;
+                        return (
+                          <div
+                            key={p.code + p.name}
+                            ref={(el) => { modalItemsRef.current[idx] = el; }}
+                            className={cn('flex items-center gap-3 landscape:gap-2 px-4 landscape:px-3 py-3 landscape:py-1.5 rounded-xl border transition-all',
+                              isSelected(p)
+                                ? 'bg-zinc-800 border-zinc-700 text-white'
+                                : 'bg-zinc-900/60 border-zinc-800 text-zinc-300 hover:bg-zinc-800/50'
+                            )}
+                          >
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm landscape:text-xs font-semibold truncate text-white">{p.name}</p>
+                              <p className="text-xs landscape:text-[10px] text-zinc-400">{p.code !== '-' ? p.code : p.category}</p>
+                            </div>
+                            <p className="text-white font-bold text-sm landscape:text-xs flex-shrink-0">{fmt(p.total)}</p>
+                            <div className="flex items-center gap-1 flex-shrink-0">
+                              {getCantidad(p) > 0 && (
+                                <>
+                                  <button onClick={() => removeOne(p)} className="w-7 h-7 landscape:w-6 landscape:h-6 rounded-lg flex items-center justify-center bg-zinc-700 text-white hover:bg-red-500/50 transition-all font-bold">−</button>
+                                  <span className="text-white font-black text-sm landscape:text-xs w-6 text-center">{getCantidad(p)}</span>
+                                </>
+                              )}
+                              <button
+                                onClick={() => addOne(p)}
+                                className={cn('w-7 h-7 landscape:w-6 landscape:h-6 rounded-lg flex items-center justify-center transition-all font-bold',
+                                  getCantidad(p) > 0 ? 'bg-white text-zinc-900' : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700'
+                                )}
+                              >+</button>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
-                </div>
-              ))}
+                ));
+              })()}
             </div>
             <div className="p-4 landscape:p-2 border-t border-zinc-800 bg-zinc-900/50">
               <NativeButton

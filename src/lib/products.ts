@@ -86,6 +86,8 @@ export const products = [
     { code: "ES0003", name: "Power Blender C/ Recetario 120-127v - Licuadora", category: "Electrodomésticos", price: 93220.34, itbis: 16779.66, total: 110000 },
     { code: "LT2209", name: "Recetario Nuevo RP Power Blender - Licuadora", category: "Electrodomésticos", price: 847.46, itbis: 152.54, total: 1000 },
     { code: "ES3101", name: "Precision Cook Estufa Inducción", category: "Electrodomésticos", price: 56779.66, itbis: 10220.34, total: 67000 },
+    { code: "ES4200", name: "Power Blender Go C/ Batidor y Cepillo", category: "Electrodomésticos", price: 64406.78, itbis: 11593.22, total: 76000 },
+    { code: "-", name: "Power Blender Go Completa C/ Picadora y Taza", category: "Electrodomésticos", price: 81355.93, itbis: 14644.07, total: 96000 },
 
     // ── EXTRACTOR DE JUGOS RP ────────────────────────────────────
     { code: "JU0026", name: "Extractor de Jugos de Royal Prestige C/Recetario", category: "Extractor de Jugos RP", price: 97457.63, itbis: 17542.37, total: 115000 },
