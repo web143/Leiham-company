@@ -179,9 +179,10 @@ const catalogProductsData: Record<string, GrupoLamina[]> = {
     g("Hervidores", [byCode("PR1675"), byCode("PR1685")]),
   ],
 
-  // SP0111 y SP0113 todavía no existen en el archivo: el filtro los descarta
-  // sin romper nada, y aparecerán solos cuando se den de alta.
-  pagina34: [ g(null, [byCode("SP0111"), byCode("SP0113"), byCode("SP0081"), byCode("SP0091")]) ],
+  pagina34: [
+    g("Recipientes", [byCode("SP0111"), byCode("SP0113")]),
+    g("Juegos de Servir", [byCode("SP0081"), byCode("SP0091")]),
+  ],
 
   pagina35: [ g(null, [byCode("SP0009")]) ],
 

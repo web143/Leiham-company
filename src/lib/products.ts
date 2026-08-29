@@ -105,6 +105,8 @@ export const products = [
     { code: "-", name: "Tazón individual", category: "Recipientes / Tazones / Bowls", price: 5084.75, itbis: 915.25, total: 6000 },
     { code: "SP0066", name: "Tazón Mezclar De 10 QT C/Tapa Con Base Silicona", category: "Recipientes / Tazones / Bowls", price: 6779.66, itbis: 1220.34, total: 8000 },
     { code: "SP0262", name: "Jgo 2 Tazónes P/Mezclar con Silicona 2.5 & 4 QT. 304SS", category: "Recipientes / Tazones / Bowls", price: 6186.44, itbis: 1113.56, total: 7300 },
+    { code: "SP0111", name: "6 Recipientes C/Capacidad de 2 Tzs - 500ml", category: "Recipientes / Tazones / Bowls", price: 2457.63, itbis: 442.37, total: 2900 },
+    { code: "SP0113", name: "Jgo. 8 Pzs Recipiente de Comida RP", category: "Recipientes / Tazones / Bowls", price: 3389.83, itbis: 610.17, total: 4000 },
 
     // ── PLANCHAS ─────────────────────────────────────────────────
     { code: "CO9218", name: "Plancha Doble Acero Innove 316 L", category: "Planchas", price: 23728.81, itbis: 4271.19, total: 28000 },
