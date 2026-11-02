@@ -145,8 +145,7 @@ export default function CalculadoraFinanciamiento({ isDark = true, externalItems
       const matchCode = normalize(p.code).includes(searchLower);
       const matchTotal = p.total.toString().includes(searchLower);
       const matchPrice = p.price.toString().includes(searchLower);
-      const matchCategory = activeCategory ? p.category === activeCategory : true;
-      return (matchName || matchCode || matchTotal || matchPrice) && matchCategory;
+      return matchName || matchCode || matchTotal || matchPrice;
     });
   }, [search, activeCategory]);
 
@@ -344,7 +343,7 @@ export default function CalculadoraFinanciamiento({ isDark = true, externalItems
           <div className="relative mb-5">
             <Search className={cn("absolute left-3.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5", textSecondary)} />
             <input
-              value={search} onChange={e => setSearch(e.target.value)}
+              value={search} onChange={e => { setSearch(e.target.value); setActiveCategory(null); }}
               placeholder="Buscar producto o código..."
               className={cn("w-full pl-10 pr-9 py-3 rounded-xl font-bold text-[13px] border outline-none transition", 
                 isDark ? "bg-white/5 border-white/8 text-white placeholder:text-white/20 focus:border-[#0066B3]/60 focus:bg-white/10" : "bg-white border-slate-200 text-slate-900 placeholder:text-slate-400 focus:border-[#0066B3]/50 focus:bg-slate-50")}
