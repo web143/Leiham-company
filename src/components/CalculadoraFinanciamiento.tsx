@@ -5,6 +5,7 @@ import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { products } from "@/lib/products";
 import { cn } from "@/lib/utils";
 import { Slider } from "@/components/ui/slider";
+import { TruncatedText } from "@/components/ui/TruncatedText";
 
 const TABLA_PAGOS = [
   { cuotas: 2, pct: 51.95 }, { cuotas: 3, pct: 35.07 }, { cuotas: 4, pct: 26.64 },
@@ -155,6 +156,7 @@ export default function CalculadoraFinanciamiento({ isDark = true, externalItems
   const totalProductos = selectedItems.reduce((s, p) => s + (p.total * (p.cantidad || 1)), 0);
   const precioSinItbis = selectedItems.reduce((s, p) => s + (p.price * (p.cantidad || 1)), 0);
   const itbisTotal = selectedItems.reduce((s, p) => s + (p.itbis * (p.cantidad || 1)), 0);
+  const hayItbisPendiente = selectedItems.some((p) => p.itbisPendiente);
   const totalUnidades = selectedItems.reduce((s, p) => s + (p.cantidad || 1), 0);
   
   const totalEfectivo = totalProductos - descuentoManual;
@@ -376,17 +378,17 @@ export default function CalculadoraFinanciamiento({ isDark = true, externalItems
                             )}
                         >
                             <div className="flex-1 min-w-0 w-full">
-                                <p className={cn("text-[13px] font-bold md:truncate whitespace-normal leading-snug", textPrimary)}>{product.name}</p>
+                                <TruncatedText text={product.name} className={cn("text-[13px] font-bold md:truncate whitespace-normal leading-snug", textPrimary)} />
                                 <div className="flex gap-3 mt-1 md:mt-0.5 opacity-80 md:opacity-100">
                                     {product.code !== '-' && <p className={cn("text-[10px] md:text-[11px] font-bold", textSecondary)}>{product.code}</p>}
-                                    <p className={cn("text-[10px] md:text-[11px] font-bold", textSecondary)}>ITBIS: {fmt(product.itbis)}</p>
+                                    {!product.itbisPendiente && <p className={cn("text-[10px] md:text-[11px] font-bold", textSecondary)}>ITBIS: {fmt(product.itbis)}</p>}
                                 </div>
                             </div>
                             
                             <div className="flex justify-between items-center md:justify-end gap-3 w-full md:w-auto mt-1 md:mt-0">
                                 <div className="text-left md:text-right flex-shrink-0">
                                     <p className={cn("text-[13px] font-black tracking-tight", getCantidad(product) > 0 ? 'text-[#0066B3]' : textPrimary)}>{fmt(product.total)}</p>
-                                    <p className={cn("text-[10px] md:text-[11px] font-bold", textSecondary)}>sin ITBIS: {fmt(product.price)}</p>
+                                    {!product.itbisPendiente && <p className={cn("text-[10px] md:text-[11px] font-bold", textSecondary)}>sin ITBIS: {fmt(product.price)}</p>}
                                 </div>
                                 <div className="flex items-center gap-1.5 flex-shrink-0" onClick={e => e.stopPropagation()}>
                                   {getCantidad(product) > 0 && (
@@ -448,9 +450,7 @@ export default function CalculadoraFinanciamiento({ isDark = true, externalItems
                       )}
                     >
                       <div className="flex-1 min-w-0 mr-2">
-                        <p className={cn('text-xs font-semibold truncate', isDark ? 'text-white/80' : 'text-slate-700')}>
-                          {p.name}
-                        </p>
+                        <TruncatedText text={p.name} className={cn('text-xs font-semibold truncate', isDark ? 'text-white/80' : 'text-slate-700')} />
                         <p className={cn('text-[10px]', isDark ? 'text-white/30' : 'text-slate-400')}>
                           x{p.cantidad || 1} · {fmt(p.total * (p.cantidad || 1))}
                         </p>
@@ -563,8 +563,8 @@ export default function CalculadoraFinanciamiento({ isDark = true, externalItems
 
               <div className={cn("space-y-1 pt-3 border-t", isDark ? "border-white/10" : "border-slate-200")}>
                 {[
-                  { label: 'Precio de compra', value: fmt(precioSinItbisEfectivo) },
-                  { label: 'ITBIS', value: fmt(itbisEfectivo) },
+                  { label: 'Precio de compra', value: hayItbisPendiente ? 'Pendiente' : fmt(precioSinItbisEfectivo) },
+                  { label: 'ITBIS', value: hayItbisPendiente ? 'Pendiente' : fmt(itbisEfectivo) },
                   { label: 'Tasa de interés anual', value: `${TASA_INTERES_ANUAL}%` },
                   { label: 'Valor productos', value: fmt(totalProductos) },
                   ...(descuentoManual !== 0 ? [{ 
@@ -712,7 +712,7 @@ export default function CalculadoraFinanciamiento({ isDark = true, externalItems
                           onClick={() => !p.fueraDeRango && (!p.excederiaSiAgrego || p.sel) ? toggleRegalo(p) : null}
                           className={cn("px-3 py-2 rounded-xl transition duration-200 relative", p.fueraDeRango ? "cursor-not-allowed border border-transparent" : p.sel ? "bg-[#0066B3]/15 border border-[#0066B3]/30 cursor-pointer" : p.excederiaSiAgrego ? "cursor-not-allowed border border-transparent" : cn(isDark ? "hover:bg-white/5 border border-transparent" : "bg-white border border-slate-100", "cursor-pointer"))}>
                           {REGALOS_VOLUMEN.includes(p.code) && <span className="absolute -top-1 -right-1 text-[8px] font-black bg-amber-500 text-black px-1.5 py-0.5 rounded-full">VOL</span>}
-                          <p className={cn("text-[11px] font-bold truncate pr-3", p.sel ? "text-[#0066B3]" : textPrimary)}>{p.name}</p>
+                          <TruncatedText text={p.name} className={cn("text-[11px] font-bold truncate pr-3", p.sel ? "text-[#0066B3]" : textPrimary)} />
                           <div className="flex justify-between items-end mt-1">
                             <p className={cn("text-[9px] font-bold", textSecondary)}>{p.category}</p>
                             <p className={cn("text-[11px] font-black tracking-tight", p.sel ? "text-[#0066B3]" : textPrimary)}>{fmt(p.total)}</p>

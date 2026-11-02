@@ -11,6 +11,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { motion, AnimatePresence } from 'framer-motion';
 import { NativeButton } from "@/components/ui/NativeButton";
 import { Slider } from "@/components/ui/slider";
+import { TruncatedText } from "@/components/ui/TruncatedText";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
@@ -68,7 +69,7 @@ const catalogProductsData: Record<string, GrupoLamina[]> = {
   // 1, 2 y 3: informativas, sin productos
 
   pagina4: [
-    g("Juegos", [byCode("CO9261"), byName("Sist. de Cocina Familiar de 10 Pzs Innove + Perfect Pop + Tapa Med. 20 Cm")]),
+    g("Juegos", [byCode("CO9961"), byName("Sist. de Cocina Familiar de 10 Pzs Innove + Perfect Pop + Tapa Med. 20 Cm")]),
     g("Piezas individuales", [byCode("CO9201"), byCode("CO9085"), byCode("CO9086"), byCode("CO9076"), byCode("CO9205"), byCode("CO9211"), byCode("CO9087"), byCode("CO9213"), byCode("CO9088"), byCode("CO9207")]),
   ],
 
@@ -187,7 +188,7 @@ const catalogProductsData: Record<string, GrupoLamina[]> = {
   pagina35: [ g(null, [byCode("SP0009")]) ],
 
   pagina36: [
-    g("Filtros de Ducha", [byCode("PR0003"), byCode("WF0080"), byCode("WF0075"), byName("Kit Reemplazo Cubierta de Ducha")]),
+    g("Filtros de Ducha", [byCode("PR0333"), byCode("WF0080"), byCode("WF0075"), byName("Kit Reemplazo Cubierta de Ducha")]),
     g("Purificador de Aire", [byCode("AP2101"), byCode("AP2004")]),
   ],
 }
@@ -524,7 +525,7 @@ export default function CatalogoViewer({ isDark = true, onProductsChange, onOver
                             )}
                           >
                             <div className="flex-1 min-w-0">
-                              <p className="text-sm landscape:text-xs font-semibold truncate text-white">{p.name}</p>
+                              <TruncatedText text={p.name} className="text-sm landscape:text-xs font-semibold truncate text-white" />
                               <p className="text-xs landscape:text-[10px] text-zinc-400">{p.code !== '-' ? p.code : p.category}</p>
                             </div>
                             <p className="text-white font-bold text-sm landscape:text-xs flex-shrink-0">{fmt(p.total)}</p>

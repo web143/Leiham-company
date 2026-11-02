@@ -1,4 +1,14 @@
-export const products = [
+type Producto = {
+    code: string;
+    name: string;
+    category: string;
+    price: number;
+    itbis: number;
+    total: number;
+    itbisPendiente?: boolean;
+};
+
+export const products: Producto[] = [
     // ── AROS SILICROMÁTICOS ──────────────────────────────────────
     { code: "SP0420", name: "Aro 16 cm. y ventana Innove", category: "Aros Silicromáticos", price: 1440.68, itbis: 259.32, total: 1700 },
     { code: "SP0430", name: "Aro 20 cm. y ventana Innove", category: "Aros Silicromáticos", price: 1525.42, itbis: 274.58, total: 1800 },
@@ -16,7 +26,7 @@ export const products = [
     { code: "CO9245", name: "Sistema de Cocina Complem. de 5 Pzs Innove", category: "Juegos de Ollas por Defecto en su Caja", price: 94067.80, itbis: 16932.20, total: 111000 },
     { code: "CO9253", name: "Sistema de Cocina Clásico de 7 Pzs Innove", category: "Juegos de Ollas por Defecto en su Caja", price: 116525.42, itbis: 20974.58, total: 137500 },
     { code: "CO9254", name: "Sistema de Cocina Especial de 8 Pzs Innove", category: "Juegos de Ollas por Defecto en su Caja", price: 142796.61, itbis: 25703.39, total: 168500 },
-    { code: "CO9261", name: "Sistema de Cocina Familiar de 10 Pzs Innove + Perfect Pop", category: "Juegos de Ollas por Defecto en su Caja", price: 182203.39, itbis: 32796.61, total: 215000 },
+    { code: "CO9961", name: "Sistema de Cocina Familiar de 10 Pzs Innove + Perfect Pop", category: "Juegos de Ollas por Defecto en su Caja", price: 182203.39, itbis: 32796.61, total: 215000 },
 
     // ── JUEGOS DE OLLAS + TAPA ADICIONAL ────────────────────────
     { code: "-", name: "Sist. de Cocina Complementario de 5 Pzs Innove + Tapa Grand. 26cm", category: "Juegos de Ollas + Tapa Adicional", price: 106355.93, itbis: 19144.07, total: 125500 },
@@ -73,6 +83,7 @@ export const products = [
     { code: "CO2124", name: "Cacerola para Huevos Royal Prestige", category: "Otros Productos", price: 11864.41, itbis: 2135.59, total: 14000 },
     { code: "SP0305", name: "Base Magneticas para Ollas", category: "Otros Productos", price: 2542.37, itbis: 457.63, total: 3000 },
     { code: "SP5050", name: "Royal Shine - Limpiador Royal Prestige", category: "Otros Productos", price: 847.46, itbis: 152.54, total: 1000 },
+    { code: "CO4911", name: "ROYAL PRESTIGE MULTIPAN", category: "Otros Productos", price: 66000, itbis: 0, total: 66000, itbisPendiente: true },
 
     // ── CAFÉ / TÉ / CHOCOLATE ────────────────────────────────────
     { code: "CO2106", name: "Cafetera Royal Prestige Barista", category: "Café / Té / Chocolate", price: 35593.22, itbis: 6406.78, total: 42000 },
@@ -171,7 +182,7 @@ export const products = [
     { code: "SP1861", name: "Jgo. De 2 Espátulas de Silicona PS", category: "Accesorios de Cocina - PS III", price: 3813.56, itbis: 686.44, total: 4500 },
 
     // ── FILTROS DE DUCHA ─────────────────────────────────────────
-    { code: "PR0003", name: "Filtro de Ducha Frescapure", category: "Filtros de Ducha", price: 21186.44, itbis: 3813.56, total: 25000 },
+    { code: "PR0333", name: "Filtro de Ducha Frescapure", category: "Filtros de Ducha", price: 21186.44, itbis: 3813.56, total: 25000 },
     { code: "WF0080", name: "SEIS (6) CARTUCHOS- FILTRO P/ DUCHA", category: "Filtros de Ducha", price: 20338.98, itbis: 3661.02, total: 24000 },
     { code: "WF0075", name: "DOS (2) CARTUCHOS- FILTRO P/ DUCHA", category: "Filtros de Ducha", price: 7627.12, itbis: 1372.88, total: 9000 },
     { code: "-", name: "Kit Reemplazo Cubierta de Ducha", category: "Filtros de Ducha", price: 5677.97, itbis: 1022.03, total: 6700 },
